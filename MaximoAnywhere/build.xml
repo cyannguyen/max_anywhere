@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Application Build Script" basedir="." default="empty">
+
+	<description>
+	Application Project Build Script
+	</description>
+	
+	<import file="util.xml" />
+
+	<!-- :: Begin Common Setup Steps -->
+	<basename property="ant.file.basename" file="${ant.file}" suffix=".xml"/>
+	<record name="${basedir}/${ant.file.basename}.log" logLevel="warn"/>
+	<loadproperties srcfile="${basedir}/build.properties" />
+	<loadproperties srcfile="${basedir}/server/conf/worklight.properties" />
+	<include file="${basedir}/build-taskdef.xml"/>
+	<!-- :: Done Common Setup Steps -->
+	
+	<condition property="isMac">
+		<os family="mac" />
+	</condition>
+	
+	<target name="init"
+		description="creates all the necessary folders used by the build">
+		<if>
+			<isset property="build.debug" />
+			<then>
+				<echoproperties></echoproperties>
+			</then>
+		</if>
+		
+		<!-- MFP Removal Changes -->
+		<!-- validate we are using the proper java vendor -->
+		<antcall target="validate-jdk-version"/>
+		
+        <!-- validate if we are building android applications that our path is correct -->
+        <!-- <ant antfile="anywhere-apps-builder.xml" target="-validate-android-sdk" />-->
+        
+		<!-- MFP Removal Changes -->
+		<!-- validate that the visual studio version is set -->
+		<!-- <ant antfile="anywhere-apps-builder.xml" target="-validate-visualstudio-version-release" />-->
+		
+		<!-- MFP Removal Changes -->
+        <!-- validate if we are building windows applications that our path is correct -->
+        <!-- <ant antfile="anywhere-apps-builder.xml" target="-validate-visual-studio-tools-path" />-->
+		
+	</target>
+	
+	<target name="validate-jdk-version" >
+		<echotimestamp> Validating Java Vendor...</echotimestamp>
+		<condition property="acceptable.java.vendor">
+			<or>
+				<equals arg1="${java.vendor}" arg2="Sun Microsystems Inc."/>
+				<equals arg1="${java.vendor}" arg2="Oracle Corporation"/>
+			</or>
+		</condition>
+		
+		<fail unless="acceptable.java.vendor"
+			message="JDK Check failed, must be either [Sun Microsystems Inc.] or [Oracle Corporation] to continue. Currently using JDK [${java.vendor}] version: ${java.version}" />
+		<echotimestamp> Success. Currently using accepted Java from [${java.vendor}] version: ${java.version}</echotimestamp>
+	</target>
+		
+	<condition property="isPlatformInstalled">
+		<available file="${basedir}/build/version.txt"/>
+	</condition>
+	
+	<target name="clean-platform" description="clean the project of platform artifacts">
+		<ant antfile="anywhere-platform-installer.xml" target="clean-local-build-dir"/>
+	</target>
+	<target name="clean-cache" description="clean the project of platform cache, allows the reinstall of a new platform package">
+		<ant antfile="anywhere-platform-installer.xml" target="clean-global-cache"/>
+	</target>
+	<target name="-clean-resources" >
+		<!-- description="cleans the resources zips and application temporary build folders, for a given application" -->
+		<basename property="local.application.name" file="${local.application.home}"/>
+		<delete dir="${java.io.tmpdir}/${local.application.name}" 
+			verbose="true" failonerror="false"/>
+			
+		<echotimestamp message="Cleaning android/native/www/resource.zip.*"/>
+		<delete verbose="true" failonerror="false">
+			<fileset dir="${basedir}/apps/${local.application.name}/android/www" 
+				includes="**/resources.zip.*.*"/>
+		</delete>
+	</target>
+	
+	<target name="clean"
+		description="The clean target command removes all folders created by the build, including ones from the platform side, resetting the build environment.">
+		<echotimestamp message="The clean target command removes all folders created by the build, including ones from the platform side, resetting the build environment."/>
+		
+		<delete dir="${basedir}/build/managed"/>
+		<mkdir dir="${basedir}/build/managed"/>
+		<delete dir="${basedir}/bin"/>
+		<mkdir dir="${basedir}/bin"/>
+		
+		<ant antfile="anywhere-artifact-processor.xml" target="clean-changetrack"/>
+		<ant antfile="anywhere-platform-installer.xml" target="clean-local-build-dir"/>
+		<ant antfile="anywhere-platform-installer.xml" target="clean-global-cache"/>
+				
+		<echotimestamp message="Cleaning User Temp Dir ${java.io.tmpdir}"/>
+		<delete dir="${java.io.tmpdir}/wlBuildResources" verbose="true" failonerror="false"/>
+		<delete dir="${java.io.tmpdir}/wlPreview" verbose="true" failonerror="false"/>
+		
+		<foreach target="-clean-resources" 
+				param="local.application.home"
+				inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps">
+					<include name="*"/>
+				</dirset>
+			</path>
+	    </foreach>
+	</target>
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="build-war" description="The build-war target command builds the WAR file. Deploy the WAR file manually on the server by using the mobilefirst config tool.">
+		<echotimestamp message="The build-war target command builds the WAR file. Deploy the WAR file manually on the server by using the mobilefirst config tool."/>
+		<ant antfile="anywhere-apps-builder.xml" target="build-war"/>	
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!--<target name="enable-mobilefirst-studio-attachments" description="updates MobileFirst Studio server with attachement support">
+		<ant antfile="anywhere-apps-builder.xml" target="-enable-mobilefirst-studio-attachments" />
+	</target>-->
+
+	<target name="update-platform" description="The update-platform target command searches the maximo-anywhere-platform, maximo-anywhere-platform-fixpack, and artifact-processor compressed files, extracts them, and installs the platform files into the apps.">
+		<echotimestamp message="The update-platform target command searches the maximo-anywhere-platform, maximo-anywhere-platform-fixpack, and artifact-processor compressed files, extracts them, and installs the platform files into the apps."/>
+		<property name="install.fixpack.dependencies" value="true" />
+		<ant antfile="anywhere-platform-installer.xml" target="install-anywhere-platform-only"/>
+		<antcall target="patch-properties"/>
+		<!-- MFP Removal Changes -->
+		<!--<ant antfile="anywhere-apps-builder.xml" target="build-war"/>-->
+	</target>
+	
+    <target name="install-platform" description="The install-platform target command searches the maximo-anywhere-platform and artifact-processor compressed files, extracts them, and installs the platform files into the apps.">
+    	<echotimestamp message="The install-platform target command searches the maximo-anywhere-platform and artifact-processor compressed files, extracts them, and installs the platform files into the apps."/>
+        <ant antfile="anywhere-platform-installer.xml" target="install-anywhere-platform-only"/>
+        <!-- MFP Removal Changes -->
+    	<!-- <ant antfile="anywhere-apps-builder.xml" target="build-war"/> -->
+    </target>	
+	
+	<target name="all-gen" description="The all-gen target command builds and generates JS files based on the app.xml and application files.">
+		<echotimestamp message="The all-gen target command builds and generates JS files based on the app.xml and application files. Also it creates zip files with app content."/>
+		<ant antfile="anywhere-artifact-processor.xml" />
+		<!-- MFP Removal Changes -->
+		<!-- <ant antfile="anywhere-apps-builder.xml" target="-configure-all-apps"/>-->
+		<ant antfile="anywhere-apps-builder.xml" target="zip-all-apps"/>
+	</target>
+	
+	<!-- MFP Removal Changes -->
+	<!--<target name="all-dist" description="The all-dist target command builds the project distribution files: *.war, *.adapter, *.wlapp, *.apk, *.ipa">
+		<echotimestamp message="The all-dist target command builds the project distribution files: *.war, *.adapter, *.wlapp, *.apk, *.ipa"/>
+		<ant antfile="anywhere-platform-installer.xml" target="-extract-map-plugins-for-ios"/>
+		<ant antfile="anywhere-apps-builder.xml" target="-build-all-adapter"/>
+		<ant antfile="anywhere-apps-builder.xml" target="-build-all-apps"/>
+		<ant antfile="anywhere-apps-builder.xml" target="-build-all-native-apk"/>
+		<ant antfile="anywhere-apps-builder.xml" target="-build-all-native-ios"/>
+		<ant antfile="anywhere-apps-builder.xml" target="-build-all-native-xap"/>
+		<ant antfile="anywhere-apps-builder.xml" target="-build-all-native-appx"/>
+		<ant antfile="anywhere-apps-builder.xml" target="build-war"/>
+	</target>-->
+
+	<target name="all-deploy" description="The all-deploy target command deploys the distribution files to MobileFirst Server or Application Center if they are accessible.">
+		<echotimestamp message="The all-deploy target command deploys the zip files to Maximo if it is accessible."/>
+		<ant antfile="anywhere-apps-builder.xml" target="zip-upload-all-apps"/>
+	</target>
+	
+	<target name="get-oslcdocs" description="The get-oslcdocs target command downloads the OSLC docs from Maximo and stores them under the oslc-docs folder.">
+		<echotimestamp message="The get-oslcdocs target command downloads the OSLC docs from Maximo and stores them under the oslc-docs folder."/>
+		<ant antfile="anywhere-platform-installer.xml" target="get-oslcdocs"/>
+	</target>
+		
+	<target name="mobilefirst" description="The mobilefirst target command builds and deploys the web components of the project. This command is a wrapper that invokes the build-war, all-gen, and all-deploy commands.">
+		<echotimestamp message="The mobilefirst target command builds and deploys the web components of the project. This command is a wrapper that invokes the build-war, all-gen, and all-deploy commands."/>
+		<property name="build.target.called" value="mobilefirst"/>
+		<ant antfile="anywhere-update-appdistribution.xml" target="set-appdescriptor-packagename"/>
+		<antcall target="verify-environment-compatibility"/>
+		<antcall target="update-appfeatures-for-appdistribution"/>
+		<antcall target="all-gen"/>
+		<antcall target="all-deploy"/>
+		<!-- MFP Removal Changes -->
+		<!-- 
+		<ant antfile="anywhere-apps-builder.xml" target="-build-all-adapter"/>
+		<antcall target="update-appfeatures-for-appdistribution"/>
+		<ant antfile="anywhere-update-appdistribution.xml" target="-build-all-apps"/>
+		<ant antfile="anywhere-apps-builder.xml" target="build-war"/>
+		<ant antfile="anywhere-apps-builder.xml" target="-deploy-all-adapter"/>
+		<ant antfile="anywhere-apps-builder.xml" target="-deploy-all-apps"/>
+		-->
+	</target>
+	
+	<target name="all" description="The all target command builds and deploys the project. This command is a wrapper that invokes the all-gen and all-deploy commands.">
+		<echotimestamp message="The all target command builds and deploys the project. This command is a wrapper that invokes the all-gen and all-deploy commands."/>
+		<property name="build.target.called" value="all"/>
+		<!--<ant antfile="anywhere-update-appdistribution.xml" target="clear-appdescriptor-packagename"/>-->
+		<antcall target="verify-environment-compatibility"/> 
+		<antcall target="init"/>
+		<antcall target="copy-worklight-properties-all-apps"/>
+		<antcall target="all-gen"/>
+		<!-- MFP Removal Changes -->
+		<!--<antcall target="all-dist"/>-->
+		
+		<antcall target="all-deploy"/>
+		<antcall target="show-support-page"/>
+	</target>
+
+	<target name="show-support-page">
+		<echo>INFO: To customize logo and copyright in the apps, follow the link below</echo>
+		<echo>INFO: https://supportcontent.ibm.com/support/pages/node/1137778 </echo>
+	</target>
+
+	<target name="copy-worklight-properties" description="Copies worklight.properties from server/conf to each app.">
+		<delete file="${application.home}/common/worklight.properties" failonerror="false" />
+		<echotimestamp message="Copy worklight.properties from server/conf to app. "/>
+		<copy file="${basedir}/server/conf/worklight.properties" tofile="${application.home}/common/worklight.properties"/>
+
+	</target>
+
+<target name="copy-worklight-properties-all-apps" description="Copies worklight.properties from server/conf to all app.">
+	<foreach target="copy-worklight-properties" param="application.home" inheritAll="true">
+		<path>
+			<dirset dir="${basedir}/apps" includes='${appsToBuild}'>
+			</dirset>
+		</path>
+    </foreach>
+</target>
+		
+	<!-- MFP Removal Changes -->
+	<!-- <target name="appdistribution" description="build and deploy webcomponents and native code, based on appdistribution configuration." depends="verify-environment-compatibility">
+		<antcall target="update-appfeatures-for-appdistribution"/>
+		<antcall target="all-gen"/>
+		<ant antfile="anywhere-apps-builder.xml" target="-build-all-adapter"/>
+		<ant antfile="anywhere-apps-builder.xml" target="-build-all-apps"/>
+		<ant antfile="anywhere-apps-builder.xml" target="build-war"/>
+		
+		<if>
+			<isset property="isMac" />
+			<then>
+				<exec executable="/bin/sh" spawn="false">
+					<arg value="${basedir}/build/tools/update-plist.sh"/>
+				</exec>
+			</then>
+		</if>
+		
+		<ant antfile="anywhere-apps-builder.xml" target="-build-all-native-apk"/>
+		<ant antfile="anywhere-apps-builder.xml" target="-build-all-native-ios"/>
+		<ant antfile="anywhere-apps-builder.xml" target="-build-all-native-xap"/>
+		<ant antfile="anywhere-apps-builder.xml" target="-build-all-native-appx"/>
+		
+		<antcall target="all-deploy"/>
+	</target>-->
+	
+	<target name="empty" description="The empty target command builds and deploys the project based on the build.target property. If build.target=all, it does a complete build and deploy, but when build.target=mobilefirst, it builds and deploys only the webcomponents.">
+		<echotimestamp message="The empty target command builds and deploys the project based on the build.target property. If build.target=all, it does a complete build and deploy, but when build.target=mobilefirst, it builds and deploys only the webcomponents."/>
+		<if>
+			<equals arg1="${build.target}" arg2="all"/>
+			<then>
+				<echotimestamp>executing target: all</echotimestamp>
+				<antcall target="all"/>
+			</then>
+			<else>
+				<echotimestamp>executing target: mobilefirst</echotimestamp>
+				<antcall target="mobilefirst"/>
+			</else>
+		</if>
+		<echotimestamp message="All build targets completed!"></echotimestamp>
+	</target>	
+
+	<target name="patch-properties"
+		description="performs a merge and update of the build.properties and worklight.properties">  
+        <!--loading the fixpack-build.properties to get the value of ignore.properties.list -->
+        <loadproperties srcFile="${basedir}/build/config/fixpack-build.properties" prefix="fixpack"/>
+        <java jar="${basedir}/libs/build/mergeproperties.jar" fork="true"
+            failonerror="false" maxmemory="128m">
+            <arg value="${basedir}/build.properties" />
+            <arg value="${basedir}/build/config/fixpack-build.properties" />
+            <arg value="-updateProperties" />
+            <arg value="-ignoreProperties${fixpack.ignore.properties.list}" />
+            <classpath>
+                <pathelement location="${basedir}/libs/build/mergeproperties.jar" />
+            </classpath>
+        </java>
+		<!-- MFP Removal Changes -->
+        <!--<java jar="${basedir}/libs/build/mergeproperties.jar" fork="true"
+            failonerror="false" maxmemory="128m">
+            <arg value="${basedir}/server/conf/worklight.properties" />
+            <arg value="${basedir}/build/config/fixpack-override-worklight.properties" />
+            <arg value="-updateProperties" />
+            <classpath>
+                <pathelement location="${basedir}/libs/build/mergeproperties.jar" />
+            </classpath>
+        </java>-->
+        <java jar="${basedir}/libs/build/mergeproperties.jar" fork="true"
+            failonerror="false" maxmemory="128m">
+            <arg value="${basedir}/server/conf/worklight.properties" />
+            <arg value="${basedir}/build/config/fixpack-worklight.properties" />
+            <classpath>
+                <pathelement location="${basedir}/libs/build/mergeproperties.jar" />
+            </classpath>
+        </java>
+	</target>
+	
+	<target name="process-app-xsd-docs" description="creates html documentation based on the platform's app.xsd">
+	   <ant antfile="anywhere-appdocs-processor.xml" target="process-app-xsd-docs" inheritAll="true"/>
+	</target>	    
+	
+	<target name="showStrayBOM">
+
+		<property name="worklight_js" 	value="iphone/native/www/default/worklight/worklight.js"/>
+		<property name="loaddir" 		value="/Users/cdoan/Downloads/MaximoAnywhere"/>
+		<property name="wlrb" 			value="${java.io.tmpdir}wlBuildResources/6.3.0.00.20150106-1717/jslibexpanded/app/ios/worklight/worklight.js"/>
+		<property name="wlrbpreview" 	value="${java.io.tmpdir}wlBuildResources/6.3.0.00.20150106-1717/jslibexpanded/preview/ios/worklight/worklight.js"/>
+
+		<exec executable="/bin/sh" spawn="false" errorproperty="bom1" resultproperty="search1">
+		      <arg value="${loaddir}/build/tools/showBOM.sh"/>
+			  <arg value="${loaddir}/apps/WorkExecution/${worklight_js}"/>
+		</exec>
+
+		<if>
+			<isset property="search1"/>
+			<then>
+				<echotimestamp>search BOM: not found in file ${loaddir}/apps/WorkExecution/${worklight_js}</echotimestamp>
+			</then>
+			<else>
+				<echotimestamp>search BOM: ${loaddir}/apps/WorkExecution/${worklight_js}</echotimestamp>
+			</else>
+		</if>
+		
+		<exec executable="/bin/sh" spawn="false">
+		      <arg value="${loaddir}/build/tools/showBOM.sh"/>
+			  <arg value="${wlrb}"/>
+		</exec>
+		
+		<exec executable="/bin/sh" spawn="false">
+		      <arg value="${loaddir}/build/tools/showBOM.sh"/>
+			  <arg value="${wlrbpreview}"/>
+		</exec>
+		
+	</target>
+	
+	<target name="removeStrayBOM" description="remove stray BOM characters from the specified files">
+
+		<property name="worklight_js" 	value="iphone/native/www/default/worklight/worklight.js"/>
+		<property name="loaddir" 		value="${basedir}"/>
+
+		<exec executable="/bin/sh" spawn="false">
+		      <arg value="${loaddir}/build/tools/showBOM.sh"/>
+			  <arg value="${loaddir}/apps/WorkExecution/${worklight_js}"/>
+		</exec>
+		<exec executable="/bin/sh" spawn="false">
+		      <arg value="${loaddir}/build/tools/removeBOMCLI.sh"/>
+		</exec>
+	</target>
+	
+	<target name="run-unit-test" description="Run the unit tests for the apps">
+	    <ant antfile="anywhere-platform-installer.xml" target="install-unittest-runner"/>
+		<ant antfile="build-test.xml" target="all"/>
+	</target>
+	
+	<target name="enable-admin-mode">  
+		<antcall target="run-admin-config-loader"/>
+		<echotimestamp> Enabling admin mode in worklight.properties</echotimestamp>
+		<propertyfile file="${basedir}/server/conf/worklight.properties">
+			<entry key="si.adminmode" value="true"></entry>
+		</propertyfile>
+		<ant antfile="anywhere-apps-builder.xml" target="replace-war" inheritAll="true"/>
+	</target>
+	
+	<target name="run-admin-config-loader">
+		<echotimestamp> Running admin config loader</echotimestamp>
+		<ant antfile="admin-config-loader.xml" target="allApps" inheritAll="true"/>
+    </target>
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="update-appfeatures-for-appdistribution">
+		<echotimestamp>Running update on app-features.properties for app distrubution configuration</echotimestamp>
+		<property name="build.target" value="" />
+		<if>
+			<equals arg1="${build.target}" arg2="all"/>
+			<then>
+				<echotimestamp>build.target=all, so app-feature.properties will not be updated.</echotimestamp>
+			</then>
+			<elseif>
+				<equals arg1="${build.target}" arg2="mobilefirst"/>
+				<then>
+					<echotimestamp>build.target=mobilefirst. Updating app features.</echotimestamp>
+					<for param="appname" list="${appsToBuild}" trim="true">
+			            <sequential>
+			                <echotimestamp message="Updating app-features.properties for @{appname}"/>-->
+<!-- 			            	<replace file="${basedir}/apps/@{appname}/app-feature.properties" token="map.enabled=true" value="map.enabled=false"/> -->
+<!--     						<replace file="${basedir}/apps/@{appname}/app-feature.properties" token="gps.enabled=false" value="gps.enabled=true"/> -->
+    						<!--<replace file="${basedir}/apps/@{appname}/app-feature.properties" token="barcode.enabled=false" value="barcode.enabled=true"/>-->
+<!--     						<replace file="${basedir}/apps/@{appname}/app-feature.properties" token="attachments.enabled=false" value="attachments.enabled=true"/> -->
+    						<!--<replace file="${basedir}/apps/@{appname}/app-feature.properties" token="connection.settings.enabled=false" value="connection.settings.enabled=true"/>-->
+<!--     						<replace file="${basedir}/apps/@{appname}/app-feature.properties" token="calibration.enabled=false" value="calibration.enabled=true"/> -->
+<!--     						<replace file="${basedir}/apps/@{appname}/app-feature.properties" token="esig.enabled=false" value="esig.enabled=true"/> -->
+    						<!--<replace file="${basedir}/apps/@{appname}/app-feature.properties" token="pushnotification.enabled=true" value="pushnotification.enabled=false"/>
+			            </sequential>
+			        </for>
+				</then>
+			</elseif>
+			<else>
+				<echotimestamp>Invalid value for build.target, it should be all or mobilefirst</echotimestamp>
+			</else>
+		</if>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="update-plist-appdistribution" if="isMac" description="Update p-list of the apps to add method=development and teamId - required to appstore">
+		<exec executable="/bin/sh" spawn="false">
+		      <arg value="${basedir}/build/tools/update-plist.sh"/>
+		</exec>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!--<target name="update-plist-inhouse" if="isMac" description="Update p-list of the apps to add method=enterprise and remove teamId key">
+		<exec executable="/bin/sh" spawn="false">
+		      <arg line="${basedir}/build/tools/update-plist.sh inhouse"/>
+		</exec>
+	</target>-->
+	
+	<target name="verify-environment-compatibility" description="verify all relevant information to guarantee that a build can be done">
+		<ant antfile="anywhere-system-verification.xml" target="verify-compatibility" inheritAll="true"/>
+		
+		<!-- Verify if platform was installed -->
+		<available file="${basedir}/build/managed" type="dir" property="managed.folder.exists" />
+		<if>
+			<equals arg1="${managed.folder.exists}" arg2="true"/>
+			<then>
+				<echotimestamp message="maximo anywhere platform is already installed."/>
+			</then>
+			<else>
+				<echotimestamp message="Your environment does not have anywhere platform installed yet. Going to install it by looking at location described in platformzip.location property into build.properties file."/>
+				<trycatch>
+			        <try>
+			        	<antcall target="update-platform"/>
+			    	</try>
+			    	<catch>
+			    	    <echotimestamp level="warning">WARNING: Fix pack files were not found.</echotimestamp>
+				        <antcall target="install-platform"/>
+					</catch>
+				</trycatch>
+	    	    
+				<echotimestamp message="maximo anywhere platform is installed now."/>
+			</else>
+		</if>
+		
+		<!-- TODO: in future we are going to check if there is a new platform version available by checking a specific url -->
+	</target>
+	
+	<target name="show-environment-information" description="show all relevant information to do a complete build">
+	    <ant antfile="anywhere-system-verification.xml" target="show-environment-info" inheritAll="true"/>
+	</target>
+</project>

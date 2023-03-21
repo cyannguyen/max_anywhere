@@ -1,0 +1,20 @@
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:oslc="http://open-services.net/ns/core#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:spi="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#">
+  <oslc:ResourceShape rdf:about="http://localhost/maximo/oslc/shapes/oslcsrdetail/doclinks/attachment">
+    <oslc:property>
+      <oslc:Property>
+        <oslc:name>describedBy</oslc:name>
+        <oslc:occurs rdf:resource="http://open-services.net/ns/core#Zero-or-many"/>
+        <oslc:propertyDefinition rdf:resource="http://www.w3.org/2007/05/powder-s#describedBy"/>
+        <oslc:valueType rdf:resource="http://open-services.net/ns/core#Resource"/>
+        <oslc:representation rdf:resource="http://open-services.net/ns/core#Reference"/>
+        <oslc:valueShape rdf:resource="http://localhost/maximo/oslc/shapes/oslcsrdetail/doclinks/attachment/meta"/>
+        <oslc:range rdf:resource="http://open-services.net/ns/cm#AttachmentDescriptor"/>
+      </oslc:Property>
+    </oslc:property>
+    <oslc:describes rdf:resource="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Attachment"/>
+  </oslc:ResourceShape>
+</rdf:RDF>

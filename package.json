@@ -1,0 +1,25 @@
+{
+  "name": "com.ibm.maximo.anywhere",
+  "displayName": "Maximo Anywhere",
+  "version": "1.0.0",
+  "description": "Maximo Anywhere Application Project",
+  "main": "index.js",
+  "scripts": {
+    "all-gen": "node scripts/all-gen.js"
+  },
+  "keywords": [
+    "maximo, anywhere"
+  ],
+  "author": "IBM Team",
+  "license": "IBM",
+  "dependencies": {
+    "chalk": "^5.0.0",
+    "child_process": "^1.0.2",
+    "fs-extra": "^10.0.0",
+    "inquirer": "^8.0.0",
+    "path": "^0.12.7",
+    "properties-reader": "^2.0.0",
+    "yargs": "^13.2.4",
+    "zip-dir": "^1.0.2"
+  }
+}

@@ -1,0 +1,620 @@
+<rdf:RDF
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:oslc="http://open-services.net/ns/core#">
+  <oslc:ServiceProvider rdf:about="http://locahost/maximo/oslc/sp/WorkManagement">
+    <oslc:prefixDefinition>
+      <oslc:PrefixDefinition>
+        <oslc:prefixBase rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#"/>
+        <oslc:prefix>spi_wm</oslc:prefix>
+      </oslc:PrefixDefinition>
+    </oslc:prefixDefinition>
+    <oslc:prefixDefinition>
+      <oslc:PrefixDefinition>
+        <oslc:prefixBase rdf:resource="http://xmlns.com/foaf/0.1/"/>
+        <oslc:prefix>foaf</oslc:prefix>
+      </oslc:PrefixDefinition>
+    </oslc:prefixDefinition>
+    <oslc:prefixDefinition>
+      <oslc:PrefixDefinition>
+        <oslc:prefixBase rdf:resource="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#"/>
+        <oslc:prefix>spi</oslc:prefix>
+      </oslc:PrefixDefinition>
+    </oslc:prefixDefinition>
+    <oslc:prefixDefinition>
+      <oslc:PrefixDefinition>
+        <oslc:prefixBase rdf:resource="http://open-services.net/ns/idevice#"/>
+        <oslc:prefix>comp</oslc:prefix>
+      </oslc:PrefixDefinition>
+    </oslc:prefixDefinition>
+    <oslc:prefixDefinition>
+      <oslc:PrefixDefinition>
+        <oslc:prefixBase rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+        <oslc:prefix>rdf</oslc:prefix>
+      </oslc:PrefixDefinition>
+    </oslc:prefixDefinition>
+    <dcterms:publisher>
+      <oslc:Publisher>
+        <dcterms:title>tpae Oslc Provider</dcterms:title>
+        <dcterms:identifier>tpae</dcterms:identifier>
+      </oslc:Publisher>
+    </dcterms:publisher>
+    <oslc:service>
+      <oslc:Service>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#PLUSCWODSANYWNP"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcpluscwodsanywnp?savedQuery=physicalcount"/>
+            <dcterms:title>OSLC query capability Physical Count Blind Count by Frequency</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:creationFactory>
+          <oslc:CreationFactory>
+            <oslc:usage rdf:resource="http://open-services.net/ns/core#default"/>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassStructure"/>
+            <oslc:resourceShape rdf:resource="http://locahost/maximo/oslc/shapes/oslcclassstructure"/>
+            <oslc:creation rdf:resource="http://locahost/maximo/oslc/os/oslcclassstructure"/>
+            <dcterms:title>OSLC creation factory for ClassStructure</dcterms:title>
+          </oslc:CreationFactory>
+        </oslc:creationFactory>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:usage rdf:resource="http://maximo.worklist#mycompletedlist"/>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WorkOrder"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcwodetail?savedQuery=myCompletedList&amp;sqp:queryName=%7BqueryName%7D&amp;sqp:app=%7Bapp%7D&amp;sqp:owner=%7Bowner%7D"/>
+            <dcterms:title>OSLC query capability </dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpecUseWith"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspecusewith?savedQuery=getWorkOrderSpecificationDomains"/>
+            <dcterms:title>OSLC query capability Returns domains used in classifications</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassStructure"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassstructure?savedQuery=ANYWHEREASSETALL"/>
+            <dcterms:title>OSLC query capability Maximo Anywhere All Asset Classstructures</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WODataSheet"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcwodatasheet?savedQuery=curbalpos"/>
+            <dcterms:title>OSLC query capability curbalpos</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpecUseWith"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspecusewith?savedQuery=hasqty"/>
+            <dcterms:title>OSLC query capability has quantity and not rotating</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpec"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspec?savedQuery=hasqty"/>
+            <dcterms:title>OSLC query capability has quantity and not rotating</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#PLUSCWODSANYWNP"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcpluscwodsanywnp?savedQuery=getAssetSpecificationDomains"/>
+            <dcterms:title>OSLC query capability Returns domains used in classifications</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#MaxDomain"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcmaxdomain?savedQuery=hasqty"/>
+            <dcterms:title>OSLC query capability has quantity and not rotating</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#Assetattribute"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcassetattr?savedQuery=getAllInvbalances"/>
+            <dcterms:title>OSLC query capability Get All Invbalances</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:creationFactory>
+          <oslc:CreationFactory>
+            <oslc:usage rdf:resource="http://open-services.net/ns/core#default"/>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpecUseWith"/>
+            <oslc:resourceShape rdf:resource="http://locahost/maximo/oslc/shapes/oslcclassspecusewith"/>
+            <oslc:creation rdf:resource="http://locahost/maximo/oslc/os/oslcclassspecusewith"/>
+            <dcterms:title>OSLC creation factory for ClassSpecUseWith</dcterms:title>
+          </oslc:CreationFactory>
+        </oslc:creationFactory>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpecUseWith"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspecusewith?savedQuery=itemtype"/>
+            <dcterms:title>OSLC query capability Item TYpe</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ServiceRequest"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcsrdetail"/>
+            <dcterms:title>OSLC query capability for ServiceRequest</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#PLUSCWODSANYWNP"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcpluscwodsanywnp?savedQuery=hasqty"/>
+            <dcterms:title>OSLC query capability has quantity and not rotating</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ServiceRequest"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcsrdetail?savedQuery=MY_REPORTED_SR"/>
+            <dcterms:title>OSLC query capability SR query for my reported SRs</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#PLUSCWODSANYWNP"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcpluscwodsanywnp?savedQuery=physicalcountNB"/>
+            <dcterms:title>OSLC query capability Physical Count Non Blind Count by Frequency</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#MaxDomain"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcmaxdomain?savedQuery=getAssetSpecificationDomains"/>
+            <dcterms:title>OSLC query capability Returns domains used in classifications</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpec"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspec?savedQuery=getWorkOrderSpecificationDomains"/>
+            <dcterms:title>OSLC query capability Returns domains used in classifications</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#Assetattribute"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcassetattr"/>
+            <dcterms:title>OSLC query capability for Assetattribute</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WODataSheet"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcwodatasheet?savedQuery=physicalcountNB"/>
+            <dcterms:title>OSLC query capability Physical Count Non Blind Count by Frequency</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#Assetattribute"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcassetattr?savedQuery=curbalpos"/>
+            <dcterms:title>OSLC query capability curbalpos</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpec"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspec?savedQuery=itemtype"/>
+            <dcterms:title>OSLC query capability Item TYpe</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WODataSheet"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcwodatasheet?savedQuery=getAllInvbalances"/>
+            <dcterms:title>OSLC query capability Get All Invbalances</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:creationFactory>
+          <oslc:CreationFactory>
+            <oslc:usage rdf:resource="http://open-services.net/ns/core#default"/>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpec"/>
+            <oslc:resourceShape rdf:resource="http://locahost/maximo/oslc/shapes/oslcclassspec"/>
+            <oslc:creation rdf:resource="http://locahost/maximo/oslc/os/oslcclassspec"/>
+            <dcterms:title>OSLC creation factory for ClassSpec</dcterms:title>
+          </oslc:CreationFactory>
+        </oslc:creationFactory>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpecUseWith"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspecusewith?savedQuery=physicalcount"/>
+            <dcterms:title>OSLC query capability Physical Count Blind Count by Frequency</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WorkOrder"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcwodetail"/>
+            <dcterms:title>OSLC query capability for WorkOrder</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:usage rdf:resource="http://maximoanywhere/mobileAnywhereWOQuery"/>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WorkOrder"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcwodetail?savedQuery=getWithComplexQuery&amp;sqp:location=%7Blocation%7D&amp;sqp:asset=%7Basset%7D"/>
+            <dcterms:title>OSLC query capability </dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WODataSheet"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcwodatasheet?savedQuery=hasqty"/>
+            <dcterms:title>OSLC query capability has quantity and not rotating</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#PLUSCWODSANYWNP"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcpluscwodsanywnp?savedQuery=getWorkOrderSpecificationDomains"/>
+            <dcterms:title>OSLC query capability Returns domains used in classifications</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpecUseWith"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspecusewith?savedQuery=getAllInvbalances"/>
+            <dcterms:title>OSLC query capability Get All Invbalances</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassStructure"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassstructure"/>
+            <dcterms:title>OSLC query capability for ClassStructure</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpecUseWith"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspecusewith"/>
+            <dcterms:title>OSLC query capability for ClassSpecUseWith</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpec"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspec"/>
+            <dcterms:title>OSLC query capability for ClassSpec</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:creationFactory>
+          <oslc:CreationFactory>
+            <oslc:usage rdf:resource="http://open-services.net/ns/core#default"/>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#Assetattribute"/>
+            <oslc:resourceShape rdf:resource="http://locahost/maximo/oslc/shapes/oslcassetattr"/>
+            <oslc:creation rdf:resource="http://locahost/maximo/oslc/os/oslcassetattr"/>
+            <dcterms:title>OSLC creation factory for Assetattribute</dcterms:title>
+          </oslc:CreationFactory>
+        </oslc:creationFactory>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#MaxDomain"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcmaxdomain?savedQuery=itemtype"/>
+            <dcterms:title>OSLC query capability Item TYpe</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#Assetattribute"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcassetattr?savedQuery=getAssetSpecificationDomains"/>
+            <dcterms:title>OSLC query capability Returns domains used in classifications</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#Assetattribute"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcassetattr?savedQuery=physicalcount"/>
+            <dcterms:title>OSLC query capability Physical Count Blind Count by Frequency</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:creationFactory>
+          <oslc:CreationFactory>
+            <oslc:usage rdf:resource="http://open-services.net/ns/core#default"/>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ServiceRequest"/>
+            <oslc:resourceShape rdf:resource="http://locahost/maximo/oslc/shapes/oslcsrdetail"/>
+            <oslc:creation rdf:resource="http://locahost/maximo/oslc/os/oslcsrdetail"/>
+            <dcterms:title>OSLC creation factory for ServiceRequest</dcterms:title>
+          </oslc:CreationFactory>
+        </oslc:creationFactory>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpec"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspec?savedQuery=physicalcount"/>
+            <dcterms:title>OSLC query capability Physical Count Blind Count by Frequency</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ServiceRequest"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcsrdetail?savedQuery=All+Service+Requests"/>
+            <dcterms:title>OSLC query capability All Service Requests</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#PLUSCWODSANYWNP"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcpluscwodsanywnp?savedQuery=itemtype"/>
+            <dcterms:title>OSLC query capability Item TYpe</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#MaxDomain"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcmaxdomain"/>
+            <dcterms:title>OSLC query capability for MaxDomain</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#Assetattribute"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcassetattr?savedQuery=hasqty"/>
+            <dcterms:title>OSLC query capability has quantity and not rotating</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:creationFactory>
+          <oslc:CreationFactory>
+            <oslc:usage rdf:resource="http://open-services.net/ns/core#default"/>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#MaxDomain"/>
+            <oslc:resourceShape rdf:resource="http://locahost/maximo/oslc/shapes/oslcmaxdomain"/>
+            <oslc:creation rdf:resource="http://locahost/maximo/oslc/os/oslcmaxdomain"/>
+            <dcterms:title>OSLC creation factory for MaxDomain</dcterms:title>
+          </oslc:CreationFactory>
+        </oslc:creationFactory>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#MaxDomain"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcmaxdomain?savedQuery=getWorkOrderSpecificationDomains"/>
+            <dcterms:title>OSLC query capability Returns domains used in classifications</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WODataSheet"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcwodatasheet?savedQuery=getAssetSpecificationDomains"/>
+            <dcterms:title>OSLC query capability Returns domains used in classifications</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:creationFactory>
+          <oslc:CreationFactory>
+            <oslc:usage rdf:resource="http://open-services.net/ns/core#default"/>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#PLUSCWODSANYWNP"/>
+            <oslc:resourceShape rdf:resource="http://locahost/maximo/oslc/shapes/oslcpluscwodsanywnp"/>
+            <oslc:creation rdf:resource="http://locahost/maximo/oslc/os/oslcpluscwodsanywnp"/>
+            <dcterms:title>OSLC creation factory for PLUSCWODSANYWNP</dcterms:title>
+          </oslc:CreationFactory>
+        </oslc:creationFactory>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#MaxDomain"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcmaxdomain?savedQuery=physicalcount"/>
+            <dcterms:title>OSLC query capability Physical Count Blind Count by Frequency</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#PLUSCWODSANYWNP"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcpluscwodsanywnp"/>
+            <dcterms:title>OSLC query capability for PLUSCWODSANYWNP</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:domain rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#"/>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpecUseWith"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspecusewith?savedQuery=physicalcountNB"/>
+            <dcterms:title>OSLC query capability Physical Count Non Blind Count by Frequency</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:usage rdf:resource="http://jazz.net/ns/ism/smarter_physical_infrastructure#woHistoryFilter"/>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WorkOrder"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcwodetail?savedQuery=woHistoryFilter"/>
+            <dcterms:title>OSLC query capability </dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WODataSheet"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcwodatasheet?savedQuery=itemtype"/>
+            <dcterms:title>OSLC query capability Item TYpe</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpec"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspec?savedQuery=getAllInvbalances"/>
+            <dcterms:title>OSLC query capability Get All Invbalances</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpec"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspec?savedQuery=curbalpos"/>
+            <dcterms:title>OSLC query capability curbalpos</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:usage rdf:resource="http://maximo.worklist#mynotcompletedlist"/>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WorkOrder"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcwodetail?savedQuery=myNotCompletedList&amp;sqp:queryName=%7BqueryName%7D&amp;sqp:app=%7Bapp%7D&amp;sqp:owner=%7Bowner%7D"/>
+            <dcterms:title>OSLC query capability </dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#MaxDomain"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcmaxdomain?savedQuery=getAllInvbalances"/>
+            <dcterms:title>OSLC query capability Get All Invbalances</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#Assetattribute"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcassetattr?savedQuery=getWorkOrderSpecificationDomains"/>
+            <dcterms:title>OSLC query capability Returns domains used in classifications</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpecUseWith"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspecusewith?savedQuery=getAssetSpecificationDomains"/>
+            <dcterms:title>OSLC query capability Returns domains used in classifications</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassStructure"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassstructure?savedQuery=ANYWHEREALL"/>
+            <dcterms:title>OSLC query capability Maximo Anywhere All Classtructures</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WODataSheet"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcwodatasheet"/>
+            <dcterms:title>OSLC query capability for WODataSheet</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#PLUSCWODSANYWNP"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcpluscwodsanywnp?savedQuery=getAllInvbalances"/>
+            <dcterms:title>OSLC query capability Get All Invbalances</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpecUseWith"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspecusewith?savedQuery=curbalpos"/>
+            <dcterms:title>OSLC query capability curbalpos</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#Assetattribute"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcassetattr?savedQuery=physicalcountNB"/>
+            <dcterms:title>OSLC query capability Physical Count Non Blind Count by Frequency</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#MaxDomain"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcmaxdomain?savedQuery=curbalpos"/>
+            <dcterms:title>OSLC query capability curbalpos</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#Assetattribute"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcassetattr?savedQuery=itemtype"/>
+            <dcterms:title>OSLC query capability Item TYpe</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:creationFactory>
+          <oslc:CreationFactory>
+            <oslc:usage rdf:resource="http://open-services.net/ns/core#default"/>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WODataSheet"/>
+            <oslc:resourceShape rdf:resource="http://locahost/maximo/oslc/shapes/oslcwodatasheet"/>
+            <oslc:creation rdf:resource="http://locahost/maximo/oslc/os/oslcwodatasheet"/>
+            <dcterms:title>OSLC creation factory for WODataSheet</dcterms:title>
+          </oslc:CreationFactory>
+        </oslc:creationFactory>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpec"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspec?savedQuery=getAssetSpecificationDomains"/>
+            <dcterms:title>OSLC query capability Returns domains used in classifications</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WODataSheet"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcwodatasheet?savedQuery=getWorkOrderSpecificationDomains"/>
+            <dcterms:title>OSLC query capability Returns domains used in classifications</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:creationFactory>
+          <oslc:CreationFactory>
+            <oslc:usage rdf:resource="http://open-services.net/ns/core#default"/>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WorkOrder"/>
+            <oslc:resourceShape rdf:resource="http://locahost/maximo/oslc/shapes/oslcwodetail"/>
+            <oslc:creation rdf:resource="http://locahost/maximo/oslc/os/oslcwodetail"/>
+            <dcterms:title>OSLC creation factory for WorkOrder</dcterms:title>
+          </oslc:CreationFactory>
+        </oslc:creationFactory>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#MaxDomain"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcmaxdomain?savedQuery=physicalcountNB"/>
+            <dcterms:title>OSLC query capability Physical Count Non Blind Count by Frequency</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WODataSheet"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcwodatasheet?savedQuery=physicalcount"/>
+            <dcterms:title>OSLC query capability Physical Count Blind Count by Frequency</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#PLUSCWODSANYWNP"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcpluscwodsanywnp?savedQuery=curbalpos"/>
+            <dcterms:title>OSLC query capability curbalpos</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+        <oslc:queryCapability>
+          <oslc:QueryCapability>
+            <oslc:resourceType rdf:resource="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ClassSpec"/>
+            <oslc:queryBase rdf:resource="http://locahost/maximo/oslc/os/oslcclassspec?savedQuery=physicalcountNB"/>
+            <dcterms:title>OSLC query capability Physical Count Non Blind Count by Frequency</dcterms:title>
+          </oslc:QueryCapability>
+        </oslc:queryCapability>
+      </oslc:Service>
+    </oslc:service>
+    <oslc:prefixDefinition>
+      <oslc:PrefixDefinition>
+        <oslc:prefixBase rdf:resource="http://www.w3.org/2000/01/rdf-schema#"/>
+        <oslc:prefix>rdfs</oslc:prefix>
+      </oslc:PrefixDefinition>
+    </oslc:prefixDefinition>
+    <oslc:prefixDefinition>
+      <oslc:PrefixDefinition>
+        <oslc:prefixBase rdf:resource="http://open-services.net/ns/asset#"/>
+        <oslc:prefix>oslc_asset</oslc:prefix>
+      </oslc:PrefixDefinition>
+    </oslc:prefixDefinition>
+    <oslc:prefixDefinition>
+      <oslc:PrefixDefinition>
+        <oslc:prefixBase rdf:resource="http://purl.org/dc/terms/"/>
+        <oslc:prefix>dcterms</oslc:prefix>
+      </oslc:PrefixDefinition>
+    </oslc:prefixDefinition>
+    <oslc:prefixDefinition>
+      <oslc:PrefixDefinition>
+        <oslc:prefixBase rdf:resource="http://jazz.net/ns/ism/registry#"/>
+        <oslc:prefix>rr</oslc:prefix>
+      </oslc:PrefixDefinition>
+    </oslc:prefixDefinition>
+    <dcterms:description>ServiceProvider for WorkManagement</dcterms:description>
+    <oslc:prefixDefinition>
+      <oslc:PrefixDefinition>
+        <oslc:prefixBase rdf:resource="http://open-services.net/ns/core#"/>
+        <oslc:prefix>oslc</oslc:prefix>
+      </oslc:PrefixDefinition>
+    </oslc:prefixDefinition>
+    <dcterms:title>WorkManagement</dcterms:title>
+  </oslc:ServiceProvider>
+</rdf:RDF>

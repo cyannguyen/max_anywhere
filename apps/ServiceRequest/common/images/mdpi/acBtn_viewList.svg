@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>acBtn_viewList</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="acBtn_viewList" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M10,9 L10,7 L28,7 L28,9 L10,9 Z M10,17 L10,15 L28,15 L28,17 L10,17 Z M10,25 L10,23 L28,23 L28,25 L10,25 Z M5,10 C3.8954305,10 3,9.1045695 3,8 C3,6.8954305 3.8954305,6 5,6 C6.1045695,6 7,6.8954305 7,8 C7,9.1045695 6.1045695,10 5,10 Z M5,18 C3.8954305,18 3,17.1045695 3,16 C3,14.8954305 3.8954305,14 5,14 C6.1045695,14 7,14.8954305 7,16 C7,17.1045695 6.1045695,18 5,18 Z M5,26 C3.8954305,26 3,25.1045695 3,24 C3,22.8954305 3.8954305,22 5,22 C6.1045695,22 7,22.8954305 7,24 C7,25.1045695 6.1045695,26 5,26 Z" fill="#5AAAFA"></path>
+    </g>
+</svg>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Application Distribution Configuration Script" basedir="." default="set-appdescriptor-packagename">
+
+	<description>
+	Application Distribution Configuration Script
+	</description>
+
+	<import file="util.xml" />
+
+	<basename property="ant.file.basename" file="${ant.file}" suffix=".xml"/>
+	<record name="${basedir}/${ant.file.basename}.log" logLevel="warn"/>
+	<loadproperties srcfile="${basedir}/build.properties" />
+	<loadproperties srcfile="${basedir}/build/compatibilityMatrix.properties" />
+	<include file="${basedir}/build-taskdef.xml"/>
+
+	<tstamp>
+      <format property="DATETIME_NOW" pattern="yyyy-MM-dd HH:mm:ss:sss zzz"/>
+    </tstamp>
+	
+	<target name="set-appdescriptor-packagename">
+		
+		<property file="${basedir}/build/appdistribution.properties" />
+		<propertyselector property="ios.version.internal" match="ios.version.internal" select="\1"/>
+		<propertyselector property="android.version.internal" match="android.version.internal" select="\1"/> 
+		<propertyselector property="android.package.name" match="android\.package\.name\.(.*)" select="\1"/>
+
+	    <foreach list="${appsToBuild}" target="-update-appdescriptor-packagename" param="application.name" trim="true" inheritAll="true"/>
+		
+	</target>
+		
+	<target name="-update-appdescriptor-packagename">  	
+		<echotimestamp>***** Application: ${application.name} *****</echotimestamp>
+		<echotimestamp>***** Internal App Distribution Version :: ${android.version.internal} *****</echotimestamp>
+		<echotimestamp>***** Application Directory: ${basedir}/apps/${application.name} *****</echotimestamp>
+		<echotimestamp>${android.package.name}</echotimestamp>
+		<for list="${android.package.name}" param="sequence" trim="true">
+			<sequential>
+				<if>
+					 <equals arg1="@{sequence}" arg2="${application.name}" casesensitive="false" trim="true"/>
+					 <then>
+						<echotimestamp>@{sequence}  :: ${android.package.name.@{sequence}} </echotimestamp>	
+					    <xmltask source="${basedir}/apps/${application.name}/application-descriptor.xml" 
+					    	dest="${basedir}/apps/${application.name}/application-descriptor.xml" 
+							failWithoutMatch="false">
+							<replace path="/:application/:android/:security/:packageName" >
+								 <![CDATA[ <packageName xmlns="http://www.worklight.com/application-descriptor">${android.package.name.@{sequence}}</packageName> ]]>
+							</replace>	
+				        </xmltask> 
+					    <xmltask source="${basedir}/apps/${application.name}/application-descriptor.xml" 
+					    	dest="${basedir}/apps/${application.name}/application-descriptor.xml" 
+							failWithoutMatch="false">
+							<replace expandProperties="false" path="/:application/:android/@version" withText="${android.version.internal}" />
+				        </xmltask>
+					    <xmltask source="${basedir}/apps/${application.name}/application-descriptor.xml" 
+					    	dest="${basedir}/apps/${application.name}/application-descriptor.xml" 
+							failWithoutMatch="false">
+							<replace expandProperties="false" path="/:application/:iphone/@version" withText="${ios.version.internal}" />
+				        </xmltask>				   				        
+					 </then>
+				</if>
+			</sequential>
+		</for>
+	</target>		
+
+	<target name="clear-appdescriptor-packagename">
+		
+		<property file="${basedir}/build/appdistribution.properties" />
+		<propertyselector property="android.package.name" match="android\.package\.name\.(.*)" select="\1"/>
+		<propertyselector property="version.name" match="version.name" select="\1"/> 
+		
+
+	    <foreach list="${appsToBuild}" target="-remove-appdescriptor-packagename" param="application.name" inheritAll="true" trim="true"/>
+	</target>		
+
+	<target name="-remove-appdescriptor-packagename">  	
+		<echotimestamp>***** Application: ${application.name} *****</echotimestamp>
+		<echotimestamp>***** Build App Distribution Version :: ${version.name} *****</echotimestamp>
+		<echotimestamp>***** Application Directory: ${basedir}/apps/${application.name} *****</echotimestamp>
+		<echotimestamp>${android.package.name}</echotimestamp>
+		<for list="${android.package.name}" param="sequence" trim="true">
+			<sequential>
+				<if>
+					 <equals arg1="@{sequence}" arg2="${application.name}" casesensitive="false" trim="true"/>
+					 <then>
+						<echotimestamp>@{sequence}  :: ${android.package.name.@{sequence}} </echotimestamp>	
+					    <xmltask source="${basedir}/apps/${application.name}/application-descriptor.xml" 
+					    	dest="${basedir}/apps/${application.name}/application-descriptor.xml" 
+							failWithoutMatch="false">
+							<replace path="/:application/:android/:security/:packageName" >
+								 <![CDATA[ <packageName xmlns="http://www.worklight.com/application-descriptor"/> ]]>
+							</replace>	
+				        </xmltask> 
+					    <xmltask source="${basedir}/apps/${application.name}/application-descriptor.xml" 
+					    	dest="${basedir}/apps/${application.name}/application-descriptor.xml" 
+							failWithoutMatch="false">
+							<replace expandProperties="false" path="/:application/:android/@version" withText="${version.name}" />
+				        </xmltask>
+					    <xmltask source="${basedir}/apps/${application.name}/application-descriptor.xml" 
+					    	dest="${basedir}/apps/${application.name}/application-descriptor.xml" 
+							failWithoutMatch="false">
+							<replace expandProperties="false" path="/:application/:iphone/@version" withText="${version.name}" />
+				        </xmltask>				        
+					 </then>
+				</if>
+			</sequential>
+		</for>
+	</target>
+	
+	<!-- MFP Removal Changes -->
+	<target name="-build-all-apps">
+		<echotimestamp>appsToBuild ${appsToBuild}</echotimestamp>
+	    <foreach target="-build-app" param="application.home" inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps" includes="${appsToBuild}">
+				</dirset>
+			</path>
+	    </foreach>
+	</target>
+	
+	<target name="-build-app" >
+	    
+	    <propertyregex property="project.path"
+	        			input="${application.home}"
+	        			regexp="(?:/|\\)(.*?)(?:/|\\)apps(?:/|\\)[^/\\]*$"
+	        			select="\1" />
+		
+		<basename property="application.name" file="${application.home}"/>
+
+	    <echotimestamp>Building application ${application.name}</echotimestamp>
+	    	
+	    <!-- needed by iOS builds -->
+	    <basename property="project.name" file="${project.path}"/>
+	    <ant antfile="anywhere-apps-builder.xml" target="-update-buildtimestamp">
+	    	<property name="app.home" value="${application.home}"/>
+	    </ant>
+		
+		<if>
+			<equals arg1="${application.name}" arg2="Inspection" />
+			<then>
+				<!-- needed for Inspection to use WE's codebase -->
+				<ant antfile="anywhere-apps-builder.xml" target="-update-inspection">
+					<property name="app.home" value="${application.home}"/>
+				</ant>
+			</then>
+		</if>
+
+		<!-- MFP Removal Changes -->
+	    <echotimestamp level="info">
+    worklightserverhost="${resolved.worklight.server.url}/${worklight.server.context}"
+    applicationFolder="${application.home}"
+    environments="common"
+    nativeProjectPrefix="${project.name}"
+    skinBuildExtensions="build-dojo.xml"
+    outputFolder="${basedir}/bin"/>
+	    </echotimestamp>	    
+	    
+	    <app-builder
+	        worklightserverhost="${resolved.worklight.server.url}/${worklight.server.context}"
+	        applicationFolder="${application.home}"
+	        environments="common"
+	        nativeProjectPrefix="${project.name}"
+	        skinBuildExtensions="build-dojo.xml"
+	        outputFolder="${basedir}/bin"/>
+
+	</target>
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-load-worklight-tools">
+		<taskdef resource="com/worklight/ant/defaults.properties">
+		  <classpath>
+		    <pathelement location="${basedir}/libs/appdistribution/worklight-ant-builder.jar"/>
+		  </classpath>
+		</taskdef>
+	</target>-->	
+</project>

@@ -1,0 +1,43 @@
+define(["require",
+        "platformTest/test/utils/TestUtils",
+        "application/business/ActualLaborObject",
+        "application/business/ActualMaterialObject",
+        "application/business/ActualToolObject",
+        "application/business/AppConfig",
+        "application/business/AssetFunctionObject",
+        "application/business/AssetMeterObject",
+        "application/business/AssignmentObject",
+        "application/business/AttachmentsObject",
+        "application/business/calibration/_StandardDeviationMixin",
+        "application/business/calibration/_SumToleranceTypesMixin",
+        "application/business/calibration/DataSheetCalculation",
+        "application/business/CalibrationPointObject",
+        "application/business/ClassStructureObject",
+        "application/business/CrewLaborObject",
+        "application/business/CrewToolObject",
+        "application/business/DataSheetObject",
+        "application/business/FieldUtil",
+        "application/business/MaxDomainObject",
+        "application/business/MaxVars",
+        "application/business/MultiAssetLocObject",
+        "application/business/PlannedMaterialObject",
+        "application/business/PlannedToolObject",
+        "application/business/SynonymDomain",
+        "application/business/TaskObject",
+        "application/business/util/CrewUtil",
+        "application/business/util/DecimalCalculator",
+        "application/business/WOAssignEmergenceBusinessObject",
+        "application/business/WorkLogObject",
+        "application/business/WorkOrderObject",
+        "application/business/WorkOrderStatusHandler",
+        "application/business/WorkOrderTimer",
+        "application/business/WoStatusObject",
+        "application/business/WpEditSettings",
+], 
+function(thisModule, TestUtils) {
+	TestUtils.register(thisModule, {
+		"myFirstTest": function() {
+			assertThat(true, equalTo(true));
+		}
+	});
+});

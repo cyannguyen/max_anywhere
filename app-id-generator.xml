@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Anywhere-App-ID-Generator" basedir="." default="generate-all-ids" >
+
+    <import file="util.xml" />
+    
+	<!-- definition of additional tasks needed to install platform -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${basedir}/libs/build/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+				    	
+	<path id="upgrade.classpath">
+	    <pathelement location="${basedir}/libs/codegen/artifact-processor_7.6.4.jar"/>
+	</path>
+
+	<basename property="ant.file.basename" file="${ant.file}" suffix=".xml"/>
+	<record name="${basedir}/${ant.file.basename}.log" logLevel="info"/>
+
+	<!--  common properties -->	
+	<property name="iddef.file" value="iddef.xml" />
+	<property name="artifact.prefix.new" value="" />
+	<property name="artifact.prefix.backup" value="" />
+	<property name="dir.workmanager.apps" value="apps" />
+	
+		
+	<!-- Generate ids for all artifacts -->
+	<target name="generate-all-ids" description="generate ids in app artifacts and layouts">
+   	    <antcall target="process-app-artifacts"/>
+	</target>
+		
+	<!-- Regenerate all ids for an element type and overwrite existing ids.  YOU SHOULD NOT NORMALLY NEED TO DO THIS -->
+	<target name="regenerate-element-ids" description="regenerate all ids for an element type in all app and platform artifacts and layouts">
+		<antcall target="generate-all-ids">
+	    	<param name="param.overwrite" value="-x"/>
+	    </antcall>
+	</target>
+
+			
+	<!--  process workmanager app artifacts -->
+    <target name="process-app-artifacts"
+		description="Parses all application artifacts and generates ids for all elements">
+        <foreach target="-process-app-artifact" param="temp.dir">
+			<path>
+				<dirset dir="${basedir}/${dir.workmanager.apps}">
+					<include name="*" />
+				</dirset>
+			</path>
+		</foreach>
+	</target>
+ 
+	<target name="-process-app-artifact"
+		description="Parse the application artifact (app and layout) and generate ids for all elements">
+		<!--  process the app -->
+        <echotimestamp message="processing app"/>
+	    <basename property="artifact.name" file="${temp.dir}" />
+	    <antcall target="-idgenerator">
+		    <param name="param.path" value="${temp.dir}/artifact"/>
+		    <param name="param.name" value="${artifact.name}"/>
+		    <param name="param.file" value="app.xml"/>
+		</antcall>
+	
+		<!--  process the app's layout files -->
+		<echotimestamp message="processing app layouts"/>
+		<antcall target="-process-files">
+		    <param name="param.path" value="${temp.dir}/artifact/layouts"/>
+		</antcall>
+	</target>
+	
+	
+	<!--  process all files for a given path (param.path) -->
+	<target name="-process-files">
+		<!-- if prefix is empty, don't exclude any files!! -->
+		<if>
+		    <equals arg1="${artifact.prefix.backup}" trim="true" arg2="" />
+		    <then>
+				<foreach target="-process-artifact" param="artifact.fullpath">
+					<path>
+						<fileset dir="${param.path}">
+						    <include name="**/*.*" />
+						</fileset>
+					</path>
+				</foreach>
+		    </then>
+		    <else>
+				<foreach target="-process-artifact" param="artifact.fullpath">
+					<path>
+		        		<fileset dir="${param.path}">
+							<exclude name="**/${artifact.prefix.backup}*.*" />
+						    <include name="**/*.*" />
+						</fileset>
+					</path>
+				</foreach>
+			</else>
+		</if>
+	</target>
+	<target name="-process-artifact" description="Parse the artifact and generate ids for all elements">
+	    <basename property="artifact.file" file="${artifact.fullpath}"/>
+	    <basename property="artifact.name" file="${artifact.fullpath}" suffix="xml"/>
+ 	    <dirname property="artifact.path" file="${artifact.fullpath}"/>
+ 	    <antcall target="-idgenerator">
+ 		    <param name="param.path" value="${artifact.path}"/>
+		    <param name="param.name" value="${artifact.name}"/>
+		    <param name="param.file" value="${artifact.file}"/>
+ 		</antcall>
+	</target>
+
+
+	<!--  id generator -->
+	<target name="-idgenerator" description="runs idgenerator">
+        <!-- Generate IDs -->
+ 		<echotimestamp message="Generate IDs for artifact [${param.path}/${param.file}]"/>	
+ 		<if>
+		    <available file="${param.path}/${param.file}"/>
+		    <then>
+		        <!--  backup artifact, rename file to ${artifact.backup.prefix}${artifact.file} if there isn't one -->
+				<if>
+				    <available file="${param.path}/${artifact.prefix.backup}${param.file}"/>
+				    <then>
+				        <!--  backup file is already there, do not overwrite!! -->
+				        <echotimestamp message="INFO:  Did not backup artifact"/>
+   				    </then>
+				    <else>
+				        <echotimestamp message="INFO:  Backing up artifact to ${artifact.prefix.backup}${param.file}"/>
+				        <move file="${param.path}/${param.file}"
+				            tofile="${param.path}/${artifact.prefix.backup}${param.file}"/>
+				    </else>
+				</if>
+
+				<condition property="param.overwrite" value="">
+				    <not><isset property="param.overwrite"/></not>
+				</condition>
+
+        		<!--  generate new artifcacts with ids  -->
+				<java classname="com.ibm.tivoli.si.build.upgrade.IdGenerator" failonerror="true">
+					<classpath refid="upgrade.classpath" />
+					<arg value="-dbuild/idDef.xml" />
+					<arg value="-b${param.name}" />
+					<arg value="-i${param.path}/${artifact.prefix.backup}${param.file}" />
+					<arg value="-o${param.path}/${artifact.prefix.new}${param.file}" />
+					<arg line="-paw ${param.overwrite}" />
+				</java>
+		    </then>
+		    <else>
+		        <echotimestamp message="WARNING:  could not find artifact ${param.path}/${param.file}"/>
+		    </else>
+		</if>
+	</target>
+		
+</project>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Artifact-Version-Updater-Apps" basedir="." default="update-all-versions">
+
+    <import file="util.xml" />
+    
+    <echotimestamp message="basedir = ${basedir}"/>
+    
+	<!-- definition of additional tasks needed to install platform -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${basedir}/libs/build/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<path id="upgrade.classpath">
+	    <pathelement location="${basedir}/../Releng/codegen/classes/"/>
+	    <pathelement location="${basedir}/libs/codegen/artifact-processor_7.6.4.jar"/>
+	</path>
+
+	<basename property="ant.file.basename" file="${ant.file}" suffix=".xml"/>
+	<record name="${basedir}/${ant.file.basename}.log" logLevel="info"/>
+
+	<!--  read build.datetime from version.txt that's written to the upgrade directory by anywhere-platform-deployer -->
+	<loadproperties srcFile="${basedir}/build/version.txt"/>
+	
+	<!--  common properties -->	
+	<property name="artifact.prefix.output" value="" />
+	<property name="artifact.prefix.input" value="" />
+	<property name="dir.workmanager.apps" value="apps" />
+	
+			
+	<!-- update version for all artifacts -->
+	<target name="update-all-versions" description="update version in all app and platform artifacts and layouts">
+	    <echotimestamp message="Setting version to ${build.datetime}"/>
+	    <echotimestamp message="basedir = ${basedir}"/>	    
+	    <antcall target="process-app-artifacts"/>
+	</target>
+
+	<!--  process workmanager app artifacts -->
+    <target name="process-app-artifacts"
+		description="Parse all application artifacts and update version on top element">
+        <foreach target="-process-app-artifact" param="temp.dir">
+			<path>
+				<dirset dir="${basedir}/${dir.workmanager.apps}">
+					<include name="*" />
+				</dirset>
+			</path>
+		</foreach>
+	</target>
+
+	<target name="-process-app-artifact"
+		description="Parse the application artifact (app and layout) and update version on top element">
+		<!--  process the app -->
+        <echotimestamp message="processing app"/>
+	    <basename property="artifact.name" file="${temp.dir}" />
+	    <antcall target="-update-version">
+		    <param name="param.path" value="${temp.dir}/artifact"/>
+		    <param name="param.name" value="${artifact.name}"/>
+		    <param name="param.file" value="app.xml"/>
+		</antcall>
+	
+		<!--  process the app's layout files -->
+        <echotimestamp message="processing app layouts"/>
+		<antcall target="-process-files">
+		    <param name="param.path" value="${temp.dir}/artifact/layouts"/>
+		</antcall>
+	</target>
+	
+	
+	<!--  process all files for a given path (param.path) -->
+	<target name="-process-files">
+		<!-- if prefix is empty, don't exclude any files!! -->
+		<if>
+		    <equals arg1="${artifact.prefix.input}" trim="true" arg2="" />
+		    <then>
+				<foreach target="-process-artifact" param="artifact.fullpath">
+					<path>
+						<fileset dir="${param.path}">
+						    <include name="**/*.*" />
+							<exclude name="**/.DS_Store" />
+							<exclude name="**/._.DS_Store" />							
+						</fileset>
+					</path>
+				</foreach>
+		    </then>
+		    <else>
+				<foreach target="-process-artifact" param="artifact.fullpath">
+					<path>
+		        		<fileset dir="${param.path}">
+							<exclude name="**/${artifact.prefix.input}*.*" />
+						    <include name="**/*.*" />
+								<exclude name="**/.DS_Store" />
+								<exclude name="**/._.DS_Store" />		        			
+						</fileset>
+					</path>
+				</foreach>
+			</else>
+		</if>
+	</target>
+
+	<target name="-process-artifact" description="Parse the artifact and update version on top element">
+	    <basename property="artifact.file" file="${artifact.fullpath}"/>
+	    <basename property="artifact.name" file="${artifact.fullpath}" suffix="xml"/>
+ 	    <dirname property="artifact.path" file="${artifact.fullpath}"/>
+ 	    <antcall target="-update-version">
+ 		    <param name="param.path" value="${artifact.path}"/>
+		    <param name="param.name" value="${artifact.name}"/>
+		    <param name="param.file" value="${artifact.file}"/>
+ 		</antcall>
+	</target>
+
+	<target name="-update-version">
+        <!-- Update Version -->
+ 		<echotimestamp message="Update version to ${build.datetime} for artifact [${param.path}/${param.file}]"/>	
+ 		<if>
+		    <available file="${param.path}/${param.file}"/>
+		    <then>
+        		<!--  update version on top element (it does one replace and exits) -->
+				<replaceregexp file="${param.path}/${artifact.prefix.input}${param.file}"
+				match="version=&quot;\d{12}&quot;"
+				replace="version=&quot;${build.datetime}&quot;"/>
+ 		    </then>
+		    <else>
+		        <echotimestamp message="WARNING:  could not find artifact ${param.path}/${param.file}"/>
+		    </else>
+		</if>
+	</target>
+		
+</project>

@@ -1,0 +1,33 @@
+<ivysettings>
+	<settings defaultResolver="central" />
+	<resolvers>
+		<ibiblio name="central" m2compatible="true" />
+		<!-- to be used by platform developer -->
+		<filesystem name="maximo-anywhere-platform-file">
+			<artifact pattern="${platformzip.location.file}" />
+		</filesystem>
+		<!-- FIXPACK OPTION ONLY -->
+		<filesystem name="maximo-anywhere-platform-fixpack-file">
+			<artifact pattern="${platformzip.location.file}" />
+		</filesystem>
+		
+		<!-- to be used by application developer -->
+		<url name="maximo-anywhere-platform-url">
+			<artifact pattern="${platformzip.location.url}" />
+		</url>
+	</resolvers>
+	<modules>
+		<module organisation="com.ibm.csi.si"
+			resolver="maximo-anywhere-platform-${platformzip.usage}" name="maximo-anywhere-platform" />
+		
+		<!-- FIXPACK OPTION -->
+		<module organisation="com.ibm.csi.si"
+			resolver="maximo-anywhere-platform-${platformzip.usage}" name="maximo-anywhere-platform-fixpack" />
+
+		<module organisation="com.ibm.csi.si"
+			resolver="maximo-anywhere-platform-${platformzip.usage}" name="artifact-processor" />
+		
+		<module organisation="com.ibm.csi.si"
+			resolver="maximo-anywhere-platform-${platformzip.usage}" name="anywhere-unittest" />
+	</modules>
+</ivysettings>

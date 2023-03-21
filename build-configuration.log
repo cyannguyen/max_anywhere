@@ -1,0 +1,41 @@
+Property "bldTarget" has not been set
+Property "androidSenderId" has not been set
+Property "androidPushKey" has not been set
+Property "iosPushPswd" has not been set
+Importing file C:\IBM\Anywhere\MaximoAnywhere\build-taskdef.xml from C:\IBM\Anywhere\MaximoAnywhere\build-configuration.xml
+Overriding previous definition of reference to ant.projectHelper
+parsing buildfile C:\IBM\Anywhere\MaximoAnywhere\build-taskdef.xml with URI = file:/C:/IBM/Anywhere/MaximoAnywhere/build-taskdef.xml
+parsing buildfile jar:file:/C:/IBM/Anywhere/MaximoAnywhere/libs/build/ivy-2.3.0.jar!/org/apache/ivy/ant/antlib.xml with URI = jar:file:/C:/IBM/Anywhere/MaximoAnywhere/libs/build/ivy-2.3.0.jar!/org/apache/ivy/ant/antlib.xml from a zip file
+Overriding previous definition of reference to ant.projectHelper
+Build sequence for target(s) `-eclipse-refresh-server-war' is [-eclipse-refresh-server-war]
+Complete build sequence is [-eclipse-refresh-server-war, configure-features, configure-dataEncryption, configure-adapter, clean, init, configure-androidmanifest, configure-authenticationconfig, configure-worklightproperties, configure-androidprojectproperties, configure, export, all, clean-changetrack, Application Utils Script.test, update-manifest-all, update-manifest-clean, configure-ios-features, --configure-androidprojectproperties-impl, update-manifest-sdk, update-manifest-permissions, configure-features-app, --configure-dataEncryption, update-manifest-screens, --configure-androidmanifest, test, update-manifest, ]
+
+-eclipse-refresh-server-war:
+ [property] Loading C:\IBM\Anywhere\MaximoAnywhere\.changetrack\.buildprop\.buildpropchecksum
+ [property] Unable to find property file: C:\IBM\Anywhere\MaximoAnywhere\.changetrack\.buildprop\.buildpropchecksum
+Property "buildpropchecksum" has not been set
+Property "buildpropchecksum" has not been set
+     [echo] 2022-11-21 10:03:03> buildpropchecksum = ${buildpropchecksum}
+ [checksum] Calculating MD5 checksum for C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\app-feature.properties
+ [checksum] Calculating MD5 checksum for C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\app-feature.properties
+ [checksum] Calculating MD5 checksum for C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\app-feature.properties
+ [checksum] Calculating MD5 checksum for C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\app-feature.properties
+ [checksum] Calculating MD5 checksum for C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\app-feature.properties
+ [checksum] Calculating MD5 checksum for C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\app-feature.properties
+ [checksum] Calculating MD5 checksum for C:\IBM\Anywhere\MaximoAnywhere\build.properties
+ [checksum] Calculating MD5 checksum for C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\app-feature.properties
+ [checksum] Calculating MD5 checksum for C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\app-feature.properties
+ [checksum] Calculating MD5 checksum for C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\app-feature.properties
+Override ignored for property "DSTAMP"
+Override ignored for property "TSTAMP"
+Override ignored for property "TODAY"
+     [echo] 2022-11-21 10:03:05> newbuildpropchecksum = b4c9cfba7afa11ca1b71c1c04a095358
+Property "buildpropchecksum" has not been set
+[propertyfile] Creating new property file: C:\IBM\Anywhere\MaximoAnywhere\.changetrack\.buildprop\.buildpropchecksum
+Override ignored for property "DSTAMP"
+Override ignored for property "TSTAMP"
+Override ignored for property "TODAY"
+Property "worklight.server.context" has not been set
+     [echo] 2022-11-21 10:03:05>   Refreshing ${worklight.server.context}/server/conf 
+Property "worklight.server.context" has not been set
+-eclipse-refresh-server-war:  duration 1 second

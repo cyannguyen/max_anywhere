@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="bin">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/bin/Transfers.zip!/" />
+      <root url="jar://$PROJECT_DIR$/bin/WorkExecution.zip!/" />
+      <root url="jar://$PROJECT_DIR$/bin/Inspection.zip!/" />
+      <root url="jar://$PROJECT_DIR$/bin/WorkApproval.zip!/" />
+      <root url="jar://$PROJECT_DIR$/bin/AssetAudit.zip!/" />
+      <root url="jar://$PROJECT_DIR$/bin/ServiceRequest.zip!/" />
+      <root url="jar://$PROJECT_DIR$/bin/PhysicalCount.zip!/" />
+      <root url="jar://$PROJECT_DIR$/bin/AssetDataManager.zip!/" />
+      <root url="jar://$PROJECT_DIR$/bin/IssuesReturns.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

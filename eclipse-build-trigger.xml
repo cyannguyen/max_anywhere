@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Anywhere Build Configuration" basedir="." default="all">
+
+	<description>
+	Ant targets that get invoked when a auto or manual build is performed in Eclipse Studio.
+	</description>
+
+	<target name="all" depends="buildconfig, artifactprocessor, refresh-warfile">
+	</target>
+
+	<target name="clean" depends="buildconfig-clean, artifactprocessor-clean, artifactprocessor">
+	</target>
+			
+	<target name="buildconfig">
+		<ant antfile="build-configuration.xml" target="all"/>
+	</target>
+	
+	<target name="artifactprocessor">
+		<ant antfile="anywhere-artifact-processor.xml" target="process-artifact-all-apps"/>
+		<!-- MFP Removal Changes -->
+		<!-- <ant antfile="anywhere-apps-builder.xml" target="-configure-all-apps"/> -->
+	</target>
+
+	<target name="buildconfig-clean">
+		<ant antfile="build-configuration.xml" target="clean-changetrack"/>
+	</target>
+	
+	<target name="artifactprocessor-clean">
+		<ant antfile="anywhere-artifact-processor.xml" target="clean-changetrack"/>
+	</target>
+	
+	<target name="refresh-warfile">
+		<ant antfile="build-configuration.xml" target="-eclipse-refresh-server-war"/>
+	</target>
+	
+</project>

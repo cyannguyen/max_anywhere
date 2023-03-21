@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Licensed Materials - Property of IBM
+			 5725-I43 (C) Copyright IBM Corp. 2006, 2013. All Rights Reserved.
+			 US Government Users Restricted Rights - Use, duplication or
+             disclosure restricted by GSA ADP Schedule Contract with IBM Corp. --><!-- Attribute "id" must be identical to application folder name --><application xmlns="http://www.worklight.com/application-descriptor" id="AssetAudit" platformVersion="7.1.0.00.20190319-1506">
+    <displayName>IBMAudit</displayName>
+    <description>Asset Audit</description>
+    <author>
+        <name>application's author</name>
+        <email>application author's e-mail</email>
+        <homepage>http://mycompany.com</homepage>
+        <copyright>Copyright My Company</copyright>
+    </author>
+    <mainFile>index.html</mainFile>
+    <features>
+        <JSONStore/>
+    </features>
+    <thumbnailImage>common/images/thumbnail.png</thumbnailImage>
+    <iphone applicationId="Asset Audit" bundleId="com.ibm.maximo.anywhere.assetaudit" version="7.6.4">
+        <worklightSettings include="true"/>
+    </iphone>
+    <android version="7.6.4">
+        <worklightSettings include="true"/>
+        <security>
+            <encryptWebResources enabled="false"/>
+            <testWebResourcesChecksum enabled="false" ignoreFileExtensions="png, jpg, jpeg, gif, mp4, mp3"/>
+            <publicSigningKey/>
+            <packageName>com.ibm.maximo.anywhere.assetaudit</packageName>
+        </security>
+        <compressWebResources enabled="true"/>
+    </android>
+    <windows8 version="7.6.4">
+        <uuid>a9608c52-9819-4b37-93b5-414ee22fc511</uuid>
+    </windows8>
+<windowsphoneuniversal version="7.6.4">
+        <uuid>5d83499a-025e-49f2-81d9-3924cbc7c344</uuid>
+    </windowsphoneuniversal>
+</application>

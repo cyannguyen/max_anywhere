@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><tns:loginConfiguration xmlns:tns="http://www.worklight.com/auth/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <!-- Licensed Materials - Property of IBM
+             5725-G92 (C) Copyright IBM Corp. 2006, 2012. All Rights Reserved.
+             US Government Users Restricted Rights - Use, duplication or
+             disclosure restricted by GSA ADP Schedule Contract with IBM Corp. -->
+    <!---->
+    <!-- <staticResources>
+        
+    </staticResources> -->
+    <!--  Sample security tests  
+         Even if not used there will be some default  webSecurityTest and mobileSecurityTest 
+         Attention: if using <testAppAuthenticity/> test below ,<publicSigningKey> element must be added to application-descriptor.xml as well. -->
+    <!-- <securityTests>
+        
+        <mobileSecurityTest name="mobileTests">
+            <testAppAuthenticity/> 
+            <testDeviceId provisioningType="none" />
+            <testUser realm="myMobileLoginForm" />
+        </mobileSecurityTest>
+
+        <webSecurityTest name="webTests">
+            <testUser realm="myWebLoginForm"/>
+        </webSecurityTest>
+
+        <customSecurityTest name="customTests">
+            <test realm="wl_antiXSRFRealm" step="1"/>
+            <test realm="wl_authenticityRealm" step="1"/>
+            <test realm="wl_remoteDisableRealm" step="1"/>
+            <test realm="wl_anonymousUserRealm" isInternalUserID="true" step="1"/>
+            <test realm="wl_deviceNoProvisioningRealm" isInternalDeviceID="true" step="2"/>
+        </customSecurityTest>
+        
+        
+
+    </securityTests> -->
+    <securityTests>
+        <customSecurityTest name="CustomAdapter-securityTest">
+            <!-- <test realm="wl_directUpdateRealm" step="1"/> -->
+            <test isInternalUserID="true" realm="CustomAuthenticationRealm"/>
+        </customSecurityTest>
+        <mobileSecurityTest name="CustomAdapter-mobile-securityTest">
+            <testUser realm="CustomAuthenticationRealm"/>
+            <testDeviceId provisioningType="none"/>
+        </mobileSecurityTest>
+    </securityTests>
+    <realms>
+        <realm loginModule="CustomLoginModule" name="CustomAuthenticationRealm">
+            <className>com.ibm.tivoli.si.auth.TpaeCustomAuthenticator</className>
+        </realm>
+        <!-- For websphere -->
+        <!-- realm name="WASLTPARealm" loginModule="WASLTPAModule">
+            <className>com.worklight.core.auth.ext.WebSphereFormBasedAuthenticator</className>
+            <parameter name="login-page" value="/login.html"/>
+            <parameter name="error-page" value="/loginError.html"/>
+        </realm -->
+    </realms>
+    <loginModules>
+        <loginModule name="CustomLoginModule">
+            <className>com.ibm.tivoli.si.auth.TpaeCustomLoginModule</className>
+            <parameter name="protocol" value="http"/>
+            <parameter name="domain" value="9.30.212.122"/>
+            <parameter name="port" value="7001"/>
+            <parameter name="context" value="maximo"/>
+        </loginModule>
+        <!-- For websphere -->
+        <!-- loginModule name="WASLTPAModule">
+            <className>com.worklight.core.auth.ext.WebSphereLoginModule</className>
+        </loginModule -->
+    </loginModules>
+</tns:loginConfiguration>

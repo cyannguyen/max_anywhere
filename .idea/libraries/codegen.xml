@@ -1,0 +1,24 @@
+<component name="libraryTable">
+  <library name="codegen">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/codegen/log4j-1.2.16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/artifact-processor_7.6.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/commons-lang3-3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/jena-iri-0.9.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/javassist-3.17.1.GA.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/reflections-0.9.8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/commons-codec-1.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/xml-apis-1.4.01.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/json4j.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/guava-14.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/jdom.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/xercesImpl-2.10.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/slf4j-log4j12-1.6.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/slf4j-api-1.6.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/jena-core-2.10.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/codegen/axis2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

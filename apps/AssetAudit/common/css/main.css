@@ -1,0 +1,43 @@
+/* Reset CSS */
+a, abbr, address, article, aside, audio, b, blockquote, body, canvas, caption, cite, code, dd, del, details, dfn, dialog, div, dl, dt, em, fieldset, figcaption, figure, footer, form, h1, h2, h3, h4, h5, h6, header, hgroup, html, i, iframe, img, ins, kbd, label, legend, li, mark, menu, nav, object, ol, p, pre, q, samp, section, small, span, strong, sub, summary, sup, table, tbody, td, tfoot, th, thead, time, tr, ul, var, video {
+	margin: 0;
+	padding: 0;
+}
+
+/* Worklight container div */
+body {
+	height: 460px;
+	margin: 0 auto;
+	width: 320px;
+}
+
+.actionIcon {
+	border: 0px;
+	vertical-align: middle;
+	box-shadow: none !important;
+	background-position: center !important;
+}
+
+.AssetMove_item2_column input {
+	width: 170px;
+}
+
+.AssetMove_item4_column input {
+	width: 170px;
+}
+
+.AssetMove_item6_column input {
+	width: 170px;
+}
+
+*[data-layoutsize='large'][data-orientation='portrait'] .AssetMove_item2_column .editableText,
+*[data-layoutsize='large'][data-orientation='portrait'] .AssetMove_item4_column .editableText,
+*[data-layoutsize='large'][data-orientation='portrait'] .AssetMove_item6_column .editableText {
+	width: 170px;
+} 
+
+*[data-layoutsize='xlarge'][data-orientation='portrait'] .AssetMove_item2_column .editableText,
+*[data-layoutsize='xlarge'][data-orientation='portrait'] .AssetMove_item4_column .editableText,
+*[data-layoutsize='xlarge'][data-orientation='portrait'] .AssetMove_item6_column .editableText {
+	width: 300px;
+}

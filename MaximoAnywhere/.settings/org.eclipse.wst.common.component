@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="AnywhereWorkManager">
+        <wb-resource deploy-path="/" source-path="/apps/WorkExecution/common"/>
+        <wb-resource deploy-path="/" source-path="/www"/>
+        <wb-resource deploy-path="/" source-path="/apps/WorkExecution/android"/>
+        <wb-resource deploy-path="/" source-path="/apps/WorkExecution/iphone"/>
+        <wb-resource deploy-path="/" source-path="/apps/WorkApproval/common"/>
+        <wb-resource deploy-path="/" source-path="/apps/WorkApproval/android"/>
+        <wb-resource deploy-path="/" source-path="/apps/WorkExecution/ipad"/>
+        <wb-resource deploy-path="/" source-path="/apps/WorkApproval/ipad"/>
+        <wb-resource deploy-path="/" source-path="/client-runtime-test/src"/>
+        <wb-resource deploy-path="/" source-path="/apps/Inspection/common"/>
+        <wb-resource deploy-path="/" source-path="/apps/Inspection/android"/>
+        <wb-resource deploy-path="/" source-path="/com.WorkExecution.application.handlers"/>
+        <wb-resource deploy-path="/" source-path="/com.WorkExecution.application.business"/>
+        <wb-resource deploy-path="/" source-path="/apps/WorkExecution/windowsphone8"/>
+        <wb-resource deploy-path="/" source-path="/apps/WorkExecution/windows8"/>
+        <wb-resource deploy-path="/" source-path="/apps/Inspection/windowsphone8"/>
+        <wb-resource deploy-path="/" source-path="/apps/Inspection/windows8"/>
+        <wb-resource deploy-path="/" source-path="/apps/PhysicalCount/windowsphone8"/>
+        <wb-resource deploy-path="/" source-path="/apps/PhysicalCount/windows8"/>
+        <wb-resource deploy-path="/" source-path="/apps/WorkApproval/windowsphone8"/>
+        <wb-resource deploy-path="/" source-path="/apps/WorkApproval/windows8"/>
+        <wb-resource deploy-path="/" source-path="/apps/AssetAudit/windows8"/>
+        <wb-resource deploy-path="/" source-path="/apps/Transfers/windows8"/>
+        <wb-resource deploy-path="/" source-path="/client-runtime-test/PhysicalCount/web-unit/js"/>
+        <wb-resource deploy-path="/" source-path="/client-runtime-test/WorkApproval/web-unit/js"/>
+        <wb-resource deploy-path="/" source-path="/client-runtime-test/WorkExecution/web-unit/js"/>
+        <wb-resource deploy-path="/" source-path="/client-runtime-test/AssetAudit/web-unit/js"/>
+        <wb-resource deploy-path="/" source-path="/client-runtime-test/AssetDataManager/web-unit/js"/>
+        <wb-resource deploy-path="/" source-path="/client-runtime-test/Inspection/web-unit/js"/>
+        <wb-resource deploy-path="/" source-path="/client-runtime-test/IssuesReturns/web-unit/js"/>
+        <wb-resource deploy-path="/" source-path="/client-runtime-test/ServiceRequest/web-unit/js"/>
+        <wb-resource deploy-path="/" source-path="/client-runtime-test/Transfers/web-unit/js"/>
+        <wb-resource deploy-path="/" source-path="/client-runtime-test/WorkExecutionDemo/web-unit/js"/>
+        <property name="context-root" value="MaximoAnywhere"/>
+    </wb-module>
+</project-modules>

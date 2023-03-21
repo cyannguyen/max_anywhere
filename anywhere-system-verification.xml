@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Application Verification Script" basedir="." default="show-environment-info">
+
+	<description>
+	Application Verification Script
+	</description>
+
+	<import file="util.xml" />
+	
+	<!-- :: Begin Common Setup Steps -->
+	<basename property="ant.file.basename" file="${ant.file}" suffix=".xml"/>
+	<record name="${basedir}/${ant.file.basename}.log" logLevel="warn"/>
+	<loadproperties srcfile="${basedir}/build.properties" />
+	<loadproperties srcfile="${basedir}/build/compatibilityMatrix.properties" />
+	<include file="${basedir}/build-taskdef.xml"/>
+	
+	<!-- When it is a totally new project, maybe worklight.properties could not be present -->
+	<available file="${basedir}/server/conf/worklight.properties" property="worklight.properties.present"/>
+	<if>
+		<isset property="worklight.properties.present"/>
+		<then>
+			<loadproperties srcfile="${basedir}/server/conf/worklight.properties" />
+		</then>
+	</if>
+	<!-- :: Done Common Setup Steps -->
+	
+	<tstamp>
+      <format property="DATETIME_NOW" pattern="yyyy-MM-dd HH:mm:ss:sss zzz"/>
+    </tstamp>
+	
+	<condition property="isMac">
+		<os family="mac" />
+	</condition>
+	<condition property="isUnix">
+		<and>
+			<os family="unix" />
+			<not>
+				<os family="mac" />
+			</not>
+		</and>
+	</condition>
+	<condition property="isWindows">
+		<os family="windows" />
+	</condition>
+	
+	<!-- MFP Removal Changes -->
+	<!-- <condition property="iphonebuild" else="false">
+	    <matches pattern="iphone" string="${worklight.envsToDeploy}"/>
+	</condition>
+	
+	<condition property="androidbuild" else="false">
+	    <matches pattern="android" string="${worklight.envsToDeploy}"/>
+	</condition>
+
+	<condition property="windowsphone8build" else="false">
+		<matches pattern="windowsphone8" string="${worklight.envsToDeploy}"/>
+	</condition>
+	
+	<condition property="windows8build" else="false">
+		<matches pattern="windows8" string="${worklight.envsToDeploy}"/>
+	</condition>-->
+		
+	<!-- MFP Removal Changes -->
+	<!-- <target name="xcode" if="isMac">-->
+	    <!-- Automatically gets the XCode and ios sdk version installed on current machine -->
+		<!-- <exec executable="xcodebuild" outputproperty="xcodeVersion">
+        	<arg value="-version"/>
+        </exec>
+  		<exec executable="xcodebuild" outputproperty="xcodeShowSdks">
+        	<arg value="-showsdks"/>
+        </exec>
+        <propertyregex property="autoXcodeVersion"
+	        input="${xcodeVersion}"
+	        regexp="Xcode ([0-9]*[\.][0-9]*)"
+	        select="\1"
+	        casesensitive="false"
+	        global="true"
+	        defaultValue="none"/>
+        <echotimestamp message="Xcode version installed found: ${autoXcodeVersion}" />
+        
+        <propertyregex property="autoXcodeSDKVersion"
+	        input="${xcodeShowSdks}"
+	        regexp="iOS ([0-9]*[\.][0-9]*)"
+	        select="\1"
+	        casesensitive="false"
+	        global="true"
+	        defaultValue="none"/>
+        <echotimestamp message="iOS SDK version installed found: ${autoXcodeSDKVersion}" />
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="android_Mac_Linux">
+	    <exec executable="/bin/sh" spawn="false" outputproperty="androidAPIVersions" failonerror="false">
+		      <arg value="${basedir}/build/tools/androidVerification.sh"/>
+	    	  <arg value="${android.sdk.home}"/>
+		</exec>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="android_Windows" if="isWindows">
+	     <exec executable="cmd" osfamily="windows" outputproperty="androidAPIVersions" failonerror="false" >
+   			<arg value="/c" />
+   			<arg value="${basedir}/build/tools/androidVerification.bat" />
+   			<arg value="${android.sdk.home}"/>
+   		</exec>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+<!-- TODO: improve message in case user does not have visualstudio installed  -->
+	<!-- <target name="visualStudio" if="isWindows">
+	    <exec executable="cmd" osfamily="windows" outputproperty="visualStudioVersion" failonerror="false" >
+   			<arg value="/c" />
+   			<arg value="${basedir}/build/tools/visualstudioVerification.bat" />
+   			<arg value="${visualstudio.install.path}"/>
+   		</exec>  
+	</target>-->
+	
+	<target name="show-environment-info" description="show all relevant information to do a complete build">
+	    <echotimestamp>Operating System information: ${os.name}, ${os.version}, ${os.arch}</echotimestamp>
+	    <echotimestamp>Product information: </echotimestamp>
+	    
+		<!-- Version name that is inside build.properties can be changed by customer, so we get this info from compatibilityMatrix.properties-->
+	    <echotimestamp>	Maximo Anywhere ${anywhere.version}</echotimestamp>
+	    
+		<!-- Check platform by looking version.txt file. In case it is not found means that platform was not installed yet, so install platform -->
+		<trycatch>
+			<try>
+				<loadproperties srcfile="${basedir}/build/version.txt" />
+			</try>
+			<catch>
+				<echotimestamp>The version.txt file is missing. The platform might not be installed. The platform will now be installed.</echotimestamp>
+				
+				<!-- Verify if there is a fixpack zip available -->
+				<fileset dir="${platformzip.location}" id="fixpack.available.id" includes="*-fixpack*.zip"/>
+				<property name="fixpack.available" refid="fixpack.available.id" />
+				<echotimestamp>The fix pack files that are found: ${fixpack.available}</echotimestamp>
+				<if>
+					<equals arg1="${fixpack.available}" arg2=""/>
+					<then>
+						<ant antfile="build.xml" target="install-platform"/>
+						<echotimestamp message="The Maximo Anywhere platform is now installed."/>
+					</then>
+					<else>
+						<echotimestamp message="The Maximo Anywhere fix pack available in the platformzip.location property will be installed."/>
+						<ant antfile="build.xml" target="update-platform"/>
+					</else>
+				</if>
+			</catch>
+		</trycatch>
+	    <echotimestamp>	Maximo Anywhere Platform Version: ${build.datetime}</echotimestamp>
+	    
+		<!-- Get an app from appsToBuild to extract mobilefirst version information -->
+		<script language="javascript"><![CDATA[
+		    var appNameList = project.getProperty('appsToBuild');
+			var appNameItems = appNameList.split(",");
+			var appNameItem = appNameItems[0].trim();
+		    project.setProperty('someappname', appNameItem);
+		]]></script>
+		
+		<if>
+			<equals arg1="${someappname}" arg2=""/>
+			<then>
+				<fail message="The property appsToBuild into build.properties is empty. Include the apps to be built."/>
+			</then>
+		</if>
+		
+	    <xmltask source="${basedir}/apps/${someappname}/application-descriptor.xml" 
+             failWithoutMatch="false" 
+             preserveType="true" 
+             report="${xmltask.report}">
+			<copy path="/:application/@platformVersion" property="currentMobilefirstVersion"/>
+        </xmltask>         
+	    <echotimestamp>	MobileFirst: ${currentMobilefirstVersion}</echotimestamp>
+	    
+	    <echotimestamp>Applicaton Version: ${version.name}</echotimestamp>
+	    <echotimestamp>Server info:</echotimestamp>
+	    <echotimestamp>	Maximo: ${adapter.connection.protocol}://${adapter.connection.domain}:${adapter.connection.port}/${adapter.connection.context}</echotimestamp>
+	    <echotimestamp>	MobileFirst: ${worklight.server.url}</echotimestamp>
+	    <echotimestamp>	MobileFirst server context: ${worklight.server.context}</echotimestamp>
+	    <echotimestamp>	MobileFirst admin context: ${worklight.admin.server.context}</echotimestamp>
+	    <echotimestamp>	AppCenter: ${appCenter.server.url}</echotimestamp>
+	    <echotimestamp>	AppCenter context: ${appCenter.server.context}</echotimestamp>
+		<!-- MFP Removal Changes -->
+	    <!--<echotimestamp>Deployment Env: ${worklight.envsToDeploy}</echotimestamp>-->
+	    <echotimestamp>Java info: ${java.vendor} ${java.version}</echotimestamp>
+	    <echotimestamp>Java Home info: ${java.home}</echotimestamp>
+	    <echotimestamp>Build Target into build.properties file: ${build.target}</echotimestamp>
+		<if>
+			<isset property="worklight.properties.present"/>
+			<then>
+				<echotimestamp>App is using admin Mode: ${si.adminmode}</echotimestamp>
+				<echotimestamp>Authentication type: ${si.auth.type}</echotimestamp>
+			</then>
+			<else>
+				<echotimestamp level="warning">WARNING: The worklight.properties file was not found.</echotimestamp>
+			</else>
+		</if>
+	    <echotimestamp>Data Encryption: ${enableDataEncryption}</echotimestamp>
+	    <echotimestamp>Build Type:</echotimestamp>
+	    <echotimestamp>	Android Debug: ${android.manifest.enable.debugging}</echotimestamp>
+	    <echotimestamp>	Visual Studio: ${visualstudio.version.release}</echotimestamp>
+		<echotimestamp>Building Applications: ${appsToBuild}</echotimestamp>
+		
+		<!-- MFP Removal Changes -->
+		<!-- Verify if target used to build is mobilefirst or if build.target=mobilefirst. In this case, do not check native sdks -->
+		<!--<if>
+			<equals arg1="${build.target.called}" arg2="mobilefirst" />
+			<then>
+				<echotimestamp message="Native SDKs are not shown because the MobileFirst target was called."/>
+			</then>
+			<elseif>
+				<and>
+					<equals arg1="${build.target}" arg2="mobilefirst" />
+					<not>
+						<equals arg1="${build.target.called}" arg2="all" />
+					</not>
+				</and>
+	  		    <then>
+	  		    	<echotimestamp message="Native SDKs are not shown because build.target=mobilefirst."/>
+	  		    </then>
+			</elseif>
+			<else>
+				<echotimestamp>SDK Path: </echotimestamp>-->
+			    <!-- antcall does not retrieve any property seted internally, to get value back need use antcallback -->
+			    <!-- <if>
+				    <equals arg1="${androidbuild}" arg2="true" />
+					<then>
+					    <if>
+					        <equals arg1="${isWindows}" arg2="true"/>
+					        <then>
+								<antcallback target="android_Windows" return="androidAPIVersions"/>			            
+					        </then>
+					        <else>
+								<antcallback target="android_Mac_Linux" return="androidAPIVersions"/>
+					        </else>
+					    </if>
+					    <echotimestamp>${androidAPIVersions}</echotimestamp>
+					</then>
+				</if>
+			    
+			    <if>
+				    <equals arg1="${iphonebuild}" arg2="true" />
+					<then>
+			    		<antcallback target="xcode" return="autoXcodeVersion"/>
+			    		<echo> </echo>
+			    	</then>
+			    </if>
+			    
+			    <if>
+				    <or>
+						<equals arg1="${windowsphone8build}" arg2="true" />
+						<equals arg1="${windows8build}" arg2="true" />
+					</or>
+					<then>
+			    		<antcallback target="visualStudio" return="visualStudioVersion"/>
+			    		<echotimestamp>${visualStudioVersion}</echotimestamp>
+			    	</then>
+			    </if>
+	    	</else>
+		</if>-->
+		
+		<foreach target="app-features-properties" param="application.home" inheritAll="false">
+			<path>
+				<dirset dir="${basedir}/apps" includes="${appsToBuild}">
+				</dirset>
+			</path>
+	    </foreach>
+	</target>
+	
+	<target name="app-features-properties">
+		<basename property="application.name" file="${application.home}"/>
+		<property file="${application.home}/app-feature.properties" prefix="app-features."/>
+		<propertyselector property="app-features" match="app-features\.(.*).enable" select="\1"/>
+
+		<echotimestamp>***** Application: ${application.name} *****</echotimestamp>
+		<for list="${app-features}" param="sequence">
+			<sequential>
+				<if>
+					<or>
+						<equals arg1="${app-features.@{sequence}.enabled}" arg2="true"/>
+						<equals arg1="${app-features.@{sequence}.enabled}" arg2="false"/>
+					</or>
+					<then>
+						<echotimestamp>@{sequence}.enabled: ${app-features.@{sequence}.enabled}</echotimestamp>
+					</then>
+					<elseif>
+						<or>
+							<equals arg1="${app-features.@{sequence}.enable}" arg2="true"/>
+							<equals arg1="${app-features.@{sequence}.enable}" arg2="false"/>
+						</or>
+						<then>
+							<echotimestamp>@{sequence}.enable: ${app-features.@{sequence}.enable}</echotimestamp>
+						</then>
+					</elseif>
+					<else>
+						<echotimestamp level="warning">@{sequence}.enabled: not defined or invalid value</echotimestamp>
+					</else>
+				</if>
+			</sequential>
+		</for>
+	</target>
+	
+	<target name="verify-compatibility" depends="show-environment-info" description="verify all relevant information to guarantee that a build can be done">
+		
+		<!-- MFP Removal Changes -->
+		<!-- <if>
+			<equals arg1="${currentMobilefirstVersion}" arg2="${mobilefirst.version}" />
+			<then>
+				<echotimestamp message="Currently, the MobileFirst Platform used is the same as the one packaged, MFP ${currentMobilefirstVersion}"/>
+			</then>
+			<else>
+				<echotimestamp level="warning" message="WARNING: Currently, the MobileFirst Platform used is ${currentMobilefirstVersion}. This platform is different from the one that is packaged, MFP ${mobilefirst.version}."/>
+			</else>
+		</if>-->
+
+		<!-- Call Fix Central to check if there is any fixpack available -->
+		<antcall target="check-anywhere-fixes-online"/>
+		
+		<!-- Call Maximo and MobileFirst to check if there is a connection failure -->
+		<antcallback antfile="anywhere-apps-builder.xml" target="init"/>
+		
+	    <!-- ############################## Verifying Java ##############################  -->
+	    <script language="javascript"><![CDATA[
+		    var versionStr = project.getProperty('java.version');
+		    var result = versionStr.match(/\d.\d/);
+		    var version = parseFloat(result);
+		    var minimum = parseFloat(project.getProperty('jdk.minimum'));
+		    var target = parseFloat(project.getProperty('jdk.target'));
+		    project.setProperty('isJdkGreaterThanMinimum', version >= minimum);
+		    project.setProperty('isJdkGreaterThanTarget', version > target);
+		]]></script>
+		
+	    <if>
+  		    <equals arg1="${isJdkGreaterThanMinimum}" arg2="false" />
+  		    <then>
+				<fail message="Currently, the Java version is ${java.version}, which does not match the Java ${jdk.minimum} minimum requirement."/>
+			</then>
+  		</if>
+  		
+  		<if>
+  		    <equals arg1="${isJdkGreaterThanTarget}" arg2="true" />
+  		    <then>
+				<echotimestamp message="WARNING: Current Java version ${java.version} is greater than version ${jdk.target} that is the recommended one." level="warning"/>
+			</then>
+  		</if>
+  		<echotimestamp message="Java version was checked."/>
+		
+		<!-- MFP Removal Changes -->
+		<!-- Verify if target used to build is mobilefirst or if build.target=mobilefirst. In this case, do not check native sdks -->
+		<!-- <if>
+			<equals arg1="${build.target.called}" arg2="mobilefirst" />
+			<then>
+				<echotimestamp message="Native SDKs were not checked because the MobileFirst target was called."/>
+			</then>
+			<elseif>
+				<and>
+					<equals arg1="${build.target}" arg2="mobilefirst" />
+					<not>
+						<equals arg1="${build.target.called}" arg2="all" />
+					</not>
+				</and>
+	  		    <then>
+	  		    	<echotimestamp message="Native SDKs were not checked because build.target=mobilefirst."/>
+	  		    </then>
+			</elseif>
+			<else>-->
+				<!-- Verify if is possible build in the current machine -->
+				<!-- <if>
+				    <and>
+				    	<equals arg1="${iphonebuild}" arg2="true" />
+				    	<equals arg1="${isWindows}" arg2="true" />		    	 
+				    </and>
+					<then>
+					    <fail message="To build for iOS, you need a Mac OS system. Update the worklight.envsToDeploy property in the build.properties file correctly."/>
+					</then>
+				</if>
+				-->
+				<!-- <if>
+				    <and>
+				    	<or>
+							<equals arg1="${windowsphone8build}" arg2="true" />
+							<equals arg1="${windows8build}" arg2="true" />
+						</or>
+				    	<equals arg1="${isMac}" arg2="true" />		    	 
+				    </and>
+					<then>
+					    <fail message="To build for Windows, you need a Windows system. Update the worklight.envsToDeploy property in the build.properties file correctly."/>
+					</then>
+				</if>
+				-->
+			    
+		  		<!-- ############################## Verifying Android ##############################  -->
+		  		<!-- <if>
+				    <equals arg1="${androidbuild}" arg2="true" />
+					<then>
+					    <script language="javascript"><![CDATA[
+						    var versionStr = project.getProperty('androidAPIVersions');
+						    var result;
+						    project.setProperty('versionStr', versionStr);
+						    if(versionStr){
+						    	result = versionStr.match(/Unsupported major.minor version 52.0(\d)*/g);
+						    	if(result){
+						    		project.setProperty('androidRequirementError', 'needJava8');
+						    	}
+						    }
+						    
+						    if(versionStr){
+						    	result = versionStr.match(/level: (\d)*/g);
+						    }
+						    
+						    var target = project.getProperty('android.target');
+						    
+						    var currentGreaterVersion = "";
+						    var hasTargetRequirement = false;
+						    
+							if(result && Array.isArray(result)){
+								result.forEach(function(elem){
+							    	currentGreaterVersion = elem.substring(7,elem.length);
+							        
+							        if(currentGreaterVersion == target)
+							        	hasTargetRequirement = true;
+							    });
+							}
+				
+						    project.setProperty('hasTargetAndroidRequirement', hasTargetRequirement);
+						]]></script>
+						
+					    <echo>${androidRequirementError}</echo>
+					    <echo>${hasTargetAndroidRequirement}</echo>
+					   <echo>${versionStr}</echo>
+					    
+ 					    <if>
+				  		    <equals arg1="${androidRequirementError}" arg2="needJava8" />
+				  		    <then>
+								<fail message="The build tools installed for Android require Java JDK 8. Verify that the JAVA_HOME environment variable and the 'java -version' commands are set to Java 8 and run the build again."/>
+							</then>
+				  		</if> 
+					    
+					    <if>
+				  		    <equals arg1="${hasTargetAndroidRequirement}" arg2="false" />
+				  		    <then>
+								<fail message="Currently, you do not have required Android API ${android.target}."/>
+							</then>
+				  		</if>
+				  		
+						<if>
+							<available file="${android.sdk.home}/extras/android/m2repository" property="m2repository.available"/>
+							<then>
+							    <echotimestamp message="The Android Support Repository is installed."/>
+							</then>
+							<else>
+							    <fail message="Currently, you do not have the Android Support Repository installed. Go to Android SDK Manager, and in the Extras section, select the Android Support Repository package and install it."/>
+							</else>    
+						</if>
+					    
+					    <if>
+							<available file="${android.sdk.home}/build-tools/${android.buildToolsVersion}" property="build-tools.available"/>
+							<then>
+							    <echotimestamp message="The Android build tools package ${android.buildToolsVersion} is installed."/>
+							</then>
+							<else>
+							    <fail message="Currently, you do not have the Android build tools ${android.buildToolsVersion} package installed. Go to Android SDK Manager, and in the Tools section, select the Android SDK Build-tools ${android.buildToolsVersion} package and install it."/>
+							</else>    
+						</if>
+					    
+					    <echotimestamp message="The Android API and the build-tools version were checked."/>
+			  		</then>
+		  		</if>-->
+				<!-- ############################## Verifying Xcode ##############################  -->
+				<!-- TODO: I am assuming xcode version is always a float number, need improve this on future -->
+			    <!-- Ant does not have a good option to compare numbers, so a good way that does not require any additional dependent libraries is using javascript -->
+				<!-- <if>
+				    <and>
+				        <isset property="isMac" />
+				    	<equals arg1="${iphonebuild}" arg2="true" />
+				    </and>
+					<then>
+				  		<script language="javascript"><![CDATA[
+						    var version = parseFloat(project.getProperty('autoXcodeVersion'));
+						    var minimum = parseFloat(project.getProperty('xcode.minimum'));
+						    var target = parseFloat(project.getProperty('xcode.target'));
+						    project.setProperty('isXcodeGreaterThanMinimum', version >= minimum);
+						    project.setProperty('isXcodeGreaterThanTarget', version > target);
+						]]></script>
+					    
+				  		<if>
+				  		    <equals arg1="${isXcodeGreaterThanMinimum}" arg2="false" />
+				  		    <then>
+								<fail message="Currently, the Xcode version is ${autoXcodeVersion}, which does not match the Xcode ${xcode.minimum} minimum requirement."/>
+							</then>
+				  		</if>
+				  		
+				  		<if>
+				  		    <equals arg1="${isXcodeGreaterThanTarget}" arg2="true" />
+				  		    <then>
+								<echotimestamp message="WARNING: Currently, the Xcode version ${autoXcodeVersion}, which is greater than the recommended version ${xcode.target}." level="warning"/>
+							</then>
+				  		</if>
+				  		<echotimestamp message="Xcode version was checked."/>
+			  		</then>
+		  		</if>-->
+		  		<!-- ############################## Verifying VisualStudio ##############################  -->
+				<!-- Next line is only for test purposes -->
+				<!-- <property name="visualStudioVersion" value='Visual Studio path: "C:/Program Files (x86)/Microsoft Visual Studio\nMicrosoft (R) Build Engine version 14.0.31101.0\n[Microsoft .NET Framework, version 4.0.30319.42000]'/> -->
+		  		<!-- <if>
+		  		    <and>
+		  		        <isset property="isWindows" />
+					    <or>
+							<equals arg1="${windowsphone8build}" arg2="true" />
+							<equals arg1="${windows8build}" arg2="true" />
+						</or>
+					</and>
+					<then>
+				  		<script language="javascript"><![CDATA[
+						    var versionStr = project.getProperty('visualStudioVersion');
+						    var result;
+						    if(versionStr){
+						    	result = versionStr.match(/Build Engine version (\d)*/g);
+						    }
+						    var version;
+						    if(result && Array.isArray(result)){
+						    	version = result[0].substring(21,result[0].length);
+						    } 
+						    
+						    var minimum = project.getProperty('visualstudio.minimum');
+						    var target = project.getProperty('visualstudio.target');
+						    project.setProperty('currentVisualStudioVersion', version);
+						    project.setProperty('isVisualStudioGreaterThanMinimum', version >= minimum);
+						    project.setProperty('isVisualStudioGreaterThanTarget', version > target);
+						]]></script>
+						
+				  		<if>
+				  		    <equals arg1="${isVisualStudioGreaterThanMinimum}" arg2="false" />
+				  		    <then>
+								<fail message="Currently, the Visual Studio version is ${currentVisualStudioVersion}, which does not match the Visual Studio ${visualstudio.minimum} minimum requirement."/>
+							</then>
+				  		</if>
+				  		
+				  		<if>
+				  		    <equals arg1="${isVisualStudioGreaterThanTarget}" arg2="true" />
+				  		    <then>
+								<echotimestamp message="WARNING: Currently, the Visual Studio version ${currentVisualStudioVersion} is greater than the recommended version ${visualstudio.target}." level="warning"/>
+							</then>
+				  		</if>
+				  		<echotimestamp message="Visual Studio version was checked."/>
+		  			</then>
+		  		</if>
+			</else>
+		</if>-->
+	</target>
+	
+	<target name="check-anywhere-fixes-online">
+		<!-- TODO: Currently we are checking fixpack availability just by looking at html from fixcentral and searching by "Action result: list".
+		In future it should be replaced by a webservice or some other best approach.-->
+		
+		<if>
+			<equals arg1="${build.update.check.enabled}" arg2="false"/>
+			<then>
+				<echotimestamp message="Currently, the build is configured to not check for updates because the build.update.check.enabled=false property has been set in the build.properties file." level="warning"/>
+			</then>
+			<else>
+				<!-- We are considering that valid version is X.X.X or X.X.X.X. When it is X.X.X we look for X.X.X.1 and when it is X.X.X.X we look for X.X.X.(X+1) -->
+	        	<script language="javascript"><![CDATA[
+				    var versionStr = project.getProperty('version.name');
+	        		    
+	        		var versionArray;
+					if(versionStr){
+	        			versionArray = versionStr.split(".");
+	        		}
+
+	        		var result = '';
+	        		if(versionArray.length == 4)
+	        			result = versionArray[0]+"."+versionArray[1]+"."+versionArray[2]+"."+Number(Number(versionArray[3])+1);
+	        		else if(versionArray.length == 3)
+	        			result = versionArray[0]+"."+versionArray[1]+"."+versionArray[2]+"."+1;
+	        		else
+	        		    result = 'invalid';
+				    
+				    project.setProperty('next.version.name', result);
+				]]></script>
+	        	
+	        	<if>
+	        		<equals arg1="${next.version.name}" arg2="invalid"/>
+	        		<then>
+	        			<echotimestamp message="WARNING: The version number specified in the build.properties file might be invalid. The fix pack search will be skipped." level="warning"/>
+	        		</then>
+	        		<else>
+						<trycatch>
+					        <try>
+					        	<!-- Check Fix Central for updates: https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Maximo+Anywhere&release=7.6.2.0&platform=All&function=all -->
+					        	<echotimestamp message="Trying to connect to Fix Central: https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm\~Tivoli&amp;product=ibm/Tivoli/Maximo+Anywhere&amp;release=${next.version.name}&amp;platform=All&amp;function=all"/>
+					        	<get src="https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm\~Tivoli&amp;product=ibm/Tivoli/Maximo+Anywhere&amp;release=${next.version.name}&amp;platform=All&amp;function=all&amp;showStatus=false" dest=".fixcentral-url-test.html"/>
+					        	
+					        	<loadfile property="fixcentral.file.property" srcfile=".fixcentral-url-test.html"/>
+					        	<propertyregex property="fixcentral.file.regex.property"
+		    				        input="${fixcentral.file.property}"
+		    				        regexp="Action result: (list)*"
+		    				        select="\1"
+		    				        casesensitive="false"
+		    				        global="true"
+		    				        defaultValue="none"/>
+		    			        
+					        	<if>
+					        		<equals arg1="${fixcentral.file.regex.property}" arg2="list"/>
+					        		<then>
+					        			<echotimestamp message="IMPORTANT: A fix pack was found on Fix Central. Go to https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm\~Tivoli&amp;product=ibm/Tivoli/Maximo+Anywhere&amp;release=${next.version.name}&amp;platform=All&amp;function=all&amp;showStatus=false to download this fix pack. Ensure that you download all the required files and put them in the folder that is specified in the platformzip.location property in the build.properties file."/>
+					        		</then>
+					        		<else>
+					        			<echotimestamp message="Fix packs were not found on Fix Central."/>
+					        		</else>
+					        	</if>
+					        	
+					    	</try>
+					    	<catch>
+					    		<echotimestamp message="WARNING: The Fix Central address is not reacheable." level="warning"/>
+					    		<if>
+						    		<equals arg1="${build.process}" arg2="offline"/>
+						    		<then>
+						    			<echotimestamp message="Currently, the build is offline because the build.process=offline property has been set in the build.properties file." level="warning"/>
+						    		</then>
+					    		</if>
+					    	</catch>
+					    </trycatch>
+	        		</else>
+	        	</if>
+			</else>
+		</if>
+	</target>
+
+</project>

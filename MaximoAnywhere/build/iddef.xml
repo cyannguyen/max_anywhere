@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iddef>
+	<element type="action">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="label" sequence="1"/>
+		<idattribute name="#{tagname}" sequence="2"/>
+	</element>
+
+	<element type="actions">
+		<idattribute parent="#{first}" name="id" sequence="0"/>
+		<idattribute parent="list" name="resource" sequence="1"/> -->
+		<idattribute name="#{tagname}" sequence="2"/>
+	</element>
+
+	<element type="app">
+		<idattribute name="#{basename}" sequence="0"/>
+	</element>
+
+	<element type="attribute">
+		<idattribute parent="resource" name="name" sequence="0"/>
+		<idattribute name="name" sequence="1" requiredinxsd="true"/>
+		<idattribute name="describedByProperty" sequence="2" requiredinxsd="true"/>
+	</element>
+
+	<element type="attributes">
+		<idattribute parent="resource" name="name" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+
+	<element type="button">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+ 		<idattribute parent="list" name="resource" sequence="1"/>
+		<idattribute parent="text" name="resourceAttribute" sequence="2"/>
+		<idattribute name="resourceAttribute" sequence="3"/>
+		<idattribute name="label" sequence="4"/>
+		<idattribute name="image" sequence="5"/>
+		<idattribute name="#{tagname}" sequence="6"/>
+	</element>
+
+	<element type="checkbox">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="resourceAttribute" sequence="1"/>
+		<idattribute name="#{tagname}" sequence="2"/>
+	</element>
+
+	<element type="combobox">
+	    <idattribute parent="#{top}" name="id" sequence="0"/>
+	    <idattribute name="resourceAttribute" sequence="1"/>
+	    <idattribute name="lookupAttribute" sequence="2"/>
+	    <idattribute name="domainResource" sequence="3"/>
+	    <idattribute name="value" sequence="4"/>
+	    <idattribute name="label" sequence="5"/>
+		<idattribute name="#{index}" sequence="6"/>
+	</element>
+	
+	<element type="column">
+		<idattribute name="columnid" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+	
+	<element type="conditions">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="cssClass" sequence="1"/>
+	</element>
+
+	<element type="container">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="cssclass" sequence="1"/>
+		<idattribute name="resource" sequence="2"/>
+		<idattribute name="#{tagname}" sequence="3"/>
+		<idattribute name="#{index}" sequence="4"/>
+	</element>
+
+	<element type="creationFactories">
+		<idattribute parent="resource" name="name" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+
+	<element type="creationFactory">
+		<idattribute parent="resource" name="name" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+		<idattribute name="name" sequence="2" requiredinxsd="true"/>
+	</element>
+
+	<element type="data">
+		<idattribute name="#{tagname}" sequence="0"/>
+	</element>
+
+	<element type="datetimepicker">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+		<idattribute name="#{index}" sequence="2"/>
+	</element>
+
+	<element type="dialog">
+		<idattribute name="id" sequence="0" requiredinxsd="true"/>
+	</element>
+
+	<element type="directionslink">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="label" sequence="1" requiredinxsd="true"/>
+	</element>
+
+	<element type="domainvalue">
+		<idattribute parent="#{first}" name="id" sequence="0"/>
+		<idattribute name="keyValue" sequence="1" requiredinxsd="true"/>
+	</element>
+		
+	<element type="domainvalues">
+		<idattribute parent="#{first}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+	
+	<element type="durationpicker">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+		<idattribute name="#{index}" sequence="2"/>
+	</element>
+
+	<element type="errorIndicator">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+
+	<element type="erroractions">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+
+	<element type="eventHandler">
+		<idattribute parent="#{first}" name="id" sequence="0"/>
+		<!--<idattribute name="#{tagname}" sequence="1"/>-->
+		<idattribute name="event" sequence="2" requiredinxsd="true"/>
+		<idattribute name="method" sequence="3"/>
+	</element>
+
+	<element type="eventHandlers">
+		<idattribute parent="#{first}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+
+	<element type="eventListener">
+		<idattribute name="event" sequence="0" requiredinxsd="true"/>
+	</element>
+
+	<element type="eventListeners">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+
+	<element type="executionOf">
+		<idattribute name="requiresRole" sequence="0" requiredinxsd="true"/>
+	</element>
+
+	<element type="findByScan">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="resourceAttribute" sequence="1" requiredinxsd="true"/>
+	</element>
+
+	<element type="footer">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+
+	<element type="group">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+		<idattribute name="#{index}" sequence="2"/>
+	</element>
+
+	<element type="groupitem">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute parent="container" name="resource" sequence="1"/>
+		<idattribute name="#{tagname}" sequence="2"/>
+		<idattribute name="transitionTo" sequence="3"/>
+		<idattribute name="#{index}" sequence="4"/>
+	</element>
+
+	<element type="image">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+		<idattribute name="#{index}" sequence="2"/>
+	</element>
+
+	<element type="lastupdatetext">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+
+	<element type="layout">
+		<idattribute name="#{basename}" sequence="0"/>
+    </element>
+	
+	<element type="link">
+		<idattribute name="label" sequence="0" requiredinxsd="true"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+
+	<element type="list">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="resource" sequence="1" requiredinxsd="true"/>
+		<idattribute name="attribute" sequence="2"/>
+		<idattribute name="#{tagname}" sequence="3"/>
+	</element>
+
+	<element type="listItemTemplate">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute parent="list" name="resource" sequence="1"/>
+		<idattribute parent="list" name="attribute" sequence="2"/>
+		<idattribute name="#{tagname}" sequence="3"/>
+		<idattribute name="layout" sequence="4"/> 
+	</element>
+
+	<element type="listtext">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute parent="list" name="resource" sequence="1"/>
+		<idattribute parent="#{first}" name="layout" sequence="2"/>
+		<idattribute name="resourceAttribute" sequence="3"/>
+	</element>
+
+	<element type="localAttribute">
+		<idattribute parent="resource" name="name" sequence="0"/>
+		<idattribute name="name" sequence="1" requiredinxsd="true"/>
+		<idattribute name="dataType" sequence="2" requiredinxsd="true"/>
+	</element>
+
+	<element type="lookup">
+		<idattribute name="id" sequence="0" requiredinxsd="true"/>
+	</element>
+
+	<element type="map">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="provider" sequence="1" requiredinxsd="true"/>
+		<idattribute name="adjustToTop" sequence="2" requiredinxsd="true"/>
+	</element>
+
+	<element type="mapDetails">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+		<idattribute name="#{index}" sequence="2"/>
+	</element>
+
+	<element type="mapMarker">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+		<idattribute name="#{index}" sequence="2"/>
+	</element>
+
+	<element type="message">
+		<idattribute name="id" sequence="0" requiredinxsd="true"/>
+		<idattribute name="defaultMessage" sequence="1" requiredinxsd="true"/>
+	</element>
+
+	<element type="messages">
+		<idattribute name="#{tagname}" sequence="0"/>
+	</element>
+
+	<element type="progressIndicator">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{index}" sequence="1"/>
+	</element>
+
+	<element type="property">
+		<idattribute name="name" sequence="0" requiredinxsd="true"/>
+	</element>
+
+	<element type="queries">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="resource" sequence="1"/>
+		<idattribute name="#{tagname}" sequence="2"/>
+	</element>
+
+	<element type="query">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="queryBase" sequence="1"/>
+	</element>
+
+	<element type="queryBase">
+		<idattribute parent="resource" name="name" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+		<idattribute name="name" sequence="2" requiredinxsd="true"/>
+	</element>
+
+	<element type="queryBases">
+		<idattribute parent="resource" name="name" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+
+	<element type="requiredAttribute">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute parent="requiredResource" name="name" sequence="1" requiredinxsd="true"/>
+		<idattribute name="name" sequence="2" requiredinxsd="true"/>
+	</element>
+
+	<element type="requiredResource">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="name" sequence="1" requiredinxsd="true"/>
+	</element>
+
+	<element type="requiredResources">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+
+	<element type="resource">
+		<idattribute name="name" sequence="0" requiredinxsd="true"/>
+	</element>
+
+	<element type="returnAttribute">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="sourceAttribute" sequence="1" requiredinxsd="true"/>
+		<idattribute name="targetAttribute" sequence="2" requiredinxsd="true"/>
+	</element>
+
+	<element type="returnAttributes">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+
+	<element type="row">
+		<idattribute name="#{tagname}" sequence="0"/>
+	    <idattribute name="#{index}" sequence="1"/>
+    </element>
+	
+	<element type="searchAttribute">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute parent="list" name="resource" sequence="1"/>
+		<idattribute name="#{tagname}" sequence="2"/>
+		<idattribute name="name" sequence="3"/>
+	</element>
+
+	<element type="searchAttributes">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute parent="list" name="resource" sequence="1"/>
+		<idattribute name="#{tagname}" sequence="2"/>
+	</element>
+
+	<element type="sortAttribute">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute parent="#{first}" name="label" sequence="1"/>
+		<idattribute name="#{tagname}" sequence="2"/>
+		<idattribute name="name" sequence="3"/>
+	</element>
+
+	<element type="sortOption">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+		<idattribute name="label" sequence="2"/>
+	</element>
+
+	<element type="sortOptions">
+		<idattribute parent="#{first}" name="id" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+
+	<element type="state">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute parent="#{first}" name="#{tagname}" sequence="1"/>
+		<idattribute name="value" sequence="2" requiredinxsd="true"/>
+		<idattribute name="label" sequence="3"/>
+	</element>
+
+	<element type="states">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute parent="button" name="resourceAttribute" sequence="1"/>
+		<idattribute name="#{tagname}" sequence="2"/>
+	</element>
+
+	<element type="text">
+		<idattribute parent="#{first}" name="id" sequence="0"/>
+		<idattribute name="resourceAttribute" sequence="1"/>
+		<idattribute name="label" sequence="2"/>
+		<idattribute name="cssclass" sequence="3"/>
+		<idattribute name="value" sequence="4" maxlength="20"/>
+<!--		<idattribute name="#{tagname}" sequence="5"/>
+ 		<idattribute name="#{index}" sequence="5"/> -->
+	</element>
+
+	<element type="textarea">
+		<idattribute parent="#{top}" name="id" sequence="0"/>
+		<idattribute name="resourceAttribute" sequence="1"/>
+		<idattribute name="#{index}" sequence="2"/>
+	</element>
+
+	<element type="ui">
+		<idattribute name="#{tagname}" sequence="0"/>
+	</element>
+
+	<element type="view">
+		<idattribute name="id" sequence="0" requiredinxsd="true"/>
+	</element>
+
+	<element type="whereClause">
+		<idattribute parent="resource" name="name" sequence="0"/>
+		<idattribute name="#{tagname}" sequence="1"/>
+	</element>
+
+</iddef>

@@ -1,0 +1,43 @@
+<project name="Anywhere-AppDocs-Processor" default="process-app-xsd-docs"
+	basedir=".">
+	
+	<import file="util.xml" />
+	<loadproperties srcfile="${basedir}/build.properties" />
+
+	<!-- definition of additional tasks needed to build documentation -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${basedir}/libs/build/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<path id="app.docs.classpath">
+		<pathelement location="${basedir}/libs/codegen/*" />
+		<pathelement location="${basedir}/libs/build/*" />
+	</path>	
+	
+	<target name="process-app-xsd-docs" description="creates html documentation based on the platform's app.xsd">
+		<if>
+			<and>
+				<isset property="app.xsd.output.location" />
+				<not>
+					<equals arg1="${app.xsd.output.location}" arg2="" />
+				</not>
+			</and>
+			<then>
+			    <pathconvert property="classpathProp" refid="app.docs.classpath" />				
+				<java classname="com.ibm.tivoli.si.build.entry.XsdBuildEntry" failonerror="true" fork="true">
+					<classpath refid="app.docs.classpath" />
+					<arg value="${basedir}/build/app.xsd" />	
+					<arg value="${app.xsd.output.location}" />			
+				</java>
+				<echotimestamp> *** Application Artifact Documentation complete. Saved in location: [${app.xsd.output.location}]</echotimestamp>
+			</then>
+			<else>
+				<echotimestamp> Property [app.xsd.output.location] needs to be set in build.properties to create xsd docs </echotimestamp>
+				<echotimestamp>     This is the output folder where the generated documentation will be saved to </echotimestamp>
+			</else>
+		</if>
+	</target>	
+	
+</project>

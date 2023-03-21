@@ -1,0 +1,212 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+
+   <xsd:element name="layout" type="layout" >
+      <xsd:annotation>
+         <xsd:documentation>
+            The ROOT element of a layout mark up file.
+         </xsd:documentation>
+      </xsd:annotation>
+   
+      <xsd:unique name="UniqueColumnId">
+         <xsd:annotation>
+            <xsd:documentation>
+               column elements MUST have a unique columnid value throughout the entire file.
+            </xsd:documentation>
+         </xsd:annotation>
+         <xsd:selector xpath="row/column" />
+         <xsd:field xpath="@columnid" />
+      </xsd:unique>
+   </xsd:element>
+   
+   <xsd:complexType name="layout">
+      <xsd:choice maxOccurs="unbounded">
+         <xsd:element maxOccurs="unbounded" name="colgroup" type="colgroup"/>
+         <xsd:element maxOccurs="unbounded" name="row" type="row"/>
+      </xsd:choice>
+      <xsd:attribute name="width" type="width" use="optional">
+         <xsd:annotation>
+            <xsd:documentation>
+               An integer value to specify a a percentage of width this layout will take up.
+            </xsd:documentation>
+         </xsd:annotation>
+      </xsd:attribute>
+	<xsd:attribute name="id" type="xsd:string" use="required">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+				A unique ID representing
+				the element in the UI
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:attribute>
+	<xsd:attribute name="version" type="xsd:string" use="optional">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+				Build version of the artifact file
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:attribute>
+   </xsd:complexType>
+
+
+   <xsd:complexType name="colgroup">
+      <xsd:annotation>
+         <xsd:documentation>
+            An element that describes a colgroup. colgroup elements can only contain col elements.
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element maxOccurs="unbounded" name="col" type="col" />
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="col">
+      <xsd:annotation>
+         <xsd:documentation>
+            An element that describes a column that will hold various elements.
+         </xsd:documentation>
+      </xsd:annotation>
+      
+      <xsd:attribute name="style" type="xsd:string">
+         <xsd:annotation>
+            <xsd:documentation>
+               A string representing the css style to be applied to this element.
+            </xsd:documentation>
+         </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="class" type="xsd:string">
+         <xsd:annotation>
+            <xsd:documentation>
+               A string representing the css class to be applied to this element.
+            </xsd:documentation>
+         </xsd:annotation>
+      </xsd:attribute>
+   </xsd:complexType>
+
+   <xsd:complexType name="row">
+      <xsd:annotation>
+         <xsd:documentation>
+            An element that describes a row.  row elements can only contain column elements.
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:sequence>
+         <xsd:element maxOccurs="unbounded" name="column" type="column" />
+      </xsd:sequence>
+	<xsd:attribute name="id" type="xsd:string" use="required">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+				A unique ID representing
+				the element in the UI
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:attribute>
+   </xsd:complexType>
+
+      
+   <xsd:complexType name="column">
+      <xsd:annotation>
+         <xsd:documentation>
+            An element that describes a column that will hold various elements.
+         </xsd:documentation>
+      </xsd:annotation>
+      
+      <xsd:attribute name="columnid" type="xsd:string">
+         <xsd:annotation>
+            <xsd:documentation>
+               A unique id that represents an attach point where controls will be placed.
+            </xsd:documentation>
+         </xsd:annotation>
+      </xsd:attribute>
+      
+	<xsd:attribute name="id" type="xsd:string" use="required">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="en">
+				A unique ID representing
+				the element in the UI
+			</xsd:documentation>
+		</xsd:annotation>
+	</xsd:attribute>
+
+      <xsd:attribute name="offset" type="offset" use="optional" />
+      
+      <xsd:attribute name="colspan" type="colspan" use="optional" />
+
+      <xsd:attribute name="rowspan" type="rowspan" use="optional" />
+      
+      <xsd:attribute name="valign" type="valign" use="optional" />
+      
+      <xsd:attribute name="halign" type="halign" use="optional" />
+
+   </xsd:complexType>
+
+   <xsd:simpleType name="width">
+      <xsd:annotation>
+         <xsd:documentation>
+            An integer value to specify a a percentage of width
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:integer">
+         <xsd:minInclusive value="0" />
+         <xsd:maxExclusive value="101" />
+      </xsd:restriction>
+   </xsd:simpleType>
+
+   <xsd:simpleType name="offset">
+      <xsd:annotation>
+         <xsd:documentation>
+            An integer value to specify how many columns to offset.
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:integer">
+         <xsd:minInclusive value="1" />
+         <xsd:maxInclusive value="12" />
+      </xsd:restriction>
+   </xsd:simpleType>
+
+   <xsd:simpleType name="colspan">
+      <xsd:annotation>
+         <xsd:documentation>
+            An integer value to specify how many columns this column will span across.
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:integer">
+         <xsd:minInclusive value="1" />
+         <xsd:maxInclusive value="12" />
+      </xsd:restriction>
+   </xsd:simpleType>
+
+   
+   <xsd:simpleType name="rowspan">
+      <xsd:annotation>
+         <xsd:documentation>
+            An integer value to specify how many rows this column will span across.
+            If you do not specify a valign attribute it will be automatically provided with a value of middle.
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:integer">
+         <xsd:minInclusive value="0" />
+         <xsd:maxExclusive value="6" />
+      </xsd:restriction>
+   </xsd:simpleType>
+   
+   <xsd:simpleType name="valign">
+      <xsd:annotation>
+         <xsd:documentation>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="top|middle|bottom"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+   <xsd:simpleType name="halign">
+      <xsd:annotation>
+         <xsd:documentation>
+         </xsd:documentation>
+      </xsd:annotation>
+      <xsd:restriction base="xsd:string">
+         <xsd:pattern value="left|center|right"/>
+      </xsd:restriction>
+   </xsd:simpleType>      
+
+</xsd:schema>

@@ -1,0 +1,59 @@
+<project name="Anywhere-Spatial-Reference" default="remove-spatial-reference" xmlns:if="ant:if" xmlns:unless="ant:unless" xmlns:ivy="antlib:org.apache.ivy.ant" basedir=".">
+
+    <import file="util.xml" />
+    
+	<!-- :: Begin Common Setup Steps -->
+	<basename property="ant.file.basename" file="${ant.file}" suffix=".xml"/>
+	<record name="${basedir}/${ant.file.basename}.log" logLevel="verbose"/>
+	<loadproperties srcfile="${basedir}/build.properties" />
+	<include file="${basedir}/build-taskdef.xml"/>
+	<!-- :: Done Common Setup Steps -->
+    
+   	<condition property="appsToBuild" else="*">
+    	<isset property="appsToBuild" />
+	</condition>
+	<target name="remove-spatial-reference">
+	    <echotimestamp>Removing spatial reference for ${appsToBuild}</echotimestamp>
+		<for param="appname" list="${appsToBuild}" trim="true">
+			<sequential>
+			    <if>
+			        <not>
+    			  		<available file="${basedir}/apps/@{appname}/platform-artifacts/map/app.xml.backup"/>
+    			  	</not>
+    			  	<then>
+			    		<copy file="${basedir}/apps/@{appname}/platform-artifacts/map/app.xml" 
+			        		tofile="${basedir}/apps/@{appname}/platform-artifacts/map/app.xml.backup" />	  	    
+    			  	</then>
+    			  	<else>
+    			  	    <echotimestamp> Backup File Already present for @{appname}</echotimestamp>
+    			  	</else>
+    			</if>
+  				
+				<xmltask source="${basedir}/apps/@{appname}/platform-artifacts/map/app.xml"
+	         		dest="${basedir}/apps/@{appname}/platform-artifacts/map/app.xml" >
+	        		<copy path="/app/data/resource[@providedBy='/oslc/sp/Spatial']/text()"  property="removetag" />
+	        		<remove path="/app/data/resource[@providedBy='/oslc/sp/Spatial']" if="removetag" /> 
+	     		</xmltask>
+			    <echotimestamp>Removed Spatial Reference for @{appname}</echotimestamp>
+			</sequential>
+		</for>
+	</target>
+	<target name="restore-spatial-reference">
+	    <echotimestamp>Restoring spatial reference for ${appsToBuild}</echotimestamp>
+		<for param="appname" list="${appsToBuild}" trim="true">
+			<sequential>
+			       <if>
+        				<available file="${basedir}/apps/@{appname}/platform-artifacts/map/app.xml.backup"/>
+        				<then>
+						    <move file="${basedir}/apps/@{appname}/platform-artifacts/map/app.xml.backup" 
+						        tofile="${basedir}/apps/@{appname}/platform-artifacts/map/app.xml" overwrite="true"/>
+						    <echotimestamp>Restored Spatial Reference for @{appname}</echotimestamp>
+        				</then>
+        				<else>
+        				    <echotimestamp>No Backup File To Restore Spatial Reference for @{appname}</echotimestamp>
+        				</else>
+        			</if>
+			</sequential>
+		</for>
+	</target>
+</project>

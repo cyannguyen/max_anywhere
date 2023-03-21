@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+toolkit/apps/WorkApproval/dojo=false
+toolkit/apps/WorkExecution/dojo=false
+toolkit/apps/Inspection/dojo=false
+toolkit/apps/PhysicalCount/dojo=false

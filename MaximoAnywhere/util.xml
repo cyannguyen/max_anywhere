@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Application Utils Script" basedir=".">
+    
+	<!-- echotimestamp needs to be compatible with echo: https://ant.apache.org/manual/Tasks/echo.html -->
+    <macrodef name="echotimestamp">
+		<attribute name="message" default=""/>
+		<attribute name="level" default="info"/>
+    	<attribute name="append" default="false"/>
+    	<attribute name="encoding" default=""/>
+    	<attribute name="file" default=""/>
+    	<attribute name="output" default=""/>
+    	<attribute name="force" default="false"/>
+		<text name="text" optional="true"/>
+		<sequential>
+			<local name="timestamp" />
+			<tstamp>
+				<format property="timestamp" pattern="yyyy-MM-dd HH:mm:ss" />
+			</tstamp>
+			
+			<!-- following echo definition, it could have file or output parameter, but not both together, so need put this decision step: https://ant.apache.org/manual/Tasks/echo.html -->
+			<if>
+				<and>
+					<equals arg1="@{file}" arg2="" />
+					<equals arg1="@{output}" arg2="" />
+				</and>
+	            <then>
+	            	<!-- in this case, both args, file and output are empty, so not using them -->
+	            	<echo message="${timestamp}> @{message}@{text}" level="@{level}" append="@{append}" encoding="@{encoding}" force="@{force}"/>
+	            </then>
+				<elseif>
+					<equals arg1="@{output}" arg2="" />
+		            <then>
+		            	<!-- in this case, output arg is empty, so just use file -->
+		            	<echo message="${timestamp}> @{message}@{text}" level="@{level}" append="@{append}" encoding="@{encoding}" force="@{force}" file="@{file}"/>
+		            </then>
+				</elseif>
+				<elseif>
+					<equals arg1="@{file}" arg2="" />
+		            <then>
+		            	<!-- in this case, file arg is empty, so just use output -->
+		            	<echo message="${timestamp}> @{message}@{text}" level="@{level}" append="@{append}" encoding="@{encoding}" force="@{force}" output="@{output}"/>
+		            </then>
+				</elseif>
+	            <else>
+	            	<fail message="You cannot use output and file arguments for echotimestamp at same time. Needs be compatible with echo tag, which just allow one of them at time."/>
+	            </else>
+	        </if>
+		</sequential>
+	</macrodef>
+    
+	<target name="test" description="just used to test purpose">
+	    <echotimestamp>my text</echotimestamp>
+	    <echotimestamp message="my text inside message"/>
+	    <echotimestamp message="my text inside message - debug" level="debug"/>
+	    <echotimestamp message="my text inside message">my text</echotimestamp>
+	    <echotimestamp message="my text inside message - verbose" level="verbose">my text</echotimestamp>
+	</target>
+</project>

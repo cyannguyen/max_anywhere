@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="maximo-anywhere-platform">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/managed/maximo-anywhere-platform.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

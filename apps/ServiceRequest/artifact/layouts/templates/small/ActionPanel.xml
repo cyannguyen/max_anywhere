@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout id="ActionPanel" width="100">
+	<row id="row_0">
+		<column colspan="6" columnid="button1" halign="center" id="button1_column"/>
+	</row>
+	<row id="row_1">
+		<column colspan="6" columnid="button2" halign="center" id="button2_column"/>
+	</row>
+</layout>

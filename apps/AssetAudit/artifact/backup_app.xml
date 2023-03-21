@@ -1,0 +1,1270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM 5725-M39 (C) COPYRIGHT IBM CORP. 
+	2013 All Rights Reserved US Government Users Restricted Rights - Use, duplication 
+	or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. -->
+<!-- Asset Audit Application Artifact -->
+<app blindQuerySupport="false" id="AssetAudit" logLevel="0" requiredRole="ANYWHERE_ASSET_AUDITOR" version="201508131126" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../build/app.xsd">	
+		
+	<!-- Back up this file before you edit it. -->	
+	<!-- comment this in to enable device side sso login-->
+    <!--
+    <eventHandlers id="AssetAudit_eventHandlers">
+	    <eventHandler class="platform.handlers.SSOHandler" event="initialize" id="AssetAudit_eventHandlers_initialize_performSSOLogin" method="performSSOLogin"/>
+	</eventHandlers> 	
+	-->
+	<ui id="ui">
+		<!-- Location list view -->
+		<view id="AssetAudit.LocationListView" label="Location List" resource="locations" saveonshow="false" showBackButton="false">
+			<!-- Each query that you define must correspond to and have the same name as the public query in Maximo. --> 
+			<!-- You must also add the "Work I Own" query to the Data Definition section of this file.-->
+			<queries id="AssetAudit.LocationListView_queries" resource="locations">
+				<query cssClass="finalQueryBaseMenuItem" id="AssetAudit.LocationListView_Mobile_Query" label="Location List" queryBase="Mobile_Query"/>
+			    <query id="AssetAudit.LocationListView___search_result__" label="Search Results" queryBase="__search_result__" system="true">
+					<eventHandlers id="AssetAudit.LocationListView___search_result___eventHandlers">
+						<eventHandler class="application.handlers.AAListHandler" event="render" id="AssetAudit.LocationListView___search_result___eventHandlers_render_hideShowSearchedMenu" method="hideShowSearchedMenu"/>
+					</eventHandlers>
+				</query>
+			</queries>
+			<requiredResources id="AssetAudit.LocationListView_requiredResources">
+				<requiredResource id="AssetAudit.LocationListView_location" name="locations" reload="true"/>
+				<requiredResource id="AssetAudit.LocationListView_PlatformProgressResource" name="PlatformProgressResource"/>
+			</requiredResources>
+			<actions id="AssetAudit.LocationListView_actions">
+				<action id="AssetAudit.LocationListView_DownloadWorkList_action" label="Download Work List" overflow="true">
+	                <eventHandlers id="AssetAudit.LocationListView_DownloadWorkList_action_eventHandlers">
+		            	<eventHandler class="application.handlers.AADownloadHandler" event="click" id="AssetAudit.LocationListView_DownloadWorkList_action_eventHandlers_click_workoffline" method="workoffline"/>
+		            	<eventHandler class="platform.handlers.WorkOfflineHandler" event="render" id="AssetAudit.LocationListView_DownloadWorkList_action_eventHandlers_render_enableDisableMenu" method="enableDisableMenu"/>
+		            </eventHandlers>
+	            </action>
+	            <action id="AssetAudit.LocationListView_SynchronizeData_action" label="Synchronize Data" overflow="true">
+					<eventHandlers id="AssetAudit.LocationListView_SynchronizeData_action_eventHandlers">
+						<eventHandler class="platform.handlers.WorkOfflineHandler" event="click" id="AssetAudit.LocationListView_SynchronizeData_action_eventHandlers_click_sync" method="sync"/>
+						<eventHandler class="platform.handlers.WorkOfflineHandler" event="render" id="AssetAudit.LocationListView_SynchronizeData_action_eventHandlers_render_enableDisableMenu" method="enableDisableSyncMenu"/>
+					</eventHandlers>
+				</action>
+				<action enableFeatureByProperty="barcode.enabled" id="AssetAudit.LocationListView_ScanBarCode_action" image="header_barcode_OFF.svg" label="Scan Bar Code">
+					<eventHandlers id="AssetAudit.LocationListView_ScanBarCode_action_eventHandlers">
+						<eventHandler class="application.handlers.AACodeScannerHandler" event="click" id="AssetAudit.LocationListView_ScanBarCode_action_eventHandlers_click_findByScan" method="findByScan"/>
+					</eventHandlers>
+				</action>
+	            <!-- Search view -->
+				<action id="AssetAudit.LocationListView_Search_action" label="Search" overflow="true" transitionTo="AssetAudit.SearchLocationView">
+				</action>				
+			</actions>
+			<progressIndicator id="AssetAudit.LocationListView_0"/>
+			<list id="AssetAudit.LocationListView_location_list" recordLabel="Location {0}" resolverClass="application.handlers.AADetailsHandler" resolverFunction="resolveLocationLabel" resource="locations">
+				<findByScan enableFeatureByProperty="barcode.enabled" headerLabel="Results for Location {0}" id="AssetAudit.LocationListView_scan_location" resourceAttribute="location"/>
+			    <eventHandlers id="AssetAudit.LocationListView_asset_list_eventHandlers">
+					<eventHandler class="platform.handlers.WorkOfflineHandler" event="render" id="AssetAudit.LocationListView_location_list_eventHandlers_render_keepWorkListResource" method="keepWorkListResource"/>
+				</eventHandlers>
+				<sortOptions id="AssetAudit.LocationListView_location_list_sortOptions">
+					<sortOption id="AssetAudit.LocationListView_sortOption_Location" label="Location">
+						<sortAttribute direction="asc" id="AssetAudit.LocationListView_Location_sortAttribute_location" name="location"/>
+					</sortOption>
+					<sortOption id="AssetAudit.LocationListView_sortOption_Status" label="Status">
+						<sortAttribute direction="asc" id="AssetAudit.LocationListView_Location_sortAttribute_status" name="locstatus"/>
+					</sortOption>
+				</sortOptions>
+				<listItemTemplate cssClass=".mblListItem .mblDomButtonArrow" id="AssetAudit.LocationListView_location_listItemTemplate_ApprovalListItem" layout="AuditLocationList">
+					<listtext id="AssetAudit.LocationListView_location_ApprovalListItem_location" layoutInsertAt="item1" resourceAttribute="location"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.LocationListView_location_ApprovalListItem_status" layoutInsertAt="item2" resourceAttribute="locstatus"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.LocationListView_location_ApprovalListItem_description" layoutInsertAt="item3" resourceAttribute="description"/>
+					<eventHandlers id="AssetAudit.LocationList_eventHandlers">
+						<eventHandler class="application.handlers.AADetailsHandler" event="click" id="AssetAudit.AssetList_eventHandlers_render_list" method="filterByLocation"/>
+					</eventHandlers>
+				</listItemTemplate>
+			</list>
+			<eventHandlers id="AssetAudit.LocationListView_eventHandlers">
+			    <eventHandler class="application.handlers.AACodeScannerHandler" event="show" id="AssetAudit.AssetListView_eventHandlers_render_registerAsScanListener" method="registerAsScanListener"/>
+				<eventHandler class="application.handlers.AADetailsHandler" event="render" id="AssetAudit.LocationListView_eventHandlers_render_showBusyList" method="showBusyList"/>
+			</eventHandlers>
+		</view>
+		
+		<!-- asset list view -->
+		<view id="AssetAudit.AssetListView" label="Asset List" resource="asset" saveonexit="false" showBackButton="true">
+			<queries id="AssetAudit.AssetListView_Asset_queries" resource="asset">
+				<query id="AssetAudit.AssetListView_getMyAssets" label="Assets for Location" queryBase="searchAllAssets">
+					<eventHandlers id="AssetAudit.AssetListView___getMyAssets___eventHandlers">
+						<eventHandler class="application.handlers.AADetailsHandler" event="render" id="AssetAudit.AssetListView___getMyAssets___eventHandlers_render_hideShowMenu" method="hideShowMyAssetsMenu"/>
+					</eventHandlers>
+				</query>
+				<query id="AssetAudit.AssetListView___created__" label="Assets Created Locally" queryBase="__created__" system="true"/>
+				<query id="AssetAudit.AssetListView___errored__" label="Records with Errors" queryBase="__errored__" system="true">
+					<eventHandlers id="AssetAudit.AssetListView___errored___eventHandlers">
+						<eventHandler class="application.handlers.AADetailsHandler" event="render" id="AssetAudit.AssetListView___errored___eventHandlers_render_hideShowErrorMenu" method="hideShowErrorMenu"/>
+					</eventHandlers>
+				</query>
+				<query id="AssetAudit.AssetListView___search_result__" label="Search Results" queryBase="__search_result__" system="true">
+					<eventHandlers id="Asset.AssetListView___search_result___eventHandlers">
+						<eventHandler class="application.handlers.AADetailsHandler" event="render" id="Asset.AssetListView___search_result___eventHandlers_render_hideShowSearchedMenu" method="hideShowSearchedMenu"/>
+					</eventHandlers>
+				</query>
+			</queries>
+			<requiredResources id="AssetAudit.AssetListView_requiredResources">
+				<requiredResource id="AssetAudit.AssetListView_assetAudit" name="assetAuditResource"/>
+				<requiredResource id="AssetAudit.AssetListView_domainassetstatus" name="domainAssetStatus"/>
+			</requiredResources>
+			<actions id="AssetAudit.AssetListView_actions">
+				<action enableFeatureByProperty="barcode.enabled" id="AssetAudit.AssetListView_ScanBarCode_action" image="header_barcode_OFF.svg" label="Scan Bar Code">
+					<eventHandlers id="AssetAudit.AssetListView_ScanBarCode_action_eventHandlers">
+						<eventHandler class="application.handlers.AACodeScannerHandler" event="click" id="AssetAudit.AssetListView_ScanBarCode_action_eventHandlers_click_auditByScan" method="findByScan"/>
+					</eventHandlers>
+				</action>
+				<action id="AssetAudit.AssetListView_Add_action" image="/images/header_add.png" label="Add Asset" transitionTo="AssetAudit.NewAssetView"/>
+				<action id="AssetAudit.AssetListView_Search_action" label="Search" overflow="true" transitionTo="AssetAudit.SearchAssetView"/>
+			</actions>
+
+			<list id="AssetAudit.AssetListView_asset_list" queryBase="searchAllAssets" recordLabel="Asset {0}" resolverClass="application.handlers.AADetailsHandler" resolverFunction="resolveAssetnumLabel" resource="asset" transitionTo="AssetAudit.AssetDetailsView"> <!--   -->
+				<findByScan enableFeatureByProperty="barcode.enabled" headerLabel="Results for Location {0}" id="AssetAudit.AssetFBSListView_scan_location" resourceAttribute="assetnum"/>
+				<eventHandlers id="AssetAudit.AssetListView_asset_list_eventHandlers">
+					<eventHandler class="platform.handlers.WorkOfflineHandler" event="render" id="AssetAudit.AssetListView_asset_list_eventHandlers_render_keepWorkListResource" method="keepWorkListResource"/>
+				</eventHandlers>
+				<sortOptions id="AssetAudit.AssetListView_asset_list_sortOptions">
+					<sortOption id="AssetAudit.AssetListView_sortOption_Asset" label="Asset">
+						<sortAttribute direction="asc" id="AssetAudit.AssetListView_asset_sortAttribute_asset" name="assetnum"/>
+					</sortOption>
+					<sortOption id="AssetAudit.AssetListView_sortOption_Status" label="Status">
+						<sortAttribute direction="asc" id="AssetAudit.AssetListView_Status_sortAttribute_status" name="status"/>
+					</sortOption>
+					<sortOption id="AssetAudit.AssetListView_sortOption_Audited" label="Audited">
+						<sortAttribute direction="desc" id="AssetAudit.AssetListView_asset_sortAttribute_audited" name="audited"/>
+					</sortOption>
+					<sortOption id="AssetAudit.AssetListView_sortOption_AuditDate" label="Audited Date">
+						<sortAttribute direction="asc" id="AssetAudit.AssetListView_asset_sortAttribute_auditDate" name="auditdateISO"/>
+					</sortOption>
+				</sortOptions>
+				<listItemTemplate id="AssetAudit.AssetListView_asset_listItemTemplate_AuditListItem" layout="AuditListItem">
+				    <listtext id="AssetAudit.AssetListView_asset_AuditListItem_asset" layoutInsertAt="item1" resourceAttribute="assetnum"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.AssetListView_asset_AuditListItem_description" layoutInsertAt="item2" resourceAttribute="description"/>
+					<checkbox cssClass="rightCheckBox" editable="true" id="AssetAudit.AssetListView_asset_AuditListItem_checkbox" label="Audited?" layoutInsertAt="item3" resourceAttribute="audited"/>
+					<text editable="false" id="AssetAudit.AssetListView_asset_AuditListItem_status" label="Status" labelCss="editableLabelOverride" layoutInsertAt="item4" resourceAttribute="statusdesc">
+						<button id="AssetAudit.AssetListView_asset_imagesaction_addChangeStatus.png_button" image="/images/action_lookup_ON.png" label="Change Status">
+						    <eventHandlers id="AssetAudit.AssetListView_asset_imagesaction_addChangeStatus.png_button_eventHandlers">
+								<eventHandler class="application.handlers.AADetailsHandler" event="click" id="AssetAudit.AssetListView_asset_imagesaction_addChangeStatus.png_button_eventHandlers_click" method="showChangeStatus"/>
+							</eventHandlers>
+						</button>    
+					</text>
+					<button cssClass="actionIcon" id="AssetAudit.AssetListView_asset__action_move_button" image="/images/button_move_asset.svg" label="Move" layoutInsertAt="item6">
+					    <eventHandlers id="AssetAudit.AssetListView_asset_action_move_button_eventHandlers">
+							<eventHandler class="application.handlers.AAMoveHandler" event="click" id="AssetAudit.AssetListView_asset_move_button_eventHandlers_click" method="showMove"/>
+							<eventHandler class="application.handlers.AAMoveHandler" event="render" id="AssetAudit.AssetListView_asset_move_button_eventHandlers_render" method="hasMove"/>
+						</eventHandlers>
+					</button>    
+					<text editable="false" id="AssetAudit.AssetListView_asset_AuditListItem_lastauditdate" label="Last Audit Date" layoutInsertAt="item5" resourceAttribute="lastauditdate"/>
+				</listItemTemplate>
+			</list>
+			<footer id="AssetAudit.completeAudit_footer">
+				<button id="AssetAudit.cancelAudit_button" label="Cancel" layoutInsertAt="button2">
+					<eventHandlers id="AssetAudit.cancelAudit_eventHandlers">
+						<eventHandler class="application.handlers.AADetailsHandler" event="click" id="AssetAudit.cancelAudit_button_eventHandlers_click_cancel" method="cancel"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="AssetAudit.saveAudit_button" label="Save" layoutInsertAt="button1">
+					<eventHandlers id="AssetAudit.saveAudit_eventHandlers">
+						<eventHandler class="application.handlers.AADetailsHandler" event="click" id="AssetAudit.saveAudit_button_eventHandlers_click_save" method="saveAsset"/>
+					</eventHandlers>
+				</button>
+			</footer>
+			<eventHandlers id="AssetAudit.AssetListView_eventHandlers_View">    
+				<eventHandler class="application.handlers.AADetailsHandler" event="render" id="AssetAudit.AssetListView_eventHandlers_render_showBusyList" method="showBusyList"/>
+				<eventHandler class="application.handlers.AACodeScannerHandler" event="show" id="AssetAudit.AssetListView_eventHandlers_show_registerAsScanListener" method="registerAsScanListener"/>
+				<eventHandler class="application.handlers.AADetailsHandler" event="show" id="AssetAudit.AssetListView_eventHandlers_show" method="show"/>
+			</eventHandlers>
+		</view>
+
+		<!--Asset Details view-->
+		<view id="AssetAudit.AssetDetailsView" label="Asset Details" resource="asset">
+			<requiredResources id="AssetAudit.AssetDetailView_requiredResources">
+				<requiredResource id="AssetAudit.AssetDetailView_asset" name="asset"/>
+			</requiredResources>
+			<actions id="AssetAudit.AssetDetailsView_actions">
+				<action id="AssetAudit.AssetDetailsView_action" image="/images/action_move_asset.svg" label="Move" transitionTo="AssetAudit.AssetMoveView">
+				     <eventHandlers id="AssetAudit.AssetListView_asset_action_move_action_eventHandlers">
+						<eventHandler class="application.handlers.AAMoveHandler" event="render" id="AssetAudit.AssetListView_asset_move_action_eventHandlers_render" method="hasMove"/>
+					</eventHandlers>
+				</action>    
+			</actions>	
+			<container id="AssetAudit.AssetDetailView_AssetAudit_container_0" resource="asset">
+				<errorIndicator id="AssetAudit.AssetDetailView_errorIndicator"/>
+			    <group id="AssetAudit.AssetDetailView_group_0">
+					<groupitem id="AssetAudit.AssetDetailView_asset_groupitem_0">
+						<text editable="false" id="AssetAudit.AssetDetailView_asset_groupitem_0__assetnum" label="Asset" resourceAttribute="assetnum"/>
+					</groupitem>
+					<groupitem id="AssetAudit.AssetDetailView_asset_groupitem_1">
+					    <text editable="false" id="AssetAudit.AssetDetailView_asset_groupitem_1__assetdesc" resourceAttribute="description"/>
+					</groupitem>
+					<groupitem id="AssetAudit.AssetDetailView_asset_groupitem_2">
+						<text editable="false" id="AssetAudit.AssetDetailView_asset_groupitem_2__status" label="Status" resourceAttribute="statusdesc"/>
+					</groupitem>
+					<groupitem id="AssetAudit.AssetDetailView_asset_groupitem_3">
+					    <text editable="false" id="AssetAudit.AssetDetailView_asset_groupitem_3__lastauditdate" label="Last Audit Date" resourceAttribute="lastauditdate"/>
+					</groupitem>
+					<groupitem id="AssetAudit.AssetDetailView_asset_groupitem_4">
+						<text editable="false" id="AssetAudit.AssetDetailView_asset_groupitem_4__location" label="Location" resourceAttribute="location"/>
+					    <text editable="false" id="AssetAudit.AssetDetailView_asset_groupitem_4__locationdesc" resourceAttribute="locationdesc"/>
+					</groupitem>
+				</group>
+			</container>
+		</view>
+		
+		<!--Create Asset Details view -->
+		<view id="AssetAudit.NewAssetView" label="Asset Details" resource="asset">
+			<requiredResources id="AssetAudit.NewAssetView_requiredResources">
+				<requiredResource id="AssetAudit.NewAssetView_domainAssetstatus" name="domainAssetStatus"/>
+				<requiredResource id="AssetAudit.NewAssetView_additionalcalendar" name="additionalcalendar"/>
+				<requiredResource id="AssetAudit.NewAssetView_additionalshift" name="additionalshift"/>
+				<requiredResource id="AssetAudit.NewAssetView_failurecodes" name="failureListResource"/>
+			</requiredResources>	
+			<container id="AssetAudit.NewAssetView_AssetAudit_container_0" resource="asset">
+				<errorIndicator id="AssetAudit.NewAssetView_errorIndicator"/>
+				<group id="AssetAudit.NewAssetView_group_0">
+					<groupitem id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.EditStatusView_0" layout="Item1Button1" transitionTo="AssetAudit.EditStatusView">
+						<text editable="false" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.EditStatusView_0_statusdesc_Status" label="Status" labelCss="editableLabel" layoutInsertAt="item1" resourceAttribute="statusdesc"/>
+					</groupitem>
+					<groupitem id="AssetAudit.NewAssetView_asset_groupitem_0">
+						<text codeScannable="true" editable="true" id="AssetAudit.NewAssetView_asset_groupitem_0_wonum_asset" label="Asset" placeHolder="Tap to enter" required="true" resourceAttribute="assetnum"/>
+					</groupitem>
+					<groupitem id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.DescriptionView_0" transitionTo="AssetAudit.DescriptionView">
+						<text editable="true" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.DescriptionView_0_description_Description" label="Description" placeHolder="Tap to enter" resourceAttribute="description"/>
+					</groupitem>	
+					<groupitem id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.EditParentView_0" transitionTo="AssetAudit.EditParentView">
+						<text codeScannable="true" editable="true" id="AssetAudit.NewAssetView_parent_groupitem_AssetAudit.EditParentView_0_asset_Asset" label="Parent" lookup="AssetAudit.ParentLookup" lookupAttribute="parent" placeHolder="Tap to enter" resourceAttribute="parent">
+							<eventHandlers id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.EditParentView_0_asset_Asset_eventHandlers">
+								<eventHandler class="application.handlers.AADetailsHandler" event="validate" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.EditParentView_0_asset_Asset_eventHandlers_validate_asyncvalidateAsset" method="asyncvalidateParent"/>
+							</eventHandlers> 
+						</text>
+						<text editable="false" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.EditParentView_0_parentdesc" resourceAttribute="parentdesc"/>
+					</groupitem>
+					<groupitem id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.EditLocationView_0" transitionTo="AssetAudit.EditLocationView">
+						<text codeScannable="true" editable="true" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.EditLocationView_0_location_Location" label="Location" lookup="AssetAudit.LocationLookup" lookupAttribute="location" placeHolder="Tap to enter" resourceAttribute="location">
+							<eventHandlers id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.EditLocationView_0_location_Location_eventHandlers">
+								<eventHandler class="application.handlers.AADetailsHandler" event="validate" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.EditLocationView_0_location_Location_eventHandlers_validate_asyncvalidateLocation" method="asyncvalidateLocation"/>
+							</eventHandlers>
+						</text> 
+						<text editable="false" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.EditLocationView_0_locationdesc" resourceAttribute="locationdesc"/>
+					</groupitem>
+					<groupitem id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_failurecode">
+						<text editable="true" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_attribute_failurecode" label="Failure Class" lookup="AssetAudit.failureClassLookup" lookupAttribute="failurecode" placeHolder="Tap to enter" resourceAttribute="failurecode">
+						    <eventHandlers id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_attribute_failurecode_eventHandlers">
+						        <eventHandler class="application.handlers.AADetailsHandler" event="validate" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_attribute_failurecode_validate" method="validateFailureCode"/>
+						    </eventHandlers>
+						</text>
+					</groupitem>
+					<groupitem id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.Itemgroupitem_0">
+						<text editable="true" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.Itemgroupitem_0_itemnum" label="Rotating Item" lookup="AssetAudit.RotatingItemLookup" lookupAttribute="itemnum" placeHolder="Tap to enter" resourceAttribute="itemnum">
+							<eventHandlers id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.Itemgroupitem_0_eventHandlers">
+								<eventHandler class="application.handlers.AADetailsHandler" event="validate" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit.Itemgroupitem_0_validate_asyncValidateItem" method="asyncValidateItem"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+				</group>
+				<group id="AssetAudit.NewAssetView_group_2">
+					<groupitem id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_priority">
+						<text editable="true" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_attribute_priority" label="Priority" placeHolder="Tap to enter" resourceAttribute="priority"/>
+					</groupitem>										
+					<groupitem id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_type">
+						<text editable="true" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_attribute_assettype" label="Type" lookup="AssetAudit.AssetTypeLookup" placeHolder="Tap to enter" resourceAttribute="assettype"/>
+					</groupitem>
+					<groupitem id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_calendar">
+						<text editable="true" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_attribute_calendar" label="Calendar" lookup="AssetAudit.calendarLookup" lookupAttribute="calnum" placeHolder="Tap to enter" resourceAttribute="calnum"/>
+					</groupitem>
+					<groupitem id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_shift">
+						<text editable="true" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_attribute_shift" label="Shift" lookup="AssetAudit.shiftLookup" lookupAttribute="shiftnum" placeHolder="Tap to enter" resourceAttribute="shiftnum"/>
+					</groupitem>
+					<groupitem id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_isrunning">
+						<checkbox editable="false" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_attribute_assetup" label="Asset Up" resourceAttribute="isrunning"/>
+					</groupitem>						
+					<groupitem id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_updownstatusdate">
+						<text editable="false" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_attribute_updownstatusdate" label="Status Date" resourceAttribute="updownstatusdate"/>
+					</groupitem>				
+					<groupitem id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_totdowntime">
+						<text editable="false" id="AssetAudit.NewAssetView_asset_groupitem_AssetAudit_attribute_totaldowntime" label="Total Downtime" resourceAttribute="totdowntime"/>
+					</groupitem>				
+				</group>													
+				<group id="AssetAudit.NewAssetView_group_5">
+					<groupitem id="AssetAudit.NewAssetView_groupitem_0">
+						<lastupdatetext id="AssetAudit.NewAssetView_lastupdatetext"/>
+					</groupitem>
+				</group>
+			</container>
+			<footer id="AssetAudit.NewAssetView_footer">
+				<button id="AssetAudit.NewAssetView_Cancel_button" label="Cancel">
+					<eventHandlers id="AssetAudit.NewAssetView_Cancel_button_eventHandlers">
+						<eventHandler class="application.handlers.AADetailsHandler" event="click" id="AssetAudit.NewAssetView_Cancel_button_eventHandlers_click_discardNewAssetView" method="discardNewAssetView"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="AssetAudit.NewAssetView_wonum_Create_button" label="Create" primary="true">
+					<eventHandlers id="AssetAudit.NewAssetView_wonum_Create_button_eventHandlers">
+						<eventHandler class="application.handlers.AADetailsHandler" event="click" id="AssetAudit.NewAssetView_wonum_Create_button_eventHandlers_click_commitNewAssetView" method="commitNewAssetView"/>
+					</eventHandlers>
+				</button>
+			</footer>
+			<eventHandlers id="AssetAudit.NewAssetView_eventHandlers">
+				<eventHandler class="application.handlers.AADetailsHandler" event="initialize" id="AssetAudit.NewAssetView_eventHandlers_initialize_initNewAssetView" method="initNewAssetView"/>
+				<eventHandler class="application.handlers.AADetailsHandler" event="back" id="AssetAudit.NewAssetView_eventHandlers_initialize_backNewAssetView" method="cancel"/>
+			</eventHandlers>
+		</view>		
+		
+		<!-- Change Status view -->
+		<view id="AssetAudit.EditStatusView" label="Change Status" resource="asset" showOverflow="false">
+			<requiredResources id="AssetAudit.EditStatusView_requiredResources">
+				<requiredResource id="AssetAudit.EditStatusView_statusChangeResource" name="statusChangeResource"/>
+			</requiredResources>
+			
+			<container id="AssetAudit.EditStatusView_asset_container_0" resource="asset">
+				<group id="AssetAudit.EditStatusView_group_0">
+					<groupitem id="AssetAudit.EditStatusView_asset_groupitem_0">
+						<text editable="false" id="AssetAudit.EditStatusView_asset_groupitem_0_assetnum_Asset" label="Asset" resourceAttribute="assetnum"/>
+						<text editable="false" id="AssetAudit.EditStatusView_asset_groupitem_0_statusdesc_Status" label="Status" resourceAttribute="status"/>
+					</groupitem>
+				</group>
+			</container>
+			<container id="AssetAudit.EditStatusView_statusChangeResource_container_0" resource="statusChangeResource">
+				<group id="AssetAudit.EditStatusView_group_1">
+					<!-- <groupitem id="AssetAudit.EditStatusView_statusChangeResource_groupitem_0"> 
+						<text editable="true" id="AssetAudit.EditStatusView_statusChangeResource_groupitem_0_changedate_StatusDate" label="Status Date" placeHolder="Select" required="true" resourceAttribute="changedate"/>
+					</groupitem> -->
+					<groupitem id="AssetAudit.EditStatusView_statusChangeResource_groupitem_1">
+						<text editable="false" id="AssetAudit.EditStatusView_statusChangeResource_groupitem_1_statusdesc_NewStatus" label="New Status" lookup="AssetAudit.statusLookup" placeHolder="Select from list" required="true" resourceAttribute="statusdesc"/>
+					</groupitem>
+					<!-- <groupitem id="AssetAudit.EditStatusView_statusChangeResource_groupitem_2">
+						<text editable="true" id="AssetAudit.EditStatusView_statusChangeResource_groupitem_2_memo_Memo" label="Memo" placeHolder="Tap to enter" resourceAttribute="memo"/>
+					</groupitem> -->
+					<groupitem id="AssetAudit.EditStatusView_statusChangeResource_groupitem_3">
+						<checkbox id="AssetAudit.EditStatusView_rolltoallchildren" label="Roll New Status to All Child Assets?" resourceAttribute="rolltoallchildren"/>
+					</groupitem>
+					<groupitem id="AssetAudit.EditStatusView_statusChangeResource_groupitem_4">
+						<checkbox id="AssetAudit.EditStatusView_removefromactiveroutes" label="Remove Asset Reference from Active Routes?" resourceAttribute="removefromactiveroutes"/>
+					</groupitem>
+					<groupitem id="AssetAudit.EditStatusView_statusChangeResource_groupitem_5">
+						<checkbox id="AssetAudit.EditStatusView_removefromactivesp" label="Remove Asset Reference from Active Safety Plans?" resourceAttribute="removefromactivesp"/>
+					</groupitem>
+					<groupitem id="AssetAudit.EditStatusView_statusChangeResource_groupitem_6">
+						<checkbox id="AssetAudit.EditStatusView_changepmstatus" label="Change the Status of All Associated PMs to Inactive?" resourceAttribute="changepmstatus"/>
+					</groupitem>
+				</group>
+			</container>
+			<footer id="AssetAudit.EditStatusView_footer">
+				<button id="AssetAudit.EditStatusView_Cancel_button" label="Cancel" resource="asset">
+					<eventHandlers id="AssetAudit.EditStatusView_Cancel_button_eventHandlers">
+						<eventHandler class="application.handlers.StatusChangeHandler" event="click" id="AssetAudit.EditStatusView_Cancel_button_eventHandlers_click_discardStatusChange" method="discardStatusChange"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="AssetAudit.EditStatusView_Save_button" label="Save" primary="true" resource="asset">
+					<eventHandlers id="AssetAudit.EditStatusView_Save_button_eventHandlers">
+						<eventHandler class="application.handlers.StatusChangeHandler" event="click" id="AssetAudit.EditStatusView_Save_button_eventHandlers_click_commitWOStatusChange" method="commitAssetStatusChange"/>
+						<eventHandler class="application.handlers.StatusChangeHandler" event="datachange" id="AssetAudit.EditStatusView_Save_button_eventHandlers_datachange_enableCommitButton" method="enableCommitButton"/>
+					</eventHandlers>
+				</button>
+			</footer>
+
+			<eventHandlers id="AssetAudit.EditStatusView_eventHandlers">
+				<eventHandler class="application.handlers.StatusChangeHandler" event="initialize" id="AssetAudit.EditStatusView_eventHandlers_initialize_initEditStatusView" method="initEditStatusView"/>
+				<eventHandler class="application.handlers.StatusChangeHandler" event="cleanup" id="AssetAudit.EditStatusView_eventHandlers_cleanup_cleanupEditStatusView" method="cleanupEditStatusView"/>	
+			</eventHandlers>
+		</view>
+		
+		<!-- Search Locations view -->
+		<view id="AssetAudit.SearchLocationView" label="Search Locations">
+			<requiredResources id="AssetAudit.SearchLocationView_requiredResources">
+				<requiredResource id="AssetAudit.SearchLocationView_searchLocation" name="searchLocation"/>
+				<requiredResource id="AssetAudit.SearchLocationView_searchAsset" name="searchAsset"/>
+				<requiredResource id="AssetAudit.SearchLocationView_location" name="locations"/>
+			</requiredResources>
+			<container id="AssetAudit.SearchLocationView_searchLocation_container_0" resource="searchLocation">
+				<group id="AssetAudit.SearchLocationView_group_0">
+					<groupitem id="AssetAudit.SearchLocationView_searchLocation_groupitem_1">
+						<text editable="true" id="AssetAudit.SearchLocationView_searchLocation_groupitem_1_location_Location" label="Location" lookup="AssetAudit.LocationLookup" lookupAttribute="location" placeHolder="Tap to enter" resourceAttribute="location"/>
+					</groupitem>
+					<groupitem id="AssetAudit.SearchLocationView_searchLocation_groupitem_2">
+						<text editable="true" id="AssetAudit.SearchLocationView_searchLocation_groupitem_2_description_Description" label="Description" placeHolder="Tap to enter" resourceAttribute="description"/>
+					</groupitem>
+					<groupitem id="AssetAudit.SearchLocationView_searchLocation_groupitem_3">
+						<text editable="true" id="AssetAudit.SearchLocationView_searchLocation_groupitem_3_asset_Asset" label="Asset" lookup="AssetAudit.AssetLookup" lookupAttribute="asset" placeHolder="Tap to enter" resourceAttribute="assetnum"/>
+					</groupitem>
+					<groupitem id="AssetAudit.SearchLocationView_searchLocation_groupitem_4">
+						<text editable="true" id="AssetAudit.SearchLocationView_searchLocation_groupitem_4_assetDesc_AssetDesc" label="Asset Description" placeHolder="Tap to enter" resourceAttribute="assetdesc"/>
+					</groupitem>
+				</group>
+			</container>
+			<footer id="AssetAudit.SearchLocationView_footer">
+				<button id="AssetAudit.SearchLocationView_Clear_button" label="Clear">
+					<eventHandlers id="AssetAudit.SearchLocationView_Clear_button_eventHandlers">
+						<eventHandler class="application.handlers.AAListHandler" event="click" id="AssetAudit.SearchLocationView_Clear_button_eventHandlers_click_clearSearchFields" method="clearSearchFields"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="AssetAudit.SearchLocationView_Search_button" label="Search" primary="true">
+					<eventHandlers id="AssetAudit.SearchLocationView_Search_button_eventHandlers">
+						<eventHandler class="application.handlers.AAListHandler" event="click" id="AssetAudit.SearchLocationView_Search_button_eventHandlers_click_setSearchQuery" method="setSearchQuery"/>
+					</eventHandlers>
+				</button>
+			</footer>
+			<eventHandlers id="AssetAudit.SearchLocationView_eventHandlers">
+				<eventHandler class="application.handlers.AAListHandler" event="initialize" id="AssetAudit.SearchLocationView_eventHandlers_initialize_initSearchData" method="initSearchData"/>
+				<eventHandler class="application.handlers.AAListHandler" event="show" id="AssetAudit.SearchLocationView_eventHandlers_show_showSearch" method="showSearch"/>
+				<eventHandler class="application.handlers.AAListHandler" event="hide" id="AssetAudit.SearchLocationView_eventHandlers_hide_hideSearch" method="hideSearch"/>
+			</eventHandlers>
+		</view>
+		
+		<!-- Search Assets view -->
+		<view id="AssetAudit.SearchAssetView" label="Search Assets">
+			<requiredResources id="AssetAudit.SearchAssetView_requiredResources">
+				<requiredResource id="AssetAudit.SearchAssetView_searchAsset" name="searchAsset"/>
+				<requiredResource id="AssetAudit.SearchAssetView_statusChangeResource" name="statusChangeResource"/>
+				<requiredResource id="AssetAudit.SearchAssetView_domainassetstatus" name="domainAssetStatus"/>
+			</requiredResources>
+			<container id="AssetAudit.SearchAssetView_searchAsset_container_0" resource="searchAsset">
+				<group id="AssetAudit.SearchAssetView_group_0">
+					<groupitem id="AssetAudit.SearchAssetView_searchAsset_groupitem_0">
+						<text editable="true" id="AssetAudit.SearchAssetView_searchAsset_groupitem_0_assetnum_Asset" label="Asset" lookup="AssetAudit.AssetLookup" lookupAttribute="asset" placeHolder="Tap to enter" resourceAttribute="assetnum"/>
+					</groupitem>
+					<groupitem id="AssetAudit.SearchAssetView_searchAsset_groupitem_1">
+						<text editable="true" id="AssetAudit.SearchAssetView_searchAsset_groupitem_1_description_Description" label="Description" placeHolder="Tap to enter" resourceAttribute="assetdesc"/>
+					</groupitem>
+					<groupitem id="AssetAudit.SearchAssetView_searchAsset_groupitem_2">
+						<text editable="true" id="AssetAudit.SearchAssetView_searchAsset_groupitem_2_statusdesc_Status" label="Status" lookup="AssetAudit.statusLookup" lookupAttribute="statusdesc" placeHolder="Tap to select from list" resourceAttribute="statusdesc"/>
+					</groupitem>
+					<groupitem id="AssetAudit.SearchAssetView_searchAsset_groupitem_4">
+						<text codeScannable="true" editable="true" id="AssetAudit.SearchAssetView_searchAsset_groupitem_4_location_Location" label="Location" lookup="AssetAudit.LocationLookup" lookupAttribute="location" placeHolder="Tap to enter" resourceAttribute="location">
+						</text>
+					</groupitem>
+				</group>
+			</container>
+			<footer id="AssetAudit.SearchAssetView_footer">
+				<button id="AssetAudit.SearchAssetView_Clear_button" label="Clear">
+					<eventHandlers id="AssetAudit.SearchAssetView_Clear_button_eventHandlers">
+						<eventHandler class="application.handlers.AADetailsHandler" event="click" id="AssetAudit.SearchAssetView_Clear_button_eventHandlers_click_clearSearchFields" method="clearSearchFields"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="AssetAudit.SearchAssetView_Search_button" label="Search" primary="true">
+					<eventHandlers id="AssetAudit.SearchAssetView_Search_button_eventHandlers">
+						<eventHandler class="application.handlers.AADetailsHandler" event="click" id="AssetAudit.SearchAssetView_Search_button_eventHandlers_click_setSearchQuery" method="setSearchQuery"/>
+					</eventHandlers>
+				</button>
+			</footer>
+			<eventHandlers id="AssetAudit.SearchAssetView_eventHandlers">
+				<eventHandler class="application.handlers.AADetailsHandler" event="initialize" id="AssetAudit.SearchAssetView_eventHandlers_initialize_initSearchData" method="initSearchData"/>
+				<eventHandler class="application.handlers.AADetailsHandler" event="show" id="AssetAudit.SearchAssetView_eventHandlers_show_showSearch" method="showSearch"/>
+				<eventHandler class="application.handlers.AADetailsHandler" event="hide" id="AssetAudit.SearchAssetView_eventHandlers_hide_hideSearch" method="hideSearch"/>
+			</eventHandlers>
+		</view>
+		
+		<!--Asset move view-->
+		<view id="AssetAudit.AssetMoveView" label="Move" resource="assetmoveresource">
+			<requiredResources id="AssetAudit.AssetMoveView_requiredResources">
+				<requiredResource id="AssetAudit.AssetMoveView_asset" name="asset">
+				    <requiredAttribute id="AssetAudit.AssetMoveView_assetmovedflt" name="assetmovedflt" reload="true"/>
+				</requiredResource>    
+				<requiredResource id="AssetAudit.AssetMoveView_localAssetMove" name="assetmoveresource"/>
+				<requiredResource id="AssetAudit.AssetMoveView_locationType" name="domainLocationType"/>
+			</requiredResources>	
+			
+			<container id="AssetAudit.AssetMoveView_AssetAudit_container_1" resource="assetmoveresource">
+				
+			    <group id="AssetAudit.AssetMoveView_group_1">
+					<groupitem id="AssetAudit.AssetMoveView_asset_groupitem_4" layout="AssetMove">
+						<text editable="false" id="AssetAudit.AssetMoveView_asset_groupitem_4__Site" label="Site" layoutInsertAt="item1" resourceAttribute="site"/>
+						<text editable="true" id="AssetAudit.AssetMoveView_asset_groupitem_4__SiteTo" label="To Site" layoutInsertAt="item2" lookup="AssetAudit.AssetMove.SiteLookup" resourceAttribute="toSite">
+						    <eventHandlers id="AssetAudit.AssetMoveView_asset_groupitem_1__SiteTo_eventHandlers">
+								<eventHandler class="application.handlers.AAMoveHandler" event="validate" id="AssetAudit.AssetMoveView_asset_groupitem_1__SiteTo_eventHandlers_validate_toSite" method="setSite"/>
+							</eventHandlers> 
+						</text>
+					</groupitem>
+					<groupitem id="AssetAudit.AssetMoveView_asset_groupitem_2" layout="AssetMove">
+						<text editable="false" id="AssetAudit.AssetMoveView_asset_groupitem_2__Location" label="Location" layoutInsertAt="item3" resourceAttribute="location"/>
+						<text codeScannable="true" editable="true" id="AssetAudit.AssetMoveView_asset_groupitem_2__LocationTo" label="To Location" layoutInsertAt="item4" lookup="AssetAudit.AssetMove.LocationLookup" resourceAttribute="toLocation">
+						    <eventHandlers id="AssetAudit.AssetMoveView_asset_groupitem_1__LocationTo_eventHandlers">
+								<eventHandler class="application.handlers.AAMoveHandler" event="validate" id="AssetAudit.AssetMoveView_asset_groupitem_1__LoationTo_eventHandlers_validate_toLocation" method="setLocation"/>
+							</eventHandlers> 
+						</text>
+					</groupitem>
+					<groupitem id="AssetAudit.AssetMoveView_asset_groupitem_1" layout="AssetMove">
+						<text editable="false" id="AssetAudit.AssetMoveView_asset_groupitem_1__Parent" label="Parent" layoutInsertAt="item5" resourceAttribute="parent"/>
+						<text codeScannable="true" editable="true" id="AssetAudit.AssetMoveView_asset_groupitem_1__ParentTo" label="To Parent" layoutInsertAt="item6" lookup="AssetAudit.AssetMove.ParentLookup" resourceAttribute="toParent">
+						    <eventHandlers id="AssetAudit.AssetMoveView_asset_groupitem_1__ParentTo_eventHandlers">
+								<eventHandler class="application.handlers.AAMoveHandler" event="validate" id="AssetAudit.AssetMoveView_asset_groupitem_1__ParentTo_eventHandlers_validate_toParent" method="setParent"/>
+							</eventHandlers> 
+						</text>	
+					</groupitem>
+					<groupitem id="AssetAudit.AssetMoveView_asset_groupitem_5" layout="AssetMove">
+						<text editable="true" id="AssetAudit.AssetMoveView_asset_groupitem_5__NewNumber" label="New Asset #" layoutInsertAt="item7" resourceAttribute="newAsset"/>
+						<eventHandlers id="AssetAudit.AssetMoveView_asset_groupitem_5_eventHandlers">
+							<eventHandler class="application.handlers.AAMoveHandler" event="render" id="AssetAudit.AssetMoveView_asset_groupitem_5__eventHandlers_redner" method="showNewAsset"/>
+						</eventHandlers> 
+					</groupitem>
+					<groupitem id="AssetAudit.AssetMoveView_asset_groupitem_3" layout="AssetMove">
+						<text editable="true" id="AssetAudit.AssetMoveView_asset_groupitem_3__BinTo" label="To Bin" layoutInsertAt="item8" resourceAttribute="toBin">
+						    <eventHandlers id="AssetAudit.AssetMoveView_asset_groupitem_1__binTo_eventHandlers">
+							<eventHandler class="application.handlers.AAMoveHandler" event="validate" id="AssetAudit.AssetMoveView_asset_groupitem_1__binTo_eventHandlers_validate_tobin" method="setBin"/>
+						</eventHandlers>
+						</text>
+						<eventHandlers id="AssetAudit.AssetMoveView_asset_groupitem_3__binTo_eventHandlers">
+							<eventHandler class="application.handlers.AAMoveHandler" event="render" id="AssetAudit.AssetMoveView_asset_groupitem_3__eventHandlers_redner2" method="hasBin"/>
+						</eventHandlers> 
+					</groupitem>
+				</group>
+			</container>
+			<footer id="AssetAudit.AssetMove_completeMove_footer">
+				<button id="AssetAudit.AssetMove_cancelMove_button" label="Cancel">
+					<eventHandlers id="AssetAudit.AssetMove.cancel_eventHandlers">
+						<eventHandler class="application.handlers.AAMoveHandler" event="click" id="AssetAudit.AssetMove_cancel_button_eventHandlers_click_cancel" method="cancel"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="AssetAudit.AssetMove_saveMove_button" label="Save">
+					<eventHandlers id="AssetAudit.AssetMove_saveAudit_eventHandlers">
+						<eventHandler class="application.handlers.AAMoveHandler" event="click" id="AssetAudit.AssetMove_save_button_eventHandlers_click_save" method="save"/>
+						<eventHandler class="application.handlers.AAMoveHandler" event="render" id="AssetAudit.AssetMove_save_button_eventHandlers_render_save" method="disableSave"/>
+					</eventHandlers>
+				</button>
+			</footer>
+			<eventHandlers id="AssetAudit.AssetMoveView.move_eventHandlers">
+				<eventHandler class="application.handlers.AAMoveHandler" event="initialize" id="AssetAudit.AssetMoveView_move_eventHandlers_render" method="setMoveResource"/>
+			</eventHandlers>
+		</view>
+		
+		<dialog id="AssetAudit.RequiredSearchFieldMissing">
+			<container id="AssetAudit.RequiredSearchFieldMissing_container_0">
+				<text editable="false" id="AssetAudit.RequiredSearchFieldMissing_container_0_Somerequiredfields" value="Some required fields are empty. Specify the missing information."/>
+				<button id="AssetAudit.RequiredSearchFieldMissing_Ok_button" label="Ok" primary="true">
+	                <eventHandlers id="AssetAudit.RequiredSearchFieldMissing_Ok_button_eventHandlers">
+						<eventHandler class="application.handlers.AADetailsHandler" event="click" id="AssetAudit.RequiredSearchFieldMissing_Ok_button_eventHandlers_click_hideDialog" method="hideDialog"/>
+		            </eventHandlers>
+	            </button>
+			</container>
+		</dialog>		
+		
+		<dialog id="AssetAudit.CancelConfirmationDialog">
+			<container cssClass="mblSimpleDialogText" id="AssetAudit.CancelConfirmationDialog_container_0">
+				<text id="AssetAudit.CancelConfirmationDialog_container_0_Doyouwanttocance" value="Do you want to cancel the work order?"/>
+			</container>
+			<container cssClass="mblSimpleDialogFooter" id="AssetAudit.CancelConfirmationDialog_container_1">						
+			    <button cssClass="mblPrimaryButton" id="AssetAudit.CancelConfirmationDialog_Yes_button" label="Yes">
+					<eventHandlers id="AssetAudit.CancelConfirmationDialog_Yes_button_eventHandlers">
+						<eventHandler class="application.handlers.StatusChangeHandler" event="click" id="AssetAudit.CancelConfirmationDialog_Yes_button_eventHandlers_click_handleYesCancelWorkClick" method="handleYesCancelWorkClick"/>
+					</eventHandlers>
+				</button>	
+				<button id="AssetAudit.CancelConfirmationDialog_No_button" label="No">
+					<eventHandlers id="AssetAudit.CancelConfirmationDialog_No_button_eventHandlers">
+						<eventHandler class="application.handlers.StatusChangeHandler" event="click" id="AssetAudit.CancelConfirmationDialog_No_button_eventHandlers_click_handleNoCancelWorkClick" method="handleNoCancelWorkClick"/>
+					</eventHandlers>
+				</button>								
+			</container>
+		</dialog>
+
+		<!-- *********************** -->
+		<!-- Lookup Section -->
+		<!-- *********************** -->
+
+		<!-- Location lookup -->
+		<lookup filterClass="application.handlers.AADetailsHandler" filterMethod="filterLocationForLookup" id="AssetAudit.LocationLookup" label="Select Location" resource="locations">
+			<requiredResources id="AssetAudit.LocationLookup_requiredResources">
+				<requiredResource id="AssetAudit.LocationLookup_additionallocations" name="locations"/>
+			</requiredResources>
+
+			<list id="AssetAudit.LocationLookup_additionallocations_list" resource="locations">
+				<searchAttributes id="AssetAudit.LocationLookup_additionallocations_searchAttributes">
+					<searchAttribute id="AssetAudit.LocationLookup_additionallocations_searchAttribute_location" name="location"/>
+					<searchAttribute id="AssetAudit.LocationLookup_additionallocations_searchAttribute_description" name="description"/>
+				</searchAttributes>
+				<listItemTemplate id="AssetAudit.LocationLookup_additionallocations_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.LocationLookup_additionallocations_Item1Desc1_location" layoutInsertAt="item1" resourceAttribute="location"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.LocationLookup_additionallocations_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="AssetAudit.LocationLookup_returnAttributes">
+				<returnAttribute id="AssetAudit.LocationLookup_location_location" sourceAttribute="location" targetAttribute="location"/>
+				<returnAttribute id="AssetAudit.LocationLookup_description_locationdesc" sourceAttribute="description" targetAttribute="locationdesc"/>
+			</returnAttributes>
+		</lookup>
+
+		<!-- Asset Status lookup -->
+		<lookup filterClass="application.handlers.StatusChangeHandler" filterMethod="filterAssetStatus" id="AssetAudit.statusLookup" label="Asset Status" resource="domainAssetStatus">
+			<requiredResources id="AssetAudit.statusLookup_requiredResources">
+				<requiredResource id="AssetAudit.statusLookup_domainassetstatus" name="domainAssetStatus"/>
+				<requiredResource id="AssetAudit.statusLookup_asset" name="asset">
+					<!-- requiredAttribute id="AssetAudit.statusLookup_workOrder_actuallaborlist" name="actuallaborlist"/-->
+				</requiredResource>
+			</requiredResources>
+
+			<list id="AssetAudit.statusLookup_domainassetstatus_list" resource="domainAssetStatus">
+				<listItemTemplate id="AssetAudit.statusLookup_domainassetstatus_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.statusLookup_domainassetstatus_Item1Desc1_value" layoutInsertAt="item1" resourceAttribute="value"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.statusLookup_domainassetstatus_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+					<eventHandlers id="AssetAudit.statusLookup_eventHandlers">
+						<eventHandler class="application.handlers.AADetailsHandler" event="click" id="AssetAudit.AssetListView_eventHandlers_click" method="statusChanged"/>
+					</eventHandlers>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="AssetAudit.statusLookup_returnAttributes">
+				<returnAttribute id="AssetAudit.statusLookup_value_status" sourceAttribute="value" targetAttribute="status"/>
+				<returnAttribute id="AssetAudit.statusLookup_description_statusdesc" sourceAttribute="description" targetAttribute="statusdesc"/>
+				<returnAttribute id="AssetAudit.statusLookup_maxvalue_maxvalue" sourceAttribute="maxvalue" targetAttribute="maxvalue"/>
+			</returnAttributes>
+		</lookup>
+
+		<!-- Shift Lookup -->
+		<lookup id="AssetAudit.shiftLookup" label="Shifts" resource="additionalshift">
+			<requiredResources id="AssetAudit.shiftLookup_requiredResources">
+				<requiredResource id="AssetAudit.shiftLookup_calendar" name="additionalshift"/>
+			</requiredResources>
+			<list id="AssetAudit.filterShift_list" resource="additionalshift">
+				<listItemTemplate id="AssetAudit.shiftLookup_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.shiftLookup_Item1Desc1_shiftnum" layoutInsertAt="item1" resourceAttribute="shiftnum"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.shiftLookup_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="AssetAudit.shiftLookup_returnAttributes">
+				<returnAttribute id="AssetAudit.shiftLookup_value_status" sourceAttribute="shiftnum" targetAttribute="shiftnum"/>
+				<!-- <returnAttribute id="AssetAudit.shiftLookup_description_statusdesc" sourceAttribute="description" targetAttribute="description"/> -->
+			</returnAttributes>
+		</lookup>
+		
+		<!-- Downtime Code Lookup for Report Downtime-->
+		<lookup id="AssetAudit.DowntimeCodeLookup" label="Downtime Code" resource="domainDownCode">
+			<requiredResources id="AssetAudit.DowntimeCodeLookup_requiredResources">
+				<requiredResource id="AssetAudit.DowntimeCodeLookup_domainLocAssetStatus" name="domainDownCode"/>
+			</requiredResources>
+
+			<list id="AssetAudit.DowntimeCodeLookup_domainLocAssetStatus_list" resource="domainDownCode">
+				<listItemTemplate id="AssetAudit.DowntimeCodeLookup_domainLocAssetStatus_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.DowntimeCodeLookup_domainLocAssetStatus_Item1Desc1_value" layoutInsertAt="item1" resourceAttribute="value"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.DowntimeCodeLookup_domainLocAssetStatus_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="AssetAudit.DowntimeCodeLookup_returnAttributes">
+				<returnAttribute id="AssetAudit.DowntimeCodeLookup_value_status" sourceAttribute="value" targetAttribute="downtimecode"/>
+			</returnAttributes>
+		</lookup>
+		
+		<!-- Calendar Lookup -->
+		<lookup id="AssetAudit.calendarLookup" label="Calendar" resource="additionalcalendar">
+			<requiredResources id="AssetAudit.calendarLookup_requiredResources">
+				<requiredResource id="AssetAudit.calendarLookup_calendar" name="additionalcalendar"/>
+			</requiredResources>
+			<list id="AssetAudit.filterCalendar_list" resource="additionalcalendar">
+				<listItemTemplate id="AssetAudit.calendarLookup_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.calendarLookup_Item1Desc1_calnum" layoutInsertAt="item1" resourceAttribute="calnum"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.calendarLookup_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="AssetAudit.calendarLookup_returnAttributes">
+				<returnAttribute id="AssetAudit.calendarLookup_value_status" sourceAttribute="calnum" targetAttribute="calnum"/>
+				<!-- <returnAttribute id="AssetAudit.calendarLookup_description_statusdesc" sourceAttribute="description" targetAttribute="description"/> -->
+			</returnAttributes>
+		</lookup>
+		
+		<!-- Asset Type lookup -->
+		<lookup id="AssetAudit.AssetTypeLookup" label="Asset Type" resource="domainAssetType">
+			<requiredResources id="AssetAudit.AssetTypeLookup_requiredResources">
+				<requiredResource id="AssetAudit.AssetTypeLookup_domainassettype" name="domainAssetType"/>
+			</requiredResources>
+
+			<list id="AssetAudit.AssetTypeLookup_domainassettype_list" resource="domainAssetType">
+				<listItemTemplate id="AssetAudit.AssetTypeLookup_domainassettype_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.AssetTypeLookup_domainassettype_Item1Desc1_value" layoutInsertAt="item1" resourceAttribute="value"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.AssetTypeLookup_domainassettype_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="AssetAudit.AssetTypeLookup_returnAttributes">
+				<returnAttribute id="AssetAudit.AssetTypeLookup_value_status" sourceAttribute="value" targetAttribute="assettype"/>
+			</returnAttributes>
+		</lookup>
+
+		<!-- Failure Class Lookup -->
+		<lookup filterClass="application.handlers.AADetailsHandler" filterMethod="filterFailureClass" id="AssetAudit.failureClassLookup" label="Failure Class" resource="failureListResource">
+			<requiredResources id="AssetAudit.failureClassLookup_requiredResources">
+				<requiredResource id="AssetAudit.failureClassLookup_domainwostatus" name="failureListResource"/>
+			</requiredResources>
+			<list id="AssetAudit.filterFailureClass_list" resource="failureListResource">
+				<listItemTemplate id="AssetAudit.failureClassLookup_domainwostatus_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.failureClassLookup_Item1Desc1_failurecode" layoutInsertAt="item1" resourceAttribute="failurecode"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.failureClassLookup_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="AssetAudit.failureClassLookup_returnAttributes">
+				<returnAttribute id="AssetAudit.failureClassLookup_value_status" sourceAttribute="failurecode" targetAttribute="failurecode"/>
+				<returnAttribute id="AssetAudit.failureClassLookup_description_statusdesc" sourceAttribute="description" targetAttribute="failurecodedesc"/>
+			</returnAttributes>
+		</lookup>
+				
+		<!-- Parent lookup -->
+		<lookup filterClass="application.handlers.AADetailsHandler" filterMethod="filterAssetForLookup" id="AssetAudit.ParentLookup" label="Select Parent" resource="additionalasset">
+			<requiredResources id="AssetAudit.ParentLookup_requiredResources">
+				<requiredResource id="AssetAudit.ParentLookup_additionalasset" name="additionalasset"/>
+			</requiredResources>
+
+			<list id="AssetAudit.ParentLookup_additionalasset_list" resource="additionalasset">
+				<searchAttributes id="AssetAudit.ParentLookup_additionalasset_searchAttributes">
+					<searchAttribute id="AssetAudit.ParentLookup_additionalasset_searchAttribute_assetnum" name="assetnum"/>
+					<searchAttribute id="AssetAudit.ParentLookup_additionalasset_searchAttribute_description" name="description"/>
+					<searchAttribute id="AssetAudit.ParentLookup_additionalasset_searchAttribute_location" name="location"/>
+					<searchAttribute id="AssetAudit.ParentLookup_additionalasset_searchAttribute_locationdesc" name="locationdesc"/>
+				</searchAttributes>
+				<listItemTemplate id="AssetAudit.ParentLookup_additionalasset_listItemTemplate_Item2Desc2" layout="Item2Desc2">
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.ParentLookup_additionalasset_Item2Desc2_assetnum" layoutInsertAt="item1" resourceAttribute="assetnum"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.ParentLookup_additionalasset_Item2Desc2_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+					<listtext id="AssetAudit.ParentLookup_additionalasset_Item2Desc2_location" layoutInsertAt="item2" resourceAttribute="location"/>
+					<listtext id="AssetAudit.ParentLookup_additionalasset_Item2Desc2_locationdesc" layoutInsertAt="desc2" resourceAttribute="locationdesc"/>
+				</listItemTemplate>
+			</list>
+
+			<returnAttributes id="AssetAudit.ParentLookup_returnAttributes">
+				<returnAttribute id="AssetAudit.ParentLookup_assetnum_asset" sourceAttribute="assetnum" targetAttribute="parent"/>
+				<returnAttribute id="AssetAudit.ParentLookup_description_assetdesc" sourceAttribute="description" targetAttribute="parentdesc"/>
+			</returnAttributes>
+		</lookup>
+		
+		<!-- Asset lookup -->
+		<lookup filterClass="application.handlers.AADetailsHandler" filterMethod="filterAssetForLookup" id="AssetAudit.AssetLookup" label="Select Asset" resource="additionalasset">
+			<requiredResources id="AssetAudit.AssetLookup_requiredResources">
+				<requiredResource id="AssetAudit.AssetLookup_additionalasset" name="additionalasset"/>
+			</requiredResources>
+
+			<list id="AssetAudit.AssetLookup_additionalasset_list" resource="additionalasset">
+				<searchAttributes id="AssetAudit.AssetLookup_additionalasset_searchAttributes">
+					<searchAttribute id="AssetAudit.AssetLookup_additionalasset_searchAttribute_assetnum" name="assetnum"/>
+					<searchAttribute id="AssetAudit.AssetLookup_additionalasset_searchAttribute_description" name="description"/>
+					<searchAttribute id="AssetAudit.AssetLookup_additionalasset_searchAttribute_location" name="location"/>
+					<searchAttribute id="AssetAudit.AssetLookup_additionalasset_searchAttribute_locationdesc" name="locationdesc"/>
+				</searchAttributes>
+				<listItemTemplate id="AssetAudit.AssetLookup_additionalasset_listItemTemplate_Item2Desc2" layout="Item2Desc2">
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.AssetLookup_additionalasset_Item2Desc2_assetnum" layoutInsertAt="item1" resourceAttribute="assetnum"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.AssetLookup_additionalasset_Item2Desc2_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+					<listtext id="AssetAudit.AssetLookup_additionalasset_Item2Desc2_location" layoutInsertAt="item2" resourceAttribute="location"/>
+					<listtext id="AssetAudit.AssetLookup_additionalasset_Item2Desc2_locationdesc" layoutInsertAt="desc2" resourceAttribute="locationdesc"/>
+				</listItemTemplate>
+			</list>
+
+			<returnAttributes id="AssetAudit.AssetLookup_returnAttributes">
+				<returnAttribute id="AssetAudit.AssetLookup_assetnum_asset" sourceAttribute="assetnum" targetAttribute="assetnum"/>
+				<returnAttribute id="AssetAudit.AssetLookup_description_assetdesc" sourceAttribute="description" targetAttribute="parentdesc"/>
+			</returnAttributes>
+		</lookup>
+		
+		<!-- Rotating Item lookup -->
+		<lookup id="AssetAudit.RotatingItemLookup" label="Select Rotating Item" resource="additionalitem">
+			<requiredResources id="AssetAudit.RotatingItemLookup_requiredResources">
+				<requiredResource id="AssetAudit.RotatingItemLookup_additionalitem" name="additionalitem"/>
+			</requiredResources>
+
+			<list id="AssetAudit.RotatingItemLookup_additionalitem_list" resource="additionalitem">
+				<searchAttributes id="AssetAudit.RotatingItemLookup_additionalitem_searchAttributes">
+					<searchAttribute id="AssetAudit.RotatingItemLookup_additionalitem_searchAttribute_itemnum" name="itemnum"/>
+					<searchAttribute id="AssetAudit.RotatingItemLookup_additionalitem_searchAttribute_description" name="description"/>
+				</searchAttributes>
+				<listItemTemplate id="AssetAudit.RotatingItemLookup_additionalitem_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.RotatingItemLookup_additionalitem_Item1Desc1_itemnum" layoutInsertAt="item1" resourceAttribute="itemnum"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.RotatingItemLookup_additionalitem_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="AssetAudit.RotatingItemLookup_returnAttributes">
+				<returnAttribute id="AssetAudit.RotatingItemLookup_itemnum_itemid" sourceAttribute="itemnum" targetAttribute="itemnum"/>
+			</returnAttributes>
+		</lookup>
+				
+				
+		<!-- Asset Move Lookups -->
+		
+		<lookup filterClass="application.handlers.AAMoveHandler" filterMethod="filterParentForLookup" id="AssetAudit.AssetMove.ParentLookup" label="Select Parent" resource="moveParent">
+			<requiredResources id="AssetAudit.AssetMove.ParentLookup_requiredResources">
+				<requiredResource id="AssetAudit.AssetMove.ParentLookup_additionalasset" name="moveParent"/>
+			</requiredResources>
+			<list id="AssetAudit.AssetMove.ParentLookup_additionalasset_list" resource="moveParent">
+				<searchAttributes id="AssetAudit.AssetMove.ParentLookup_additionalasset_searchAttributes">
+					<searchAttribute id="AssetAudit.AssetMove.ParentLookup_additionalasset_searchAttribute_assetnum" name="assetnum"/>
+					<searchAttribute id="AssetAuditAssetMove..ParentLookup_additionalasset_searchAttribute_description" name="description"/>
+				</searchAttributes>
+				<listItemTemplate id="AssetAudit.AssetMove.ParentLookup_additionalasset_listItemTemplate_Item2Desc2" layout="Item2Desc2">
+					<listtext cssClass="bold textappearance-medium" id="AssetAuditAssetMove..ParentLookup_additionalasset_Item2Desc2_assetnum" layoutInsertAt="item1" resourceAttribute="assetnum"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.AssetMove.ParentLookup_additionalasset_Item2Desc2_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="AssetAudit.AssetMove.ParentLookup_returnAttributes">
+				<returnAttribute id="AssetAudit.AssetMove.ParentLookup_assetnum_asset" sourceAttribute="assetnum" targetAttribute="toParent"/>
+			</returnAttributes>
+		</lookup>
+		
+		<lookup filterClass="application.handlers.AAMoveHandler" filterMethod="filterLocationForLookup" id="AssetAudit.AssetMove.LocationLookup" label="Select Location" resource="moveLocations">
+			<requiredResources id="AssetAudit.AssetMove.LocationLookup_requiredResources">
+				<requiredResource id="AssetAudit.AssetMove.LocationLookup_additionallocations" name="moveLocations"/>
+			</requiredResources>
+
+			<list id="AssetAudit.AssetMove.LocationLookup_additionallocations_list" resource="moveLocations">
+				<searchAttributes id="AssetAudit.AssetMove.LocationLookup_additionallocations_searchAttributes">
+					<searchAttribute id="AssetAudit.AssetMove.LocationLookup_additionallocations_searchAttribute_location" name="location"/>
+					<searchAttribute id="AssetAudit.AssetMove.LocationLookup_additionallocations_searchAttribute_description" name="description"/>
+				</searchAttributes>
+				<listItemTemplate id="AssetAudit.AssetMove.LocationLookup_additionallocations_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.AssetMove.LocationLookup_additionallocations_Item1Desc1_location" layoutInsertAt="item1" resourceAttribute="location"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.AssetMove.LocationLookup_additionallocations_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="AssetAudit.AssetMove.LocationLookup_returnAttributes">
+			   	<returnAttribute id="AssetAudit.AssetMove.LocationLookup_locationtype_locationtype" sourceAttribute="locationtype" targetAttribute="locationtype"/>
+				<returnAttribute id="AssetAudit.AssetMove.LocationLookup_location_location" sourceAttribute="location" targetAttribute="toLocation"/>
+			</returnAttributes>
+		</lookup>	
+
+		<lookup id="AssetAudit.AssetMove.SiteLookup" label="Select Site" resource="site">
+			<requiredResources id="AssetAudit.AssetMove.SiteLookup_requiredResources">
+				<requiredResource id="AssetAudit.AssetMove.SiteLookup_additionalSites" name="site"/>
+			</requiredResources>
+
+			<list id="AssetAudit.AssetMove.SiteLookup_additionalSites_list" resource="site">
+				<searchAttributes id="AssetAudit.AssetMove.SiteLookup_additionalSites_searchAttributes">
+					<searchAttribute id="AssetAudit.AssetMove.SiteLookup_additionalSites_searchAttribute_Site" name="siteid"/>
+					<searchAttribute id="AssetAudit.AssetMove.SiteLookup_additionalSites_searchAttribute_description" name="orgid"/>
+				</searchAttributes>
+				<listItemTemplate id="AssetAudit.AssetMove.SiteLookup_additionalSites_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.AssetMove.SiteLookup_additionalSites_Item1Desc1_Site" layoutInsertAt="item1" resourceAttribute="siteid"/>
+					<listtext cssClass="bold textappearance-medium" id="AssetAudit.AssetMove.SiteLookup_additionalSites_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="orgid"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="AssetAudit.AssetMove.SiteLookup_returnAttributes">
+				<returnAttribute id="AssetAudit.AssetMove.SiteLookup_Site_Site" sourceAttribute="siteid" targetAttribute="toSite"/>
+			</returnAttributes>
+		</lookup>	
+		
+	</ui>
+
+	<!-- Data Definition section -->
+	<data id="data">
+	<!-- Asset resource -->
+		<resource class="application.business.AssetObject" defaultOrderBy="assetnum asc" describedBy="http://open-services.net/ns/asset#Asset" hasManagedQuery="true" id="asset" name="asset" pageSize="20" providedBy="/oslc/sp/AssetManagement">
+			<attributes id="asset_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="asset_identifier_dctermsidentifier" index="true" name="identifier"/>
+				<attribute describedByProperty="dcterms:title" id="asset_description_dctermstitle" index="true" name="description"/>
+				<attribute describedByProperty="spi:description_longdescription" id="asset_longdescription_dctermsdescription" name="longdescription"/>
+				<attribute describedByProperty="oslc:shortTitle" id="asset_assetnum_oslcshortTitle" index="true" name="assetnum"/>
+				<attribute describedByProperty="spi:location{oslc:shortTitle}" id="asset_location_spilocationoslcshortTitle" index="true" name="location"/> <!--  referenceResource="locations"/>-->
+				<attribute describedByProperty="spi:location{dcterms:title}" id="asset_locationdesc_spilocationdctermstitle" index="true" name="locationdesc"/> <!--  referenceResource="locations"/>-->
+				<attribute describedByProperty="spi:location{spi:description_longdescription}" id="asset_locationld_spilocationspidescription_longdescription" name="locationld"/>
+				<attribute describedByProperty="spi:status" id="asset_status_spistatus" index="true" method="statusChanged" name="status"/>
+				<attribute describedByProperty="spi:statusdate" id="asset_changestatusdate_spi_statusdate" name="changestatusdate"/>
+				<attribute describedByProperty="spi:siteid" id="asset_siteid_spi_siteid" index="true" name="siteid"/>
+				<attribute describedByProperty="spi:orgid" id="asset_orgid_spi_orgid" name="orgid"/>
+				<attribute describedByProperty="spi:assetaudit" describedByResource="assetAuditResource" id="asset_assetAudit_spi_assetAudit" name="assetAudit"/>
+				<attribute describedByProperty="spi:lastauditby" id="asset_lastauditby" name="lastauditby"/>
+				<attribute describedByProperty="spi:lastauditdate" id="asset_lastauditdate" name="lastauditdate"/>
+				<attribute describedByProperty="spi:itemnum" id="asset_itemnum_spiitemnum" index="true" name="itemnum"/>
+				<attribute describedByProperty="spi:calnum" id="asset_spicalnunm_calnum" name="calnum"/>
+				<attribute describedByProperty="spi:shiftnum" id="asset_spishiftnum_shiftnum" name="shiftnum"/>
+				<attribute describedByProperty="spi:assettype" id="asset_assettype_spiassettype" index="true" name="assettype"/>
+				<attribute describedByProperty="spi:failureCode{oslc:shortTitle}" id="asset_failurecode_spifailureCodeoslcshortTitle" name="failurecode"/>
+				<attribute describedByProperty="spi:failureCode{dcterms:title}" id="asset_failurecodedesc_spifailureCodedctermstitle" name="failurecodedesc"/>				 
+				<attribute describedByProperty="spi:isrunning" id="asset_isrunning_spiisrunning" name="isrunning"/>
+				<attribute describedByProperty="spi:updownstatus{spi:changedate}" id="asset_updownstatusdate_spiupdownstatusspichangedate" name="updownstatusdate"/>
+				<attribute describedByProperty="spi:totdowntime" id="asset_totdowntime_spitotdowntime" name="totdowntime"/>
+				<attribute describedByProperty="spi:priority" id="asset_priority_spipriority" name="priority"/>
+				<attribute describedByProperty="spi:moved" id="asset_priority_spimoved" index="true" name="moved"/>
+				<attribute describedByProperty="spi:parent{oslc:shortTitle}" id="asset_parent_spiparentshorttitle" index="true" name="parent" referenceResource="additionalasset"/>
+				<attribute describedByProperty="spi:parent{dcterms:title}" id="asset_parentdesc_spiparenttitle" index="true" name="parentdesc" referenceResource="additionalasset"/>
+				<attribute describedByProperty="spi:assetmovedflt" describedByResource="assetMovedFltResource" id="asset_spiassetmovedflt_assetmovedflt" name="assetmovedflt"/>
+				<attribute describedByProperty="spi:rolltoallchildren" id="asset_status_spirolltoallchildren" name="rolltoallchildren"/>
+				<attribute describedByProperty="spi:removefromactiveroutes" id="asset_status_spiremovefromactiveroutes" name="removefromactiveroutes"/>
+				<attribute describedByProperty="spi:removefromactivesp" id="asset_status_spiremovefromactivesp" name="removefromactivesp"/>
+				<attribute describedByProperty="spi:changepmstatus" id="asset_status_spichangepmstatus" name="changepmstatus"/>
+				<attribute describedByProperty="spi:binnum" id="asset_binnum_spibinnum" name="binnum"/>
+				<attribute describedByProperty="spi:itemsetid" id="asset_itemnum_spiitemsetid" index="true" name="itemsetid"/>
+												
+				<!-- Local Attributes -->
+				<localAttribute dataType="boolean" id="asset_audited_boolean" index="true" name="audited"/>
+				<localAttribute dataType="string" formula="${lastauditdate}" id="asset_lastauditdateISO_string" index="true" name="auditdateISO" remoteName="spi:lastauditdate"/>
+				<localAttribute dataType="string" id="asset_statusdesc_string" name="statusdesc"/>
+			</attributes>
+			<creationFactories id="asset_creationFactories">
+		        <creationFactory creationUri="/oslc/os/oslcasset" id="asset_creationFactory_createMyAssets" name="createMyAsset"/>
+	        </creationFactories>			
+	        <queryBases id="asset_queryBases">
+	 			<queryBase defaultForSearch="true" id="asset_queryBase_searchAllAssets" name="searchAllAssets" queryUri="/oslc/os/oslcasset"/>
+			</queryBases>
+		</resource>
+	
+		<!-- Location resource -->
+		<resource class="application.business.LocationObject" defaultOrderBy="location asc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Location" hasManagedQuery="true" id="locations" name="locations" pageSize="40" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="locations_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="locations_locationsid_dctermsidentifier" name="locationsid"/>
+				<attribute describedByProperty="spi:siteid" id="locations_siteid_spisiteid" name="siteid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="locations_location_oslcshortTitle" index="true" name="location"/>
+				<attribute describedByProperty="dcterms:title" id="locations_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:status" id="locations_status_spistatus" index="true" name="locstatus"/>
+				<attribute describedByProperty="spi:type" id="locations_type_spitype" name="locationtype"/>
+			</attributes>
+			<queryBases id="locations_queryBases">
+				<queryBase id="asset_queryBase_Mobile_Query" name="Mobile_Query" queryUri="/oslc/os/oslclocations?savedQuery=Mobile_Query"/>
+	 		</queryBases>									
+		</resource>
+		
+		<!-- Resource for storing a status change. -->
+		<resource class="application.business.AssetStatusObject" id="statusChangeResource" name="statusChangeResource" singleton="true">
+			<attributes id="statusChangeResource_attributes">
+				<localAttribute dataType="string" id="statusChangeResource_status_string" name="status"/>
+				<localAttribute dataType="string" id="statusChangeResource_statusdesc_string" name="statusdesc"/>
+				<localAttribute dataType="dateTime" id="statusChangeResource_changedate_dateTime" name="changedate"/>
+				<localAttribute dataType="boolean" id="statusChangeResource_spirolltoallchildren" name="rolltoallchildren"/>
+				<localAttribute dataType="boolean" id="statusChangeResource_spiremovefromactiveroutes" name="removefromactiveroutes"/>
+				<localAttribute dataType="boolean" id="statusChangeResource_spiremovefromactivesp" name="removefromactivesp"/>
+				<localAttribute dataType="boolean" id="statusChangeResource_spichangepmstatus" name="changepmstatus"/>
+				<localAttribute dataType="string" id="statusChangeResource_memo_string" maxSize="50" name="memo"/>
+			</attributes>
+		</resource>
+				
+		<!--  Resource for searching assets -->
+		<resource id="searchAsset" name="searchAsset">
+			<attributes id="searchAsset_attributes">
+				<localAttribute dataType="string" id="searchAsset_assetnum_string" index="true" name="assetnum"/>
+				<localAttribute dataType="string" id="searchAsset_description_string" name="assetdesc"/>
+				<localAttribute dataType="string" id="searchAsset_statusdesc_string" name="statusdesc"/>
+				<localAttribute dataType="string" id="searchWAsset_location_string" name="location"/>
+				<localAttribute dataType="string" id="searchWAsset_locationdesc_string" name="locationdesc"/>
+			</attributes>
+			<whereClause id="searchAsset_whereClause"/>
+		</resource>
+
+		<!--  Resource for searching locations -->
+		<resource id="searchLocation" name="searchLocation">
+			<attributes id="searchLocation_attributes">
+				<localAttribute dataType="string" id="searchLocation_locationsid_string" name="location"/>
+				<localAttribute dataType="string" id="searchLocation_description_string" name="description"/>
+				<localAttribute dataType="string" id="searchLocation_assetnum_string" index="true" name="assetnum"/>
+				<localAttribute dataType="string" id="searchLocation_assetdesc_string" name="assetdesc"/>
+			</attributes>
+			<whereClause id="searchLocation_whereClause"/>
+		</resource>
+		
+		<!-- DOMAINS resources -->
+		<!-- Asset Status domain -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domainAssetStatus" isSystem="true" name="domainAssetStatus" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="domainAssetStatus_attributes">
+				<attribute describedByProperty="spi:orgid" id="domainAssetStatus_orgid_spiorgid" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="domainAssetStatus_siteid_spisiteid" name="siteid"/>
+				<attribute describedByProperty="spi:maxvalue" id="domainAssetStatus_maxvalue_spimaxvalue" name="maxvalue"/>
+				<attribute describedByProperty="spi:value" id="domainAssetStatus_value_spivalue" name="value"/>
+				<attribute describedByProperty="dcterms:title" id="domainAssetStatus_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:defaults" id="domainAssetStatus_defaults_spidefaults" name="defaults"/>
+				<attribute describedByProperty="oslc:shortTitle" id="domainAssetStatus_domainid_oslcshortTitle" name="domainid"/>
+				<attribute describedByProperty="dcterms:identifier" id="domainAssetStatus_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
+			</attributes>
+			<queryBases id="domaingetassetstatus_queryBases">
+ 	 			<queryBase id="domaingetassetstatus_queryBase_getassetstatus" name="getassetstatus" queryUri="/oslc/os/oslcsynonymdomain"/>
+	 		</queryBases>			
+			<whereClause clause="oslc:shortTitle='LOCASSETSTATUS'" id="domaingetassetstatus_whereClause"/>
+		</resource>
+		
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domainlocationstatus" isSystem="true" name="domainlocationstatus" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="domainlocationstatustype_attributes">
+				<attribute describedByProperty="spi:orgid" id="domainlocationstatustype_orgid_spiorgid" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="domainlocationstatustype_siteid_spisiteid" name="siteid"/>
+				<attribute describedByProperty="spi:maxvalue" id="domainlocationstatustype_maxvalue_spimaxvalue" name="maxvalue"/>
+				<attribute describedByProperty="spi:value" id="domainlocationstatustype_value_spivalue" name="value"/>
+				<attribute describedByProperty="dcterms:title" id="domainlocationstatustype_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:defaults" id="domainlocationstatustype_defaults_spidefaults" name="defaults"/>
+				<attribute describedByProperty="oslc:shortTitle" id="domainlocationstatustype_domainid_oslcshortTitle" name="domainid"/>
+				<attribute describedByProperty="dcterms:identifier" id="domainlocationstatustype_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
+			</attributes>
+			<queryBases id="domainlocationstatustype_queryBases">
+ 	 			<queryBase id="domainlocationstatustype_queryBase_getlocstat" name="getlocstat" queryUri="/oslc/os/oslcsynonymdomain"/>
+	 		</queryBases>			
+			<whereClause clause="oslc:shortTitle='LOCASSETSTATUS'" id="domainlocationstatustype_whereClause"/>
+		</resource>
+
+		<!-- UserInfo attribute list  -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#MaxUser" id="userInfo" name="userInfo" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">	
+	        <attributes id="userInfo_attributes">
+		        <attribute describedByProperty="dcterms:identifier" id="userInfo_maxuserid_dctermsidentifier" name="maxuserid"/>
+		        <attribute describedByProperty="spi:userid" id="userInfo_userid_spiuserid" name="userid"/>
+		        <attribute describedByProperty="spi:loginid" id="userInfo_loginid_spiloginid" name="loginid"/>
+		        <attribute describedByProperty="spi:storeroomsite" id="userInfo_storeroomsite_spistoreroomsite" name="storeroomsite"/>
+		        <attribute describedByProperty="spi:type" id="userInfo_type_spitype" name="type"/>
+		        <attribute describedByProperty="spi:personid" id="userInfo_personid_spipersonid" name="personid"/>
+		        <attribute describedByProperty="spi:sysuser" id="userInfo_sysuser_spisysuser" name="sysuser"/>
+		        <attribute describedByProperty="spi:querywithsite" id="userInfo_querywithsite_spiquerywithsite" name="querywithsite"/>
+		        <attribute describedByProperty="spi:defsite{oslc:shortTitle}" id="userInfo_defsite_spidefsiteoslcshortTitle" name="defsite"/>
+		        <attribute describedByProperty="spi:defsite{spi:orgid}" id="userInfo_deforg_spidefsitespiorgid" name="deforg"/>
+		        <attribute describedByProperty="spi:status" id="userInfo_status_spistatus" name="status"/>
+		        <attribute describedByProperty="spi:emailpswd" id="userInfo_emailpswd_spiemailpswd" name="emailpswd"/>
+		        <attribute describedByProperty="spi:screenreader" id="userInfo_screenreader_spiscreenreader" name="screenreader"/>
+		        <attribute describedByProperty="spi:failedlogins" id="userInfo_failedlogins_spifailedlogins" name="failedlogins"/>
+		        <attribute describedByProperty="spi:inactivesites" id="userInfo_inactivesites_spiinactivesites" name="inactivesites"/>
+		        <attribute describedByProperty="spi:groupuser" describedByResource="userRoles" id="userInfo_groupList_spigroupuser" name="groupList"/>
+		     </attributes>
+		     <queryBases id="userInfo_queryBases">
+				<queryBase id="userInfo_queryBase_currentUser" name="currentUser" queryUri="/oslc/os/oslcmaxuser?savedQuery=currentUser"/>
+			</queryBases>
+	    </resource>
+	    				
+	   	<!-- Asset Audit resource -->
+	    <resource id="assetAuditResource" name="assetAuditResource">
+			<attributes id="assetAuditResource_attributes">
+				<attribute describedByProperty="spi:auditdate" id="assetAuditResource_auditdate_spi_auditdate" name="auditdate"/>
+				<attribute describedByProperty="spi:auditby" id="assetAuditResource_createby_spi_auditby" index="true" name="auditby"/>
+				<attribute describedByProperty="spi:orgid" id="assetAuditResource_orgid_spi_orgid" name="orgid"/>
+				<attribute describedByProperty="spi:assetid" id="assetAuditResource_assetid_spi_assetid" name="assetid"/>
+				<attribute describedByProperty="spi:anywhererefid" id="wassetAuditResource_anywhereRefId_spi_wmanywhererefid" name="anywhereRefId"/>
+			</attributes>
+		</resource>
+		
+		<!-- Roles attribute list  -->				
+	    <resource id="userRoles" name="userRoles">
+			<attributes id="userRoles_attributes">
+				<attribute describedByProperty="spi:groupname" id="userRoles_roleName_spigroupname" name="roleName"/>			
+			</attributes>
+		</resource>
+		
+	    <!-- Asset down code domain -->
+		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#AlphaNumericDomain" id="domainDownCode" name="domainDownCode" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="domainDownCode_attributes">
+				<attribute describedByProperty="spi:value" id="domainDownCode_value_spivalue" name="value"/>
+				<attribute describedByProperty="spi:description" id="domainDownCode_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:domainid" id="domainDownCode_domainid_oslcshortTitle" name="domainid"/>
+				<attribute describedByProperty="spi:alndomainid" id="domainDownCode_synonymdomainid_dctermsidentifier" name="identifier"/>
+			</attributes>
+			<queryBases id="domaingetdowndode_queryBases">
+ 	 			<queryBase id="domaingetdowndode_queryBase_getassetstatus" name="getdowncode" queryUri="/oslc/os/oslcalndomain"/>
+	 		</queryBases>			
+			<whereClause clause="spi:domainid='DOWNCODE'" id="domaingetdowndode_whereClause"/>
+		</resource>
+		
+		<!-- FailureList -->
+	    <resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#FailureList" id="failureListResource" name="failureListResource" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">	
+			<attributes id="failureListResource_attributes">
+			    <attribute describedByProperty="spi:failurelist" id="failureListResource_failurelist_spifailurelist" key="1" name="failurelist"/>
+			    <attribute describedByProperty="spi:type" id="failureListResource_type_spitype" name="type"/>
+			    <attribute describedByProperty="spi:parent" id="failureListResource_parent_spiparent" index="true" name="parent"/>
+			    <attribute describedByProperty="spi:orgid" id="failureListResource_orgid_spiorgid" index="true" key="2" name="orgid"/>
+			    <attribute describedByProperty="spi_wm:failureCode{oslc:shortTitle}" id="failureListResource_failurecode_spi_wmfailureCodeoslcshortTitle" index="true" name="failurecode"/>
+			    <attribute describedByProperty="spi_wm:failureCode{dcterms:title}" id="failureListResource_description_spi_wmfailureCodedctermstitle" name="description"/>
+			</attributes>
+			<queryBases id="failureListResource_queryBases">
+				<queryBase id="failureListResource_queryBase_getfailureList" name="getfailureList" queryUri="/oslc/os/oslcfailurelist"/>		 
+			</queryBases>			
+			<whereClause clause="spi:orgid=${deforg} and spi:parent!='*'" id="failureListResource_whereClause"/>			
+		</resource>	
+		
+	    <!-- additional asset -->
+		<resource additionalData="true" describedBy="http://open-services.net/ns/asset#Asset" id="additionalasset" name="additionalasset" pageSize="1000" providedBy="/oslc/sp/AssetManagement">
+			<attributes id="additionalasset_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="additionalasset_assetuid_dctermsidentifier" name="assetuid"/>
+				<attribute describedByProperty="spi:assetid" id="additionalasset_assetid_spiassetid" name="assetid"/>
+				<attribute describedByProperty="spi:orgid" id="additionalasset_orgid_spiorgid" index="true" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="additionalasset_siteid_spisiteid" index="true" name="siteid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="additionalasset_assetnum_oslcshortTitle" index="true" name="assetnum"/>
+				<attribute describedByProperty="dcterms:title" id="additionalasset_description_dctermstitle" index="true" name="description"/>
+				<attribute describedByProperty="spi:location{oslc:shortTitle}" id="additionalasset_location_spilocationoslcshortTitle" index="true" name="location" referenceResource="additionallocations"/>
+				<attribute describedByProperty="spi:location{dcterms:title}" id="additionalasset_locationdesc_spilocationdctermstitle" index="true" name="locationdesc" referenceResource="additionallocations"/>
+				<attribute describedByProperty="spi:location{spi:description_longdescription}" id="additionalasset_locationld_spilocationld" index="true" name="locationld" referenceResource="additionallocations"/>
+				<attribute describedByProperty="spi:itemnum" id="additionalasset_itemnum_spiitemnum" index="true" name="itemnum"/>
+				<attribute describedByProperty="spi:itemtype" id="additionalasset_itemtype_spiitemtype" index="true" name="itemtype"/>
+				<attribute describedByProperty="spi:itemsetid" id="additionalasset_itemsetid_spiitemsetid" index="true" name="itemsetid"/>
+				<attribute describedByProperty="spi:description_longdescription" id="additionalasset_assetlongdesc_spidescription_longdescription" name="assetlongdesc"/>
+			</attributes>
+			<queryBases id="additionalasset_queryBases">
+ 	 			<queryBase id="additionalasset_queryBase_getadditionalasset" name="getadditionalasset" queryUri="/oslc/os/oslcasset"/>
+	 		</queryBases>			
+			<whereClause clause="spi:siteid=${defsite}" id="additionalasset_whereClause"/>
+		</resource>
+
+		<!--  additional location -->
+		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Location" id="additionallocations" name="additionallocations" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure"> 
+			<attributes id="additionallocations_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="additionallocations_locationsid_dctermsidentifier" name="locationsid"/>
+				<attribute describedByProperty="spi:siteid" id="additionallocations_siteid_spisiteid" index="true" name="siteid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="additionallocations_location_oslcshortTitle" index="true" name="location"/>
+				<attribute describedByProperty="spi:description_longdescription" id="additionallocations_locationld_spilocationld" name="locationld"/>
+			</attributes>
+			<queryBases id="additionallocations_queryBases">
+ 	 			<queryBase id="additionallocations_queryBase_getlocation" name="getlocation" queryUri="/oslc/os/oslcoperloc"/>
+	 		</queryBases>									
+		</resource>
+
+		<!-- Location Type domain -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domainLocationType" isSystem="true" name="domainLocationType" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="domainLocationType_attributes">
+				<attribute describedByProperty="spi:orgid" id="domainLocationType_orgid_spiorgid" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="domainLocationType_siteid_spisiteid" name="siteid"/>
+				<attribute describedByProperty="spi:maxvalue" id="domainLocationTypes_maxvalue_spimaxvalue" name="maxvalue"/>
+				<attribute describedByProperty="spi:value" id="domainLocationType_value_spivalue" name="value"/>
+				<attribute describedByProperty="dcterms:title" id="domainLocationType_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:defaults" id="domainLocationType_defaults_spidefaults" name="defaults"/>
+				<attribute describedByProperty="oslc:shortTitle" id="domainLocationType_domainid_oslcshortTitle" name="domainid"/>
+				<attribute describedByProperty="dcterms:identifier" id="domainLocationType_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
+			</attributes>
+			<queryBases id="domaingetlocationtype_queryBases">
+ 	 			<queryBase id="domaingetlocationtype_queryBase_getlocationtype" name="getlocationtype" queryUri="/oslc/os/oslcsynonymdomain"/>
+	 		</queryBases>			
+			<whereClause clause="oslc:shortTitle='LOCTYPE'" id="domaingetlocationtype_whereClause"/>
+		</resource>
+	
+		<!-- Asset Type domain -->
+		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domainAssetType" name="domainAssetType" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="domainAssetType_attributes">
+				<attribute describedByProperty="spi:orgid" id="domainAssetType_orgid_spiorgid" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="domainAssetType_siteid_spisiteid" name="siteid"/>
+				<attribute describedByProperty="spi:maxvalue" id="domainAssetType_maxvalue_spimaxvalue" name="maxvalue"/>
+				<attribute describedByProperty="spi:value" id="domainAssetType_value_spivalue" name="value"/>
+				<attribute describedByProperty="dcterms:title" id="domainAssetType_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:defaults" id="domainAssetType_defaults_spidefaults" name="defaults"/>
+				<attribute describedByProperty="oslc:shortTitle" id="domainAssetType_domainid_oslcshortTitle" name="domainid"/>
+				<attribute describedByProperty="dcterms:identifier" id="domainAssetType_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
+			</attributes>
+			<queryBases id="domainAssetType_queryBases">
+ 	 			<queryBase id="domainAssetType_queryBase_getassettype" name="getassettype" queryUri="/oslc/os/oslcsynonymdomain"/>
+	 		</queryBases>			
+			<whereClause clause="oslc:shortTitle='ASSETTYPE'" id="domaingetassettype_whereClause"/>
+		</resource>
+
+		<!-- Item resource -->
+		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Item" id="additionalitem" name="additionalitem" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="additionalitem_attributes">
+				<attribute describedByProperty="oslc:shortTitle" id="additionalitem_itemnum_oslcshortTitle" index="true" name="itemnum"/>
+				<attribute describedByProperty="dcterms:identifier" id="additionalitem_itemid_dctermsidentifier" name="itemid"/>
+				<attribute describedByProperty="dcterms:title" id="additionalitem_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:itemtype" id="additionalitem_itemtype_spiitemtype" name="itemtype"/>
+				<attribute describedByProperty="spi:rotating" id="additionalitem_rotating_spirotating" name="rotating"/>
+				<attribute describedByProperty="spi:itemsetid" id="additionalitem_itemsetid_spiitemsetid" name="itemsetid"/>
+			</attributes>
+			<queryBases id="additionalitem_queryBases">
+ 	 			<queryBase id="additionalitem_queryBase_getitem" name="getitem" queryUri="/oslc/os/oslcitem"/>
+	 		</queryBases>									
+			<whereClause clause="spi:rotating=1 and spi:itemtype='ITEM'" id="additionalitem_whereClause"/>
+		</resource>
+		
+		<!-- Shift resource -->
+		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Shift" id="additionalshift" name="additionalshift" pageSize="500" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="additionalshift_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="additionalshift_amcrewid_dctermsidentifier" name="shiftid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="additionalshift_amcrew_oslcshortTitle" index="true" name="shiftnum"/>
+				<attribute describedByProperty="dcterms:title" id="additionalshift_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:orgid" id="additionalshift_orgid_spiorgid" name="orgid"/>
+			</attributes>
+			<queryBases id="additionalshift_queryBases">
+ 	 			<queryBase id="additionalshift_queryBase_getcalendar" name="getshift" queryUri="/oslc/os/oslcshift"/>
+	 		</queryBases>									
+			<whereClause clause="spi:orgid=${deforg}" id="additionalshift_whereClause"/>
+		</resource>
+
+		<!-- Calendar resource -->
+		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Calendar" id="additionalcalendar" name="additionalcalendar" pageSize="500" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="additionalcalendar_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="additionalcalendar_amcrewid_dctermsidentifier" name="calendarid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="additionalcalendar_amcrew_oslcshortTitle" index="true" name="calnum"/>
+				<attribute describedByProperty="dcterms:title" id="additionalcalendar_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:orgid" id="additionalcalendar_orgid_spiorgid" name="orgid"/>
+				<attribute describedByProperty="spi:startdate" id="additionalcalendar_startdate_spistartdate" name="startdate"/>
+				<attribute describedByProperty="spi:enddate" id="additionalcalendar_enddate_spienddate" name="endadate"/>
+			</attributes>
+			<queryBases id="additionalcalendar_queryBases">
+ 	 			<queryBase id="additionalcalendar_queryBase_getcalendar" name="getcalendar" queryUri="/oslc/os/oslccalendar"/>
+	 		</queryBases>									
+			<whereClause clause="spi:orgid=${deforg}" id="additionalcalendar_whereClause"/>
+		</resource>
+		
+		<!-- Asset Move resource reference-->
+		<resource id="assetMovedFltResource" name="assetMovedFltResource">
+			<attributes id="assetMovedFltResource_attributes">
+				<attribute describedByProperty="spi:tloamdfltnewglaccount" id="assetMovedFltResource_tloamdfltnewglaccount_spi_tloamdfltnewglaccount" name="tloamdfltnewglaccount"/>
+				<attribute describedByProperty="spi:pluscdfltnewlploc" id="assetMovedFltResource_pluscdfltnewlploc_spi_pluscdfltnewlploc" name="pluscdfltnewlploc"/>
+				<attribute describedByProperty="spi:orgid" id="assetMovedFltResource_orgid_spi_orgid" name="orgid"/>
+				<attribute describedByProperty="spi:dfltnewsite" id="assetMovedFltResource_dfltnewsite_spi_dfltnewsite" name="dfltnewsite"/>
+				<attribute describedByProperty="spi:dfltnewparentchkbox" id="assetMovedFltResource_dfltnewparentchkbox_spi_dfltnewparentchkbox" name="dfltnewparentchkbox"/>
+				<attribute describedByProperty="spi:dfltnewparent" id="assetMovedFltResource_dfltnewparent_spi_dfltnewparent" name="dfltnewparent"/>
+				<attribute describedByProperty="spi:dfltneworgid" id="assetMovedFltResource_dfltneworgid_spi_dfltneworgid" name="dfltneworgid"/>
+				<attribute describedByProperty="spi:dfltnewlocationchkbox" id="assetMovedFltResource_dfltnewlocationchkbox_spi_dfltnewlocationchkbox" name="dfltnewlocationchkbox"/>
+				<attribute describedByProperty="spi:dfltnewlocation" id="assetMovedFltResource_dfltnewlocation_spi_dfltnewlocation" name="dfltnewlocation"/>
+				<attribute describedByProperty="spi:dfltnewbinnumchkbox" id="assetMovedFltResource_dfltnewbinnumchkbox_spi_dfltnewbinnumchkbox" name="dfltnewbinnumchkbox"/>
+				<attribute describedByProperty="spi:dfltnewbinnum" id="assetMovedFltResource_dfltnewbinnum_spi_dfltnewbinnum" name="dfltnewbinnum"/>
+				<attribute describedByProperty="spi:dfltnewassetnum" id="assetMovedFltResource_dflnewassetnum_dflspinewassetnum" name="dfltnewassetnum"/>
+			</attributes>
+		</resource>
+		
+		<!-- Asset Move local resource -->
+	    <resource id="assetmoveresource" name="assetmoveresource" singleton="true">
+			<attributes id="assetMoveResource_attributes">
+				<localAttribute dataType="string" id="assetMoveResource_parent_spi_parent" index="true" maxSize="12" name="parent"/>
+				<localAttribute dataType="string" id="assetMoveResource_toParent_spi_toParent" index="true" maxSize="12" name="toParent"/>
+				<localAttribute dataType="string" id="assetMoveResource_location_spi_location" index="true" maxSize="12" name="location"/>
+				<localAttribute dataType="string" id="assetMoveResource_toLocation_spi_toLocation" index="true" maxSize="12" name="toLocation"/>
+				<localAttribute dataType="string" id="assetMoveResource_toBin_spi_toBin" index="true" maxSize="8" name="toBin"/>
+				<localAttribute dataType="string" id="assetMoveResource_site_spi_site" index="true" maxSize="8" name="site"/>
+				<localAttribute dataType="string" id="assetMoveResource_site_spi_tosite" index="true" maxSize="8" name="toSite"/>
+				<localAttribute dataType="string" id="assetMoveResource_newAsset_spi_newAsset" index="true" maxSize="12" name="newAsset"/>
+				<localAttribute dataType="string" id="assetMoveResource_locationtypet_spi_locationtype" index="true" maxSize="16" name="locationtype"/>
+			</attributes>
+		</resource>
+		
+	    <!--  Site Resource -->
+	    <resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Site" id="site" isSystem="true" name="site" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="site_attributes">
+				<attribute describedByProperty="oslc:shortTitle" id="site_siteid_oslcshortTitle" index="true" key="1" name="siteid"/>
+				<attribute describedByProperty="spi:orgid" id="site_orgid_spiorgid" name="orgid"/>
+			</attributes>
+			<queryBases id="site_queryBases">
+ 	 			<queryBase id="site_queryBase_getSite" name="getSite" queryUri="/oslc/os/oslcsite"/>
+	 		</queryBases>
+	 		<whereClause id="site_whereClause"/>
+		</resource>	
+		
+	    <!--  Move Location Resource -->
+	    <resource additionalData="true" defaultOrderBy="location asc" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Location" id="moveLocations" name="moveLocations" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="movelocations_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="movelocations_locationsid_dctermsidentifier" index="true" name="locationsid"/>
+				<attribute describedByProperty="spi:siteid" id="movelocations_siteid_spisiteid" index="true" name="siteid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="movelocations_location_oslcshortTitle" index="true" name="location"/>
+				<attribute describedByProperty="dcterms:title" id="movelocations_description_dctermstitle" index="true" name="description"/>
+				<attribute describedByProperty="spi:status" id="movelocations_status_spistatus" index="true" name="status"/>
+				<attribute describedByProperty="spi:type" id="movelocations_movetype_spitype" index="true" name="locationtype"/>
+			</attributes>
+			<queryBases id="movelocation_queryBases">
+ 	 			<queryBase id="movelocation_queryBase_getSite" name="getLocation" queryUri="/oslc/os/oslclocations"/>
+	 		</queryBases>
+	 		<whereClause id="movelocation_whereClause"/>
+		</resource>
+		
+	    <!--  Move Parent Resource -->
+	    <resource additionalData="true" describedBy="http://open-services.net/ns/asset#Asset" id="moveParent" name="moveParent" pageSize="1000" providedBy="/oslc/sp/AssetManagement">
+			<attributes id="moveParent_attributes">
+				<attribute describedByProperty="oslc:shortTitle" id="moveParent_assetnum_oslcshortTitle" index="true" name="assetnum"/>
+				<attribute describedByProperty="dcterms:title" id="moveParent_description_dctermstitle" index="true" name="description"/>
+				<attribute describedByProperty="spi:siteid" id="moveParent_siteid_spisiteid" index="true" name="siteid"/>
+			</attributes>
+			<queryBases id="moveParent_queryBases">
+ 	 			<queryBase id="moveParent_queryBase_getadditionalasset" name="getadditionalasset" queryUri="/oslc/os/oslcasset"/>
+	 		</queryBases>			
+			<whereClause id="moveParent_whereClause"/>
+		</resource>
+		 
+		 <resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Inventory" id="inventory" name="inventory" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="inventory_attributes">
+				<attribute describedByProperty="spi:itemnum" id="inventory_itemnum_spiitemnum" index="true" name="itemnum"/>
+				<attribute describedByProperty="spi:binnum" id="inventory_binnum_spibinnum" index="true" name="binnum"/>
+				<attribute describedByProperty="dcterms:identifier" id="inventory_inventoryid_dctermsidentifier" name="inventoryid"/>
+				<attribute describedByProperty="spi:itemsetid" id="inventory_itemsetid_spiitemsetid" index="true" name="itemsetid"/>
+				<attribute describedByProperty="spi:location" id="inventory_location_spilocation" index="true" name="location"/>
+				<attribute describedByProperty="spi:siteid" id="inventory_siteid_spisiteid" index="true" name="siteid"/>
+			</attributes>
+			<queryBases id="inventory_queryBases">
+ 	 			<queryBase id="inventory_queryBase_getinventory" name="getinventory" queryUri="/oslc/os/oslcinventory?savedQuery=getWithComplexQuery"/>
+	 		</queryBases>			
+		</resource>
+	    
+	</data>
+
+	<!-- ERROR MESSAGES SECTION -->
+	<messages id="messages">
+		<message defaultMessage="Invalid User" id="INVALID_USER_NAME"/>
+		<message defaultMessage="Time Out" id="TIME_OUT"/>
+		<message defaultMessage="Cannot connect to the server" id="CONNECTION FAILURE"/>
+		<message defaultMessage="Location" id="primaryResourceSingleLabel"/>
+		<message defaultMessage="Asset" id="primaryResourcePluralLabel"/>
+		<message defaultMessage="IBM Maximo Asset Auditor" id="applicationName"/>
+		<message defaultMessage="The asset status cannot change from {0} to {1}." id="invalidstatustransition"/>
+		<message defaultMessage="" id="changePasswordInfo"/>
+		<message defaultMessage="Specify a date that is later than the date of the last status change on {0}." id="statusDateinFuture"/>
+		<message defaultMessage="The specified log type was not found. Check your entry." id="invalidLogType"/>
+		<message defaultMessage="Location with number {0}" id="itemsforscan"/>  
+		<message defaultMessage="The failure code {0} does not exist in your failure code lookup resource. To report failures, go to Settings &gt; Refresh Lookup Data, and try again." id="failureClassData"/> 
+		<message defaultMessage="The following assets were scanned but not found assigned to this location: " id="notFound"/> 
+		<message defaultMessage="The search could not be performed because your device is not connected to the network." id="searchNoNetwork"/> 
+		
+	</messages>
+</app>

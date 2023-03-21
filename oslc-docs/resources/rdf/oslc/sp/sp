@@ -1,0 +1,12 @@
+<rdf:RDF
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:oslc="http://open-services.net/ns/core#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <rdf:Description rdf:about="http://locahost/maximo/oslc/sp">
+    <rdfs:member rdf:resource="http://locahost/maximo/oslc/sp/WorkManagement"/>
+    <rdfs:member rdf:resource="http://locahost/maximo/oslc/sp/FriendOfAFriend"/>
+    <rdfs:member rdf:resource="http://locahost/maximo/oslc/sp/SmarterPhysicalInfrastructure"/>
+    <rdfs:member rdf:resource="http://locahost/maximo/oslc/sp/AssetManagement"/>
+  </rdf:Description>
+</rdf:RDF>

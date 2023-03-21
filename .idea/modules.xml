@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/client-runtime-test/AssetAudit/AssetAudit.iml" filepath="$PROJECT_DIR$/client-runtime-test/AssetAudit/AssetAudit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/client-runtime-test/AssetDataManager/AssetDataManager.iml" filepath="$PROJECT_DIR$/client-runtime-test/AssetDataManager/AssetDataManager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/client-runtime-test/Inspection/Inspection.iml" filepath="$PROJECT_DIR$/client-runtime-test/Inspection/Inspection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/client-runtime-test/IssuesReturns/IssuesReturns.iml" filepath="$PROJECT_DIR$/client-runtime-test/IssuesReturns/IssuesReturns.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/MaximoAnywhere.iml" filepath="$PROJECT_DIR$/.idea/MaximoAnywhere.iml" />
+      <module fileurl="file://$PROJECT_DIR$/client-runtime-test/PhysicalCount/PhysicalCount.iml" filepath="$PROJECT_DIR$/client-runtime-test/PhysicalCount/PhysicalCount.iml" />
+      <module fileurl="file://$PROJECT_DIR$/client-runtime-test/ServiceRequest/ServiceRequest.iml" filepath="$PROJECT_DIR$/client-runtime-test/ServiceRequest/ServiceRequest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/client-runtime-test/Transfers/Transfers.iml" filepath="$PROJECT_DIR$/client-runtime-test/Transfers/Transfers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/client-runtime-test/WorkApproval/WorkApproval.iml" filepath="$PROJECT_DIR$/client-runtime-test/WorkApproval/WorkApproval.iml" />
+      <module fileurl="file://$PROJECT_DIR$/client-runtime-test/WorkExecution/WorkExecution.iml" filepath="$PROJECT_DIR$/client-runtime-test/WorkExecution/WorkExecution.iml" />
+      <module fileurl="file://$PROJECT_DIR$/client-runtime-test/client-runtime-test.iml" filepath="$PROJECT_DIR$/client-runtime-test/client-runtime-test.iml" />
+    </modules>
+  </component>
+</project>

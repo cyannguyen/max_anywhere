@@ -1,0 +1,2016 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM 5725-M39 (C) COPYRIGHT IBM CORP. 
+	2013 All Rights Reserved US Government Users Restricted Rights - Use, duplication 
+	or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. -->
+<!-- Work Approval Application Artifact -->
+<app blindQuerySupport="false" id="WorkApproval" logLevel="0" requiredRole="ANYWHERE_APPROVER" version="201507140725" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../build/app.xsd">	
+		
+	<!-- Back up this file before you edit it. -->
+	
+	<!-- comment this in to enable device side sso login-->
+    <!--
+    <eventHandlers id="WorkApproval_eventHandlers">
+	    <eventHandler class="platform.handlers.SSOHandler" event="initialize" id="WorkApproval_eventHandlers_initialize_performSSOLogin" method="performSSOLogin"/>
+	</eventHandlers> 	
+	-->
+	
+	<!-- UI section -->
+	<!-- To change the display name of any element, change the label attribute.-->
+	<!-- If you support additional languages, you must also update the label in the common/js/application/translation/nls/<language>/artifact.js file for that language.-->
+	
+	<ui id="ui">
+	    
+		<!-- Work list view -->
+		<view id="WorkApproval.WorkListView" label="Approval Work List" resource="workOrder" saveonshow="true" showBackButton="false">
+			<!-- Each query that you define must correspond to and have the same name as the public query in Maximo. --> 
+			<!-- You must also add the "Work I Own" query to the Data Definition section of this file.-->
+			<queries id="WorkApproval.WorkListView_queries" resource="workOrder">
+				<query cssClass="finalQueryBaseMenuItem" id="WorkApproval.WorkListView_myapprovals" label="Approval Work List" queryBase="myapprovals"/>
+			    <query id="WorkApproval.WorkListView___search_result__" label="Search Results" queryBase="__search_result__" system="true">
+					<eventHandlers id="WorkApproval.WorkListView___search_result___eventHandlers">
+						<eventHandler class="application.handlers.WOListHandler" event="render" id="WorkApproval.WorkListView___search_result___eventHandlers_render_hideShowSearchedMenu" method="hideShowSearchedMenu"/>
+					</eventHandlers>
+				</query>
+			</queries>
+			<requiredResources id="WorkApproval.WorkListView_requiredResources">
+				<requiredResource id="WorkApproval.WorkListView_workOrder" name="workOrder" reload="true"/>
+				<requiredResource id="WorkApproval.WorkListView_PlatformProgressResource" name="PlatformProgressResource"/>
+				<requiredResource id="WorkApproval.WorkListView_domainwostatus" name="domainwostatus"/>
+			</requiredResources>
+			<actions id="WorkApproval.WorkListView_actions">
+				<action id="WorkApproval.WorkListView_DownloadWorkList_action" label="Download Work List" overflow="true">
+	                <eventHandlers id="WorkApproval.WorkListView_DownloadWorkList_action_eventHandlers">
+		            	<eventHandler class="platform.handlers.WorkOfflineHandler" event="click" id="WorkApproval.WorkListView_DownloadWorkList_action_eventHandlers_click_workoffline" method="workoffline"/>
+		            	<eventHandler class="platform.handlers.WorkOfflineHandler" event="render" id="WorkApproval.WorkListView_DownloadWorkList_action_eventHandlers_render_enableDisableMenu" method="enableDisableMenu"/>
+		            </eventHandlers>
+	            </action>
+	            <action id="WorkApproval.WorkListView_SynchronizeData_action" label="Synchronize Data" overflow="true">
+					<eventHandlers id="WorkApproval.WorkListView_SynchronizeData_action_eventHandlers">
+						<eventHandler class="platform.handlers.WorkOfflineHandler" event="click" id="WorkApproval.WorkListView_SynchronizeData_action_eventHandlers_click_sync" method="sync"/>
+						<eventHandler class="platform.handlers.WorkOfflineHandler" event="render" id="WorkApproval.WorkListView_SynchronizeData_action_eventHandlers_render_enableDisableMenu" method="enableDisableSyncMenu"/>
+					</eventHandlers>
+				</action>
+		<!-- Search view -->
+				<action id="WorkApproval.WorkListView_Search_action" label="Search" overflow="true" transitionTo="WorkApproval.SearchWorkOrderView">
+					<eventHandlers id="WorkApproval.WorkListView_Search_action_eventHandlers">
+						<eventHandler class="platform.handlers.WorkOfflineHandler" event="render" id="WorkApproval.WorkListView_Search_action_eventHandlers_render_enableDisableBasedOnConnection" method="enableDisableBasedOnConnection"/>
+					</eventHandlers>
+				</action>				
+			</actions>
+
+			<progressIndicator id="WorkApproval.WorkListView_0"/>
+		<!-- Work Order Details view -->
+
+			<list id="WorkApproval.WorkListView_workOrder_list" recordLabel="Work Order {0}" resolverClass="application.handlers.WODetailsHandler" resolverFunction="resolveWonumLabel" resource="workOrder" transitionTo="WorkApproval.WorkListDetailsView">
+				<eventHandlers id="WorkApproval.WorkListView_workOrder_list_eventHandlers">
+					<eventHandler class="platform.handlers.WorkOfflineHandler" event="render" id="WorkApproval.WorkListView_workOrder_list_eventHandlers_render_keepWorkListResource" method="keepWorkListResource"/>
+				</eventHandlers>
+				<sortOptions id="WorkApproval.WorkListView_workOrder_list_sortOptions">
+					<sortOption id="WorkApproval.WorkListView_sortOption_ScheduledStart" label="Scheduled Start">
+						<sortAttribute direction="asc" id="WorkApproval.WorkListView_ScheduledStart_sortAttribute_starttime" name="starttimeISO"/>
+					</sortOption>
+					<sortOption id="WorkApproval.WorkListView_sortOption_Status" label="Status">
+						<sortAttribute direction="asc" id="WorkApproval.WorkListView_Status_sortAttribute_status" name="status"/>
+					</sortOption>
+					<sortOption id="WorkApproval.WorkListView_sortOption_WorkOrder" label="Work Order">
+						<sortAttribute direction="asc" id="WorkApproval.WorkListView_WorkOrder_sortAttribute_wonum" name="wonum"/>
+					</sortOption>
+				</sortOptions>
+
+				<listItemTemplate id="WorkApproval.WorkListView_workOrder_listItemTemplate_ApprovalListItem" layout="ApprovalListItem">
+					<listtext id="WorkApproval.WorkListView_workOrder_ApprovalListItem_wonum" layoutInsertAt="item1" resourceAttribute="wonum"/>
+					<listtext id="WorkApproval.WorkListView_workOrder_ApprovalListItem_starttime" layoutInsertAt="item2" resourceAttribute="starttime"/>
+					<listtext id="WorkApproval.WorkListView_workOrder_ApprovalListItem_statusdesc" layoutInsertAt="item4" resourceAttribute="statusdesc"/>
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.WorkListView_workOrder_ApprovalListItem_description" layoutInsertAt="item3" resourceAttribute="description"/>
+					<listtext id="WorkApproval.WorkListView_workOrder_ApprovalListItem_assetnumanddescription" layoutInsertAt="item5" resourceAttribute="assetnumanddescription"/>
+					<button id="WorkApproval.WorkListView_workOrder_status_Approve_button" label="Approve" layoutInsertAt="button1" resourceAttribute="status">
+						<eventHandlers id="WorkApproval.WorkListView_workOrder_status_Approve_button_eventHandlers">
+							<eventHandler class="application.handlers.StatusChangeHandler" event="click" id="WorkApproval.WorkListView_workOrder_status_Approve_button_eventHandlers_click_handleApproveWorkClick" method="handleApproveWorkClick"/>
+							<eventHandler class="application.handlers.StatusChangeHandler" event="datachange" id="WorkApproval.WorkListView_workOrder_status_Approve_button_eventHandlers_datachange_enableApproveButton" method="enableApproveButton"/>
+						</eventHandlers>
+					</button>
+					<button id="WorkApproval.WorkListView_workOrder_status_Cancel_button" label="Cancel" layoutInsertAt="button2" resourceAttribute="status">
+						<eventHandlers id="WorkApproval.WorkListView_workOrder_status_Cancel_button_eventHandlers">
+							<eventHandler class="application.handlers.StatusChangeHandler" event="click" id="WorkApproval.WorkListView_workOrder_status_Cancel_button_eventHandlers_click_handleCancelWorkClick" method="handleCancelWorkClick"/>
+							<eventHandler class="application.handlers.StatusChangeHandler" event="datachange" id="WorkApproval.WorkListView_workOrder_status_Cancel_button_eventHandlers_datachange_enableCancelButton" method="enableCancelButton"/>
+						</eventHandlers>
+					</button>
+
+					<actions id="WorkApproval.WorkListView_workOrder_listItemTemplate_ApprovalListItem_workOrder_actions">
+			<!-- Change Status view -->
+						<action id="WorkApproval.WorkListView_ChangeStatus_action" label="Change Status" transitionTo="WorkApproval.EditStatusView">
+							<eventHandlers id="WorkApproval.WorkListView_ChangeStatus_action_eventHandlers">
+								<eventHandler class="application.handlers.WOListHandler" event="render" id="WorkApproval.WorkListView_ChangeStatus_action_eventHandlers_render_renderWorkOrderActionIfNotLocked" method="renderWorkOrderActionIfNotLocked"/>
+							</eventHandlers>
+						</action>
+			<!-- View Cost view -->
+						<action id="WorkApproval.WorkListView_ViewCost_action" label="View Cost" transitionTo="WorkApproval.CostsView"/>
+			<!-- Create Work Log Entry view -->
+						<action id="WorkApproval.WorkListView_CreateWorkLogEntry_action" label="Create Work Log Entry" transitionTo="WorkApproval.NewWorkLogView">
+							<eventHandlers id="WorkApproval.WorkListView_CreateWorkLogEntry_action_eventHandlers">
+								<eventHandler class="application.handlers.WOListHandler" event="render" id="WorkApproval.WorkListView_CreateWorkLogEntry_action_eventHandlers_render_renderWorkOrderActionIfNotLocked" method="renderWorkOrderActionIfNotLocked"/>
+							</eventHandlers>
+						</action>
+					</actions>
+
+				</listItemTemplate>
+			</list>
+			<eventHandlers id="WorkApproval.WorkListView_eventHandlers">
+				<!-- eventHandler class="application.handlers.WODetailsHandler" event="show" id="WorkApproval.WorkListView_eventHandlers_show_populateSearch" method="populateSearch"/-->
+				<eventHandler class="application.handlers.WODetailsHandler" event="render" id="WorkApproval.WorkListView_eventHandlers_render_showBusyList" method="showBusyList"/>
+			</eventHandlers>
+		</view>
+
+		<!-- Work Order Details view -->
+		<view id="WorkApproval.WorkListDetailsView" label="Work Order Details" resource="workOrder">
+			<requiredResources id="WorkApproval.WorkListDetailsView_requiredResources">
+				<requiredResource id="WorkApproval.WorkListDetailsView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.WorkListDetailsView_workOrder_tasklist" name="tasklist"/>
+				</requiredResource>
+				<requiredResource id="WorkApproval.WorkListDetailsView_domainwostatus" name="domainwostatus"/>
+				<requiredResource id="WorkApproval.WorkListDetailsView_workCosts" name="workCosts"/>
+			</requiredResources>
+			<eventHandlers id="WorkApproval.WorkListDetailsView_eventHandlers">
+				<eventHandler class="application.handlers.WOListHandler" event="initialize" id="WorkApproval.WorkListDetailsView_eventHandlers_initialize_InitializeAllListSizes" method="InitializeAllListSizes"/>
+			</eventHandlers>
+			<container id="WorkApproval.WorkListDetailsView_container_0">
+			    <errorIndicator id="WorkApproval.WorkListDetailsView_errorIndicator"/>
+				<group id="WorkApproval.WorkListDetailsView_group_0">
+		<!-- Status view -->
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.EditStatusView_0" transitionTo="WorkApproval.EditStatusView">
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.EditStatusView_0_statusdesc_Status" label="Status" resourceAttribute="statusdesc"/>
+						<button id="WorkApproval.WorkListDetailsView_status_Approve_button" label="Approve" resourceAttribute="status">
+							<eventHandlers id="WorkApproval.WorkListDetailsView_status_Approve_button_eventHandlers">
+								<eventHandler class="application.handlers.StatusChangeHandler" event="click" id="WorkApproval.WorkListDetailsView_status_Approve_button_eventHandlers_click_handleApproveWorkClick" method="handleApproveWorkClick"/>
+								<eventHandler class="application.handlers.StatusChangeHandler" event="datachange" id="WorkApproval.WorkListDetailsView_status_Approve_button_eventHandlers_datachange_enableApproveButton" method="enableApproveButton"/>
+							</eventHandlers>
+						</button>
+						<button id="WorkApproval.WorkListDetailsView_status_Cancel_button" label="Cancel" resourceAttribute="status">
+							<eventHandlers id="WorkApproval.WorkListDetailsView_status_Cancel_button_eventHandlers">
+								<eventHandler class="application.handlers.StatusChangeHandler" event="click" id="WorkApproval.WorkListDetailsView_status_Cancel_button_eventHandlers_click_handleCancelWorkClick" method="handleCancelWorkClick"/>
+								<eventHandler class="application.handlers.StatusChangeHandler" event="datachange" id="WorkApproval.WorkListDetailsView_status_Cancel_button_eventHandlers_datachange_enableCancelButton" method="enableCancelButton"/>
+							</eventHandlers>
+						</button>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_0">
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_0_wonum_WorkOrder" label="Work Order" resourceAttribute="wonum"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.DescriptionView_0" transitionTo="WorkApproval.DescriptionView">
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.DescriptionView_0_description_Description" label="Description" resourceAttribute="description"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.AssetView_0" transitionTo="WorkApproval.AssetView">
+						<!-- <text resourceAttribute="asset" label="Asset" editable="false" 
+							/> <text resourceAttribute="assetdesc" editable="false" /> -->
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.AssetView_0_assetnumanddescription_Asset" label="Asset" resourceAttribute="assetnumanddescription"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.LocationView_0" transitionTo="WorkApproval.LocationView">
+						<!-- <text resourceAttribute="location" label="Location" editable="false" 
+							/> <text resourceAttribute="locationdesc" editable="false" /> -->
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.LocationView_0_locationanddescription_Location" label="Location" resourceAttribute="locationanddescription"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_1">
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_1_woserviceaddress_ServiceAddress" label="Service Address" resourceAttribute="woserviceaddress"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_2">
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_2_targetstart_TargetStart" label="Target Start" resourceAttribute="targetstart"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_3">
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_3_targetfinish_TargetFinish" label="Target Finish" resourceAttribute="targetfinish"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_4">
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_4_starttime_ScheduledStart" label="Scheduled Start" resourceAttribute="starttime"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_5">
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_5_finishtime_ScheduledFinish" label="Scheduled Finish" resourceAttribute="finishtime"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_6">
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_6_worktype_WorkType" label="Work Type" resourceAttribute="worktype"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_7">
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_7_priority_Priority" label="Priority" resourceAttribute="priority"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_8">
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_8_reportedby_ReportedBy" label="Reported By" resourceAttribute="reportedby"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_9">
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_9_reporteddate_ReportedDate" label="Reported Date" resourceAttribute="reporteddate"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_10">
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_10_glaccount_GLAccount" label="GL Account" resourceAttribute="glaccount"/>
+					</groupitem>
+				</group>
+				<group id="WorkApproval.WorkListDetailsView_group_1">
+		<!-- Costs view -->
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.CostsView_0" layout="ViewCostLine" transitionTo="WorkApproval.CostsView">
+						<text cssClass="relatedRecords" editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.CostsView_0_Costs" layoutInsertAt="item1" value="Costs"/>
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.CostsView_0_localtotalcost" layoutInsertAt="item2" resourceAttribute="localtotalcost">
+							<eventHandlers id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.CostsView_0_localtotalcost_eventHandlers">
+								<eventHandler class="application.handlers.WOListHandler" event="render" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.CostsView_0_localtotalcost_eventHandlers_render_calculateWOCost" method="calculateWOCost"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+		<!-- Multiple Assets & Locations view -->
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.MultipleAssetsLocationsView_0" layout="Item1Count1Button1" transitionTo="WorkApproval.MultipleAssetsLocationsView">
+						<text cssClass="relatedRecords" editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.MultipleAssetsLocationsView_0_MultipleAssetsLo" layoutInsertAt="item1" value="Multiple Assets &amp; Locations"/>
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.MultipleAssetsLocationsView_0_multiassetloclistsize" layoutInsertAt="count1" resourceAttribute="multiassetloclistsize">
+							<eventHandlers id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.MultipleAssetsLocationsView_0_multiassetloclistsize_eventHandlers">
+								<eventHandler class="application.handlers.WOListHandler" event="render" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.MultipleAssetsLocationsView_0_multiassetloclistsize_eventHandlers_render_UpdateMultiAssetLocListSize" method="UpdateMultiAssetLocListSize"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+		<!-- Tasks view -->
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.TasksView_0" layout="Item1Count1Button1" transitionTo="WorkApproval.TasksView">
+						<text cssClass="relatedRecords" editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.TasksView_0_Tasks" layoutInsertAt="item1" value="Tasks"/>
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.TasksView_0_tasklistsize" layoutInsertAt="count1" resourceAttribute="tasklistsize">
+							<eventHandlers id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.TasksView_0_tasklistsize_eventHandlers">
+								<eventHandler class="application.handlers.WOListHandler" event="render" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.TasksView_0_tasklistsize_eventHandlers_render_UpdateTaskListSize" method="UpdateTaskListSize"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+				</group>
+				<group id="WorkApproval.WorkListDetailsView_group_2">
+		<!-- Planned Labor view -->
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedLaborView_0" layout="Item1Count1Button1" transitionTo="WorkApproval.PlannedLaborView">
+						<text cssClass="relatedRecords" editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedLaborView_0_PlannedLabor" layoutInsertAt="item1" value="Planned Labor"/>
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedLaborView_0_laborlistsize" layoutInsertAt="count1" resourceAttribute="laborlistsize">
+							<eventHandlers id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedLaborView_0_laborlistsize_eventHandlers">
+								<eventHandler class="application.handlers.WOListHandler" event="render" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedLaborView_0_laborlistsize_eventHandlers_render_UpdateLaborListSize" method="UpdateLaborListSize"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+		<!-- Planned Materials view -->
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedMaterialView_0" layout="Item1Count1Button1" transitionTo="WorkApproval.PlannedMaterialView">
+						<text cssClass="relatedRecords" editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedMaterialView_0_PlannedMaterials" layoutInsertAt="item1" value="Planned Materials"/>
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedMaterialView_0_materiallistsize" layoutInsertAt="count1" resourceAttribute="materiallistsize">
+							<eventHandlers id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedMaterialView_0_materiallistsize_eventHandlers">
+								<eventHandler class="application.handlers.WOListHandler" event="render" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedMaterialView_0_materiallistsize_eventHandlers_render_UpdateMaterialListSize" method="UpdateMaterialListSize"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+		<!-- Planned Tools view -->
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedToolsView_0" layout="Item1Count1Button1" transitionTo="WorkApproval.PlannedToolsView">
+						<text cssClass="relatedRecords" editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedToolsView_0_PlannedTools" layoutInsertAt="item1" value="Planned Tools"/>
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedToolsView_0_toollistsize" layoutInsertAt="count1" resourceAttribute="toollistsize">
+							<eventHandlers id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedToolsView_0_toollistsize_eventHandlers">
+								<eventHandler class="application.handlers.WOListHandler" event="render" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedToolsView_0_toollistsize_eventHandlers_render_UpdateToolListSize" method="UpdateToolListSize"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+		<!-- Planned Services view -->
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedServicesView_0" layout="Item1Count1Button1" transitionTo="WorkApproval.PlannedServicesView">
+						<text cssClass="relatedRecords" editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedServicesView_0_PlannedServices" layoutInsertAt="item1" value="Planned Services"/>
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedServicesView_0_servicelistsize" layoutInsertAt="count1" resourceAttribute="servicelistsize">
+							<eventHandlers id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedServicesView_0_servicelistsize_eventHandlers">
+								<eventHandler class="application.handlers.WOListHandler" event="render" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.PlannedServicesView_0_servicelistsize_eventHandlers_render_UpdateServiceListSize" method="UpdateServiceListSize"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+				</group>
+				<group id="WorkApproval.WorkListDetailsView_group_3">
+		<!-- Work Log view -->
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.WorkLogView_0" layout="Item1Count1Button1" transitionTo="WorkApproval.WorkLogView">
+						<text cssClass="relatedRecords" editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.WorkLogView_0_WorkLog" layoutInsertAt="item1" value="Work Log"/>
+						<text editable="false" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.WorkLogView_0_workloglistsize" layoutInsertAt="count1" resourceAttribute="workloglistsize">
+							<eventHandlers id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.WorkLogView_0_workloglistsize_eventHandlers">
+								<eventHandler class="application.handlers.WOListHandler" event="render" id="WorkApproval.WorkListDetailsView_groupitem_WorkApproval.WorkLogView_0_workloglistsize_eventHandlers_render_UpdateWorkLogListSize" method="UpdateWorkLogListSize"/>
+							</eventHandlers>
+						</text>
+						<button id="WorkApproval.WorkListDetailsView_CreateWorkLogEntry_action_addNew_OFF.svg_button" image="action_addNew_OFF.svg" label="Create Work Log Entry" layoutInsertAt="button1" transitionTo="WorkApproval.NewWorkLogView">
+							<eventHandlers id="WorkApproval.WorkListDetailsView_CreateWorkLogEntry_action_addNew_OFF.svg_button_eventHandlers">
+								<eventHandler class="application.handlers.WorkLogHandler" event="datachange" id="WorkApproval.WorkListDetailsView_CreateWorkLogEntry_action_addNew_OFF.svg_button_eventHandlers_datachange_enableAddWorkLogButton" method="enableAddWorkLogButton"/>
+							</eventHandlers>
+						</button>
+					</groupitem>
+				</group>
+				<group id="WorkApproval.WorkListDetailsView_group_4">
+					<groupitem id="WorkApproval.WorkListDetailsView_groupitem_11">
+						<lastupdatetext id="WorkApproval.WorkListDetailsView_lastupdatetext"/>
+					</groupitem>
+				</group>
+
+			</container>
+		</view>
+
+		<!-- Description view for access to Long Description -->
+		<view id="WorkApproval.DescriptionView" label="Description" resource="workOrder">
+			<requiredResources id="WorkApproval.DescriptionView_requiredResources">
+				<requiredResource id="WorkApproval.DescriptionView_workOrder" name="workOrder"/>
+			</requiredResources>
+			<container id="WorkApproval.DescriptionView_container_0">
+				<group id="WorkApproval.DescriptionView_group_0">
+					<groupitem id="WorkApproval.DescriptionView_groupitem_0">
+						<text editable="false" id="WorkApproval.DescriptionView_groupitem_0_description" resourceAttribute="description"/>
+					</groupitem>
+					<groupitem id="WorkApproval.DescriptionView_groupitem_1">
+						<text cssClass="richText" editable="false" id="WorkApproval.DescriptionView_groupitem_1_longdescription" resourceAttribute="longdescription"/>
+					</groupitem>
+				</group>
+			</container>
+		</view>
+
+		<!-- Asset view for access to Long Description -->
+		<view id="WorkApproval.AssetView" label="Asset">
+			<requiredResources id="WorkApproval.AssetView_requiredResources">
+				<requiredResource id="WorkApproval.AssetView_workOrder" name="workOrder"/>
+			</requiredResources>
+			<container id="WorkApproval.AssetView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.AssetView_group_0">
+					<groupitem id="WorkApproval.AssetView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.AssetView_workOrder_groupitem_0_asset" resourceAttribute="asset"/>
+						<text editable="false" id="WorkApproval.AssetView_workOrder_groupitem_0_assetdesc" resourceAttribute="assetdesc"/>
+					</groupitem>
+					<groupitem id="WorkApproval.AssetView_workOrder_groupitem_1">
+						<text cssClass="richText" editable="false" id="WorkApproval.AssetView_workOrder_groupitem_1_assetld" resourceAttribute="localAssetLd"/>
+					</groupitem>
+				</group>
+			</container>
+			<eventHandlers id="WorkApproval.AssetView_eventHandlers">
+				<eventHandler class="application.handlers.WODetailsHandler" event="initialize" id="WorkApproval.AssetView_eventHandlers_initialize_initAssetView" method="initAssetView"/>
+			</eventHandlers>
+		</view>
+
+		<!-- Location view for access to Long Description -->
+		<view id="WorkApproval.LocationView" label="Location">
+			<requiredResources id="WorkApproval.LocationView_requiredResources">
+				<requiredResource id="WorkApproval.LocationView_workOrder" name="workOrder"/>
+			</requiredResources>
+			<container id="WorkApproval.LocationView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.LocationView_group_0">
+					<groupitem id="WorkApproval.LocationView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.LocationView_workOrder_groupitem_0_location" resourceAttribute="location"/>
+						<text editable="false" id="WorkApproval.LocationView_workOrder_groupitem_0_locationdesc" resourceAttribute="locationdesc"/>
+					</groupitem>
+					<groupitem id="WorkApproval.LocationView_workOrder_groupitem_1">
+						<text cssClass="richText" editable="false" id="WorkApproval.LocationView_workOrder_groupitem_1_locationld" resourceAttribute="localLocationLd"/>
+					</groupitem>
+				</group>
+			</container>
+			<eventHandlers id="WorkApproval.LocationView_eventHandlers">
+				<eventHandler class="application.handlers.WODetailsHandler" event="initialize" id="WorkApproval.LocationView_eventHandlers_initialize_initLocationView" method="initLocationView"/>
+			</eventHandlers>
+		</view>
+
+		<!-- Change Status view -->
+		<view id="WorkApproval.EditStatusView" label="Change Status" resource="workOrder" showOverflow="false">
+			<requiredResources id="WorkApproval.EditStatusView_requiredResources">
+				<requiredResource id="WorkApproval.EditStatusView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.EditStatusView_workOrder_tasklist" name="tasklist"/>
+				</requiredResource>
+				<requiredResource id="WorkApproval.EditStatusView_statusChangeResource" name="statusChangeResource"/>
+			</requiredResources>
+			
+			<container id="WorkApproval.EditStatusView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.EditStatusView_group_0">
+					<groupitem id="WorkApproval.EditStatusView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.EditStatusView_workOrder_groupitem_0_wonum_WorkOrder" label="Work Order" resourceAttribute="wonum"/>
+						<text editable="false" id="WorkApproval.EditStatusView_workOrder_groupitem_0_statusdesc_Status" label="Status" resourceAttribute="statusdesc"/>
+					</groupitem>
+				</group>
+			</container>
+			<container id="WorkApproval.EditStatusView_statusChangeResource_container_0" resource="statusChangeResource">
+				<group id="WorkApproval.EditStatusView_group_1">
+					<groupitem id="WorkApproval.EditStatusView_statusChangeResource_groupitem_0"> 
+						<text editable="true" id="WorkApproval.EditStatusView_statusChangeResource_groupitem_0_changedate_StatusDate" label="Status Date" placeHolder="Select" required="true" resourceAttribute="changedate"/>
+					</groupitem>
+					<groupitem id="WorkApproval.EditStatusView_statusChangeResource_groupitem_1">
+						<text editable="false" id="WorkApproval.EditStatusView_statusChangeResource_groupitem_1_statusdesc_NewStatus" label="New Status" lookup="WorkApproval.statusLookup" placeHolder="Select from list" required="true" resourceAttribute="statusdesc"/>
+					</groupitem>
+					<groupitem id="WorkApproval.EditStatusView_statusChangeResource_groupitem_2">
+						<text editable="true" id="WorkApproval.EditStatusView_statusChangeResource_groupitem_2_memo_Memo" label="Memo" placeHolder="Tap to enter" resourceAttribute="memo"/>
+					</groupitem>
+				</group>
+			</container>
+			<footer id="WorkApproval.EditStatusView_footer">
+				<button id="WorkApproval.EditStatusView_Cancel_button" label="Cancel" resource="workOrder">
+					<eventHandlers id="WorkApproval.EditStatusView_Cancel_button_eventHandlers">
+						<eventHandler class="application.handlers.StatusChangeHandler" event="click" id="WorkApproval.EditStatusView_Cancel_button_eventHandlers_click_discardStatusChange" method="discardStatusChange"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="WorkApproval.EditStatusView_Save_button" label="Save" primary="true" resource="workOrder">
+					<eventHandlers id="WorkApproval.EditStatusView_Save_button_eventHandlers">
+						<eventHandler class="application.handlers.StatusChangeHandler" event="click" id="WorkApproval.EditStatusView_Save_button_eventHandlers_click_commitWOStatusChange" method="commitWOStatusChange"/>
+						<eventHandler class="application.handlers.StatusChangeHandler" event="datachange" id="WorkApproval.EditStatusView_Save_button_eventHandlers_datachange_enableCommitButton" method="enableCommitButton"/>
+					</eventHandlers>
+				</button>
+			</footer>
+
+			<eventHandlers id="WorkApproval.EditStatusView_eventHandlers">
+				<eventHandler class="application.handlers.StatusChangeHandler" event="initialize" id="WorkApproval.EditStatusView_eventHandlers_initialize_initEditStatusView" method="initEditStatusView"/>
+				<eventHandler class="application.handlers.StatusChangeHandler" event="cleanup" id="WorkApproval.EditStatusView_eventHandlers_cleanup_cleanupEditStatusView" method="cleanupEditStatusView"/>	
+			</eventHandlers>
+		</view>
+
+		<!-- Change Status view -->
+		<view id="WorkApproval.EditTaskStatusView" label="Change Status" resource="workOrder" showOverflow="false">
+			<requiredResources id="WorkApproval.EditTaskStatusView_requiredResources">
+				<requiredResource id="WorkApproval.EditTaskStatusView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.EditTaskStatusView_workOrder_tasklist" name="tasklist"/>
+				</requiredResource>
+				<requiredResource id="WorkApproval.EditTaskStatusView_statusChangeResource" name="statusChangeResource"/>
+			</requiredResources>
+
+			<container attribute="tasklist" id="WorkApproval.EditTaskStatusView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.EditTaskStatusView_group_0">
+					<groupitem id="WorkApproval.EditTaskStatusView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.EditTaskStatusView_workOrder_groupitem_0_parent_WorkOrder" label="Work Order" resourceAttribute="parent"/>
+						<text editable="false" id="WorkApproval.EditTaskStatusView_workOrder_groupitem_0_taskid_Task" label="Task" resourceAttribute="taskid"/>
+						<text editable="false" id="WorkApproval.EditTaskStatusView_workOrder_groupitem_0_statusdesc_Status" label="Status" resourceAttribute="statusdesc"/>
+
+					</groupitem>
+				</group>
+			</container>
+			<container id="WorkApproval.EditTaskStatusView_statusChangeResource_container_0" resource="statusChangeResource">
+				<group id="WorkApproval.EditTaskStatusView_group_1">
+					<groupitem id="WorkApproval.EditTaskStatusView_statusChangeResource_groupitem_0">
+						<text editable="true" id="WorkApproval.EditTaskStatusView_statusChangeResource_groupitem_0_changedate_StatusDate" label="Status Date" placeHolder="Select" required="true" resourceAttribute="changedate"/>
+					</groupitem>
+					<groupitem id="WorkApproval.EditTaskStatusView_statusChangeResource_groupitem_1">
+						<text editable="false" id="WorkApproval.EditTaskStatusView_statusChangeResource_groupitem_1_statusdesc_NewStatus" label="New Status" lookup="WorkApproval.taskStatusLookup" placeHolder="Select from list" required="true" resourceAttribute="statusdesc"/>
+					</groupitem>
+					<groupitem id="WorkApproval.EditTaskStatusView_statusChangeResource_groupitem_2">
+						<text editable="true" id="WorkApproval.EditTaskStatusView_statusChangeResource_groupitem_2_memo_Memo" label="Memo" placeHolder="Tap to enter" resourceAttribute="memo"/>
+					</groupitem>
+				</group>
+			</container>
+			<footer id="WorkApproval.EditTaskStatusView_footer">
+				<button id="WorkApproval.EditTaskStatusView_Cancel_button" label="Cancel" resource="workOrder">
+					<eventHandlers id="WorkApproval.EditTaskStatusView_Cancel_button_eventHandlers">
+						<eventHandler class="application.handlers.StatusChangeHandler" event="click" id="WorkApproval.EditTaskStatusView_Cancel_button_eventHandlers_click_discardStatusChange" method="discardStatusChange"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="WorkApproval.EditTaskStatusView_Save_button" label="Save" primary="true" resource="workOrder">
+					<eventHandlers id="WorkApproval.EditTaskStatusView_Save_button_eventHandlers">
+						<eventHandler class="application.handlers.StatusChangeHandler" event="click" id="WorkApproval.EditTaskStatusView_Save_button_eventHandlers_click_commitTaskStatusChange" method="commitTaskStatusChange"/>
+					</eventHandlers>
+				</button>
+			</footer>
+			<eventHandlers id="WorkApproval.EditTaskStatusView_eventHandlers">
+				<eventHandler class="application.handlers.StatusChangeHandler" event="initialize" id="WorkApproval.EditTaskStatusView_eventHandlers_initialize_initEditStatusView" method="initEditStatusView"/>
+			</eventHandlers>
+		</view>
+
+		<!-- Multiple Assets and Locations view -->
+		<view id="WorkApproval.MultipleAssetsLocationsView" label="Multiple Assets &amp; Locations">
+			<requiredResources id="WorkApproval.MultipleAssetsLocationsView_requiredResources">
+				<requiredResource id="WorkApproval.MultipleAssetsLocationsView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.MultipleAssetsLocationsView_workOrder_multiassetloclist" name="multiassetloclist"/>
+				</requiredResource>
+			</requiredResources>
+
+			<list attribute="multiassetloclist" id="WorkApproval.MultipleAssetsLocationsView_workOrder_multiassetloclist_list" resource="workOrder">
+				<sortOptions id="WorkApproval.MultipleAssetsLocationsView_workOrder_multiassetloclist_list_sortOptions">
+					<sortOption id="WorkApproval.MultipleAssetsLocationsView_sortOption_Sequence" label="Sequence">
+						<sortAttribute direction="asc" id="WorkApproval.MultipleAssetsLocationsView_Sequence_sortAttribute_sequence" name="sequence"/>
+					</sortOption>
+					<sortOption id="WorkApproval.MultipleAssetsLocationsView_sortOption_Asset" label="Asset">
+						<sortAttribute direction="asc" id="WorkApproval.MultipleAssetsLocationsView_Asset_sortAttribute_assetnumanddescription" name="assetnumanddescription"/>
+					</sortOption>
+					<sortOption id="WorkApproval.MultipleAssetsLocationsView_sortOption_Location" label="Location">
+						<sortAttribute direction="asc" id="WorkApproval.MultipleAssetsLocationsView_Location_sortAttribute_locationanddescription" name="locationanddescription"/>
+					</sortOption>
+				</sortOptions>
+				<listItemTemplate id="WorkApproval.MultipleAssetsLocationsView_workOrder_multiassetloclist_listItemTemplate">
+					<listtext id="WorkApproval.MultipleAssetsLocationsView_workOrder_sequence" resourceAttribute="sequence"/>
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.MultipleAssetsLocationsView_workOrder_assetnumanddescription" resourceAttribute="assetnumanddescription"/>
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.MultipleAssetsLocationsView_workOrder_locationanddescription" resourceAttribute="locationanddescription"/>
+				</listItemTemplate>
+			</list>
+		</view>
+
+
+
+		<!-- Tasks view -->
+		<view id="WorkApproval.TasksView" label="Tasks">
+			<requiredResources id="WorkApproval.TasksView_requiredResources">
+				<requiredResource id="WorkApproval.TasksView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.TasksView_workOrder_tasklist" name="tasklist"/>
+				</requiredResource>
+			</requiredResources>
+			<list attribute="tasklist" id="WorkApproval.TasksView_workOrder_tasklist_list" resource="workOrder" transitionTo="WorkApproval.TaskDetailView">
+				<sortOptions id="WorkApproval.TasksView_workOrder_tasklist_list_sortOptions">
+					<sortOption id="WorkApproval.TasksView_sortOption_Task" label="Task">
+						<sortAttribute direction="asc" id="WorkApproval.TasksView_Task_sortAttribute_taskid" name="taskid"/>
+					</sortOption>
+				</sortOptions>
+				<listItemTemplate id="WorkApproval.TasksView_workOrder_tasklist_listItemTemplate">
+					<listtext id="WorkApproval.TasksView_workOrder_taskid" resourceAttribute="taskid"/>
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.TasksView_workOrder_taskdescription" resourceAttribute="taskdescription"/>
+					<listtext id="WorkApproval.TasksView_workOrder_statusdesc" resourceAttribute="statusdesc"/>
+					</listItemTemplate>
+			</list>
+		</view>
+
+		<!-- Task Details view -->
+		<view id="WorkApproval.TaskDetailView" label="Task Details" resolverClass="application.handlers.WODetailsHandler" resolverFunction="resolveWonumLabel">
+			<requiredResources id="WorkApproval.TaskDetailView_requiredResources">
+				<requiredResource id="WorkApproval.TaskDetailView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.TaskDetailView_workOrder_tasklist" name="tasklist"/>
+				</requiredResource>
+			</requiredResources>
+			<container attribute="tasklist" id="WorkApproval.TaskDetailView_workOrder_container_0" resource="workOrder">
+
+				<group id="WorkApproval.TaskDetailView_group_0">
+					<groupitem id="WorkApproval.TaskDetailView_workOrder_groupitem_WorkApproval.EditTaskStatusView_0" transitionTo="WorkApproval.EditTaskStatusView">
+						<text editable="false" id="WorkApproval.TaskDetailView_workOrder_groupitem_WorkApproval.EditTaskStatusView_0_statusdesc_Status" label="Status" resourceAttribute="statusdesc"/>
+
+					</groupitem>
+					<groupitem id="WorkApproval.TaskDetailView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.TaskDetailView_workOrder_groupitem_0_taskid_Task" label="Task" resourceAttribute="taskid"/>
+					</groupitem>
+					<groupitem id="WorkApproval.TaskDetailView_workOrder_groupitem_WorkApproval.TaskView_0" transitionTo="WorkApproval.TaskView">
+						<text editable="false" id="WorkApproval.TaskDetailView_workOrder_groupitem_WorkApproval.TaskView_0_taskdescription_Description" label="Description" resourceAttribute="taskdescription"/>
+					</groupitem>
+					<groupitem id="WorkApproval.TaskDetailView_workOrder_groupitem_WorkApproval.AssetView_0" transitionTo="WorkApproval.AssetView">
+						<text editable="false" id="WorkApproval.TaskDetailView_workOrder_groupitem_WorkApproval.AssetView_0_assetnumanddescription_Asset" label="Asset" resourceAttribute="assetnumanddescription"/>
+					</groupitem>
+					<groupitem id="WorkApproval.TaskDetailView_workOrder_groupitem_WorkApproval.LocationView_0" transitionTo="WorkApproval.LocationView">
+						<text editable="false" id="WorkApproval.TaskDetailView_workOrder_groupitem_WorkApproval.LocationView_0_locationanddescription_Location" label="Location" resourceAttribute="locationanddescription"/>
+					</groupitem>
+					<groupitem id="WorkApproval.TaskDetailView_workOrder_groupitem_1">
+						<text editable="false" id="WorkApproval.TaskDetailView_workOrder_groupitem_1_schedstart_ScheduledStart" label="Scheduled Start" resourceAttribute="schedstart"/>
+					</groupitem>
+				</group>
+				<group id="WorkApproval.TaskDetailView_group_1">
+					<groupitem id="WorkApproval.TaskDetailView_workOrder_groupitem_2">
+						<lastupdatetext id="WorkApproval.TaskDetailView_lastupdatetext"/>
+					</groupitem>
+				</group>
+
+			</container>
+		</view>
+
+		<!-- Task view - Long Description -->
+		<view id="WorkApproval.TaskView" label="Task">
+			<requiredResources id="WorkApproval.TaskView_requiredResources">
+				<requiredResource id="WorkApproval.TaskView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.TaskView_workOrder_tasklist" name="tasklist"/>
+				</requiredResource>
+			</requiredResources>
+			<container attribute="tasklist" id="WorkApproval.TaskView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.TaskView_group_0">
+					<groupitem id="WorkApproval.TaskView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.TaskView_workOrder_groupitem_0_taskdescription" resourceAttribute="taskdescription"/>
+					</groupitem>
+					<groupitem id="WorkApproval.TaskView_workOrder_groupitem_1">
+						<text cssClass="richText" editable="false" id="WorkApproval.TaskView_workOrder_groupitem_1_tasklongdesc" resourceAttribute="tasklongdesc"/>
+					</groupitem>
+
+				</group>
+
+			</container>
+		</view>
+		<!-- Planned Labor view -->
+		<view id="WorkApproval.PlannedLaborView" label="Planned Labor">
+			<requiredResources id="WorkApproval.PlannedLaborView_requiredResources">
+				<requiredResource id="WorkApproval.PlannedLaborView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.PlannedLaborView_workOrder_laborlist" name="laborlist"/>
+				</requiredResource>
+			</requiredResources>
+			<list attribute="laborlist" id="WorkApproval.PlannedLaborView_workOrder_laborlist_list" resource="workOrder" transitionTo="WorkApproval.PlannedLaborDetailView">
+
+				<sortOptions id="WorkApproval.PlannedLaborView_workOrder_laborlist_list_sortOptions">
+					<sortOption id="WorkApproval.PlannedLaborView_sortOption_TaskIDCraft" label="Task ID, Craft">
+						<sortAttribute direction="asc" id="WorkApproval.PlannedLaborView_TaskIDCraft_sortAttribute_taskid" name="taskid"/>
+						<sortAttribute direction="asc" id="WorkApproval.PlannedLaborView_TaskIDCraft_sortAttribute_craft" name="craft"/>
+					</sortOption>
+				</sortOptions>
+
+				<listItemTemplate id="WorkApproval.PlannedLaborView_workOrder_laborlist_listItemTemplate_PlannedLaborListItem" layout="PlannedLaborListItem">
+					<listtext id="WorkApproval.PlannedLaborView_workOrder_PlannedLaborListItem_taskid" layoutInsertAt="item1" resourceAttribute="taskid"/>
+					<listtext id="WorkApproval.PlannedLaborView_workOrder_PlannedLaborListItem_craft" layoutInsertAt="item2" resourceAttribute="craft"/>
+					<listtext id="WorkApproval.PlannedLaborView_workOrder_PlannedLaborListItem_skilllevel" layoutInsertAt="item3" resourceAttribute="skilllevel"/>
+					<listtext id="WorkApproval.PlannedLaborView_workOrder_PlannedLaborListItem_crewtype" layoutInsertAt="item4" resourceAttribute="crewtype"/>
+					<listtext id="WorkApproval.PlannedLaborView_workOrder_PlannedLaborListItem_linecost" layoutInsertAt="item5" resourceAttribute="linecost"/>
+				</listItemTemplate>
+			</list>
+		</view>
+		<!-- Labor Details view -->
+		<view id="WorkApproval.PlannedLaborDetailView" label="Labor Details">
+			<requiredResources id="WorkApproval.PlannedLaborDetailView_requiredResources">
+				<requiredResource id="WorkApproval.PlannedLaborDetailView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.PlannedLaborDetailView_workOrder_laborlist" name="laborlist"/>
+				</requiredResource>
+			</requiredResources>
+			<container attribute="laborlist" id="WorkApproval.PlannedLaborDetailView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.PlannedLaborDetailView_group_0">
+					<groupitem id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_0_taskid_Task" label="Task" resourceAttribute="taskid"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_1">
+						<text editable="false" id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_1_laborcode_Labor" label="Labor" resourceAttribute="laborcode"/>
+						
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_2">
+						<text editable="false" id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_2_craft_Craft" label="Craft" resourceAttribute="craft"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_3">
+						<text editable="false" id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_3_skilllevel_SkillLevel" label="Skill Level" resourceAttribute="skilllevel"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_4">
+						<text editable="false" id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_4_hours_Hours" label="Hours" resourceAttribute="hours"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_5">
+						<text editable="false" id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_5_rate_Rate" label="Rate" resourceAttribute="rate"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_6">
+						<text editable="false" id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_6_linecost_Cost" label="Cost" resourceAttribute="linecost"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_7">
+						<text editable="false" id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_7_vendor_Vendor" label="Vendor" resourceAttribute="vendor"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_8">
+						<text editable="false" id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_8_contractnum_LaborContract" label="Labor Contract" resourceAttribute="contractnum"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_9">
+						<text editable="false" id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_9_crewworkgroup_CrewWorkGroup" label="Crew Work Group" resourceAttribute="crewworkgroup"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_10">
+						<text editable="false" id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_10_crewtype_CrewType" label="Crew Type" resourceAttribute="crewtype"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_11">
+						<text editable="false" id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_11_crew_Crew" label="Crew" resourceAttribute="crew"/>
+					</groupitem>
+				</group>
+				<group id="WorkApproval.PlannedLaborDetailView_group_1">
+					<groupitem id="WorkApproval.PlannedLaborDetailView_workOrder_groupitem_12">
+						<lastupdatetext id="WorkApproval.PlannedLaborDetailView_lastupdatetext"/>
+					</groupitem>
+				</group>
+
+			</container>
+		</view>
+
+		<!-- Planned Costs view -->
+		<view id="WorkApproval.CostsView" label="Planned Costs" resource="workCosts">
+			<requiredResources id="WorkApproval.CostsView_requiredResources">
+				<requiredResource id="WorkApproval.CostsView_workOrder" name="workOrder">
+				    <requiredAttribute id="WorkApproval.CostsView_workOrder_tasklist" name="tasklist"/>
+				</requiredResource>
+			</requiredResources>
+			<container id="WorkApproval.CostsView_container_0"/>
+			<container id="WorkApproval.CostsView_container_1">
+				<group id="WorkApproval.CostsView_group_0">
+					<groupitem id="WorkApproval.CostsView_groupitem_0" layout="ViewCostLaborSection">
+					    <text cssClass="bold textappearance-medium" editable="false" id="WorkApproval.CostsView_groupitem_0_LaborTotal" layoutInsertAt="item1" value="Labor Total"/>
+					    <text cssClass="bold textappearance-medium" editable="false" id="WorkApproval.CostsView_groupitem_0_localestlabhrs" layoutInsertAt="item2" resourceAttribute="localestlabhrs"/>
+					    <text cssClass="bold textappearance-medium" editable="false" id="WorkApproval.CostsView_groupitem_0_hours" layoutInsertAt="item3" value="hours"/>
+						<text cssClass="bold textappearance-medium" editable="false" id="WorkApproval.CostsView_groupitem_0_localestlabcost" layoutInsertAt="item4" resourceAttribute="localestlabcost"/>
+						
+						<text cssClass="bold listTextGreyed" editable="false" id="WorkApproval.CostsView_groupitem_0_Internal" layoutInsertAt="item5" value="Internal"/>
+						<text cssClass="bold listTextGreyed" editable="false" id="WorkApproval.CostsView_groupitem_0_localestintlabhrs" layoutInsertAt="item6" resourceAttribute="localestintlabhrs"/>
+						<text cssClass="bold listTextGreyed" editable="false" id="WorkApproval.CostsView_groupitem_0_localestintlabcost" layoutInsertAt="item7" resourceAttribute="localestintlabcost"/>
+						
+						<text cssClass="bold listTextGreyed" editable="false" id="WorkApproval.CostsView_groupitem_0_External" layoutInsertAt="item8" value="External"/>
+						<text cssClass="bold listTextGreyed" editable="false" id="WorkApproval.CostsView_groupitem_0_localestoutlabhrs" layoutInsertAt="item9" resourceAttribute="localestoutlabhrs"/>
+						<text cssClass="bold listTextGreyed" editable="false" id="WorkApproval.CostsView_groupitem_0_localestoutlabcost" layoutInsertAt="item10" resourceAttribute="localestoutlabcost"/>
+						
+					</groupitem>
+				</group>
+			</container>
+			<container id="WorkApproval.CostsView_container_2">
+			    <group id="WorkApproval.CostsView_group_1">
+			        <groupitem id="WorkApproval.CostsView_groupitem_1" layout="ViewCostLine">						    						
+						<text cssClass="bold textappearance-medium" editable="false" id="WorkApproval.CostsView_groupitem_1_Materials" layoutInsertAt="item1" value="Materials"/>
+						<text cssClass="bold textappearance-medium" editable="false" id="WorkApproval.CostsView_groupitem_1_localestmatcost" layoutInsertAt="item2" resourceAttribute="localestmatcost"/>
+					</groupitem>
+				</group>
+			</container>
+			<container id="WorkApproval.CostsView_container_3">
+			    <group id="WorkApproval.CostsView_group_2">
+			        <groupitem id="WorkApproval.CostsView_groupitem_2" layout="ViewCostLine">						    						
+						<text cssClass="bold textappearance-medium" editable="false" id="WorkApproval.CostsView_groupitem_2_Services" layoutInsertAt="item1" value="Services"/>
+						<text cssClass="bold textappearance-medium" editable="false" id="WorkApproval.CostsView_groupitem_2_localestservcost" layoutInsertAt="item2" resourceAttribute="localestservcost"/>
+					</groupitem>
+				</group>
+			</container>
+			<container id="WorkApproval.CostsView_container_4">
+			    <group id="WorkApproval.CostsView_group_3">
+			        <groupitem id="WorkApproval.CostsView_groupitem_3" layout="ViewCostLine">						    						
+						<text cssClass="bold textappearance-medium" editable="false" id="WorkApproval.CostsView_groupitem_3_Tools" layoutInsertAt="item1" value="Tools"/>
+						<text cssClass="bold textappearance-medium" editable="false" id="WorkApproval.CostsView_groupitem_3_localesttoolcost" layoutInsertAt="item2" resourceAttribute="localesttoolcost"/>
+					</groupitem>
+				</group>
+			</container>
+			<container id="WorkApproval.CostsView_container_5">
+			    <group id="WorkApproval.CostsView_group_4">
+			        <groupitem id="WorkApproval.CostsView_groupitem_4" layout="ViewCostLine">	
+			            <text cssClass="bold textappearance-large" editable="false" id="WorkApproval.CostsView_groupitem_4_TotalCost" layoutInsertAt="item1" value="Total Cost"/>					    
+						<text cssClass="bold textappearance-large" editable="false" id="WorkApproval.CostsView_groupitem_4_localesttotalcost" layoutInsertAt="item2" resourceAttribute="localesttotalcost"/>
+					</groupitem>
+				</group>
+			</container>
+			<!-- <container> <group> <groupitem> <button label="Work Package Costs"> 
+				<eventHandlers> <eventHandler event="click" method="hierarchyCostsClickHandler" 
+				class="application.handlers.WODetailsHandler" /> </eventHandlers> </button> 
+				</groupitem> </group> </container> -->
+
+			<eventHandlers id="WorkApproval.CostsView_eventHandlers">
+				<eventHandler class="application.handlers.WODetailsHandler" event="show" id="WorkApproval.CostsView_eventHandlers_show_initCostsView" method="initCostsView"/>
+			</eventHandlers>
+		</view>
+	<!-- Work Package Costs view -->
+
+		<!-- <view id="WorkApproval.HierarchyCostsView" label="Work Package Costs" 
+			 resource="workOrder"> <requiredResources><requiredResource name="workOrderPOInfo" 
+			/><requiredResource name="workCosts" /></requiredResources> <container> <group> 
+			<groupitem> <text value="Current Estimate" editable="false" /> <text resourceAttribute="localestintlabhrs" 
+			label="Internal Labor Hours" editable="false" /> <text resourceAttribute="localestoutlabhrs" 
+			label="External Labor Hours" editable="false" /> <text resourceAttribute="localestlabhrs" 
+			label="Total Labor Hours" editable="false" /> <text resourceAttribute="localestintlabcost" 
+			label="Internal Labor Cost" editable="false" /> <text resourceAttribute="localestoutlabcost" 
+			label="External Labor Cost" editable="false" /> <text resourceAttribute="localestlabcost" 
+			label="Total Labor Cost" editable="false" /> <text resourceAttribute="localestmatcost" 
+			label="Total Material Cost" editable="false" /> <text resourceAttribute="localesttoolcost" 
+			label="Total Tool Cost" editable="false" /> <text resourceAttribute="localestservcost" 
+			label="Total Service Cost" editable="false" /> <text resourceAttribute="localesttotalcost" 
+			label="Grand Total Cost" editable="false" /> </groupitem> </group> </container> 
+			<container resource="workOrderPOInfo"> <group> <groupitem> <text resourceAttribute="pototal" 
+			label="PO Total" editable="false" /> <text resourceAttribute="prtotal" label="PR 
+			Total" editable="false" /> </groupitem> </group> </container> <eventHandlers> 
+			<eventHandler event="show" method="initHierarchyCostsView" class="application.handlers.WODetailsHandler" 
+			/> </eventHandlers> </view> -->
+		<!-- Planned Materials view -->
+		<view id="WorkApproval.PlannedMaterialView" label="Planned Materials">
+			<requiredResources id="WorkApproval.PlannedMaterialView_requiredResources">
+				<requiredResource id="WorkApproval.PlannedMaterialView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.PlannedMaterialView_workOrder_materiallist" name="materiallist"/>
+				</requiredResource>
+			</requiredResources>
+			<list attribute="materiallist" id="WorkApproval.PlannedMaterialView_workOrder_materiallist_list" resource="workOrder" transitionTo="WorkApproval.PlannedMaterialDetailView">
+
+				<sortOptions id="WorkApproval.PlannedMaterialView_workOrder_materiallist_list_sortOptions">
+					<sortOption id="WorkApproval.PlannedMaterialView_sortOption_TaskIDItem" label="Task ID, Item">
+						<sortAttribute direction="asc" id="WorkApproval.PlannedMaterialView_TaskIDItem_sortAttribute_taskid" name="taskid"/>
+						<sortAttribute direction="asc" id="WorkApproval.PlannedMaterialView_TaskIDItem_sortAttribute_itemanddescription" name="itemanddescription"/>
+					</sortOption>
+				</sortOptions>
+
+				<listItemTemplate id="WorkApproval.PlannedMaterialView_workOrder_materiallist_listItemTemplate_PlannedMaterialListItem" layout="PlannedMaterialListItem">
+					<listtext id="WorkApproval.PlannedMaterialView_workOrder_PlannedMaterialListItem_taskid" layoutInsertAt="item1" resourceAttribute="taskid"/>
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.PlannedMaterialView_workOrder_PlannedMaterialListItem_itemanddescription" layoutInsertAt="item2" resourceAttribute="itemanddescription"/>
+					<listtext id="WorkApproval.PlannedMaterialView_workOrder_PlannedMaterialListItem_quantity" layoutInsertAt="item3" resourceAttribute="quantity"/>
+					<listtext id="WorkApproval.PlannedMaterialView_workOrder_PlannedMaterialListItem_linecost" layoutInsertAt="item4" resourceAttribute="linecost"/>
+				</listItemTemplate>
+			</list>
+		</view>
+		<!-- Material Details view -->
+		<view id="WorkApproval.PlannedMaterialDetailView" label="Material Details">
+			<requiredResources id="WorkApproval.PlannedMaterialDetailView_requiredResources">
+				<requiredResource id="WorkApproval.PlannedMaterialDetailView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.PlannedMaterialDetailView_workOrder_materiallist" name="materiallist"/>
+				</requiredResource>
+			</requiredResources>
+			<container attribute="materiallist" id="WorkApproval.PlannedMaterialDetailView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.PlannedMaterialDetailView_group_0">
+					<groupitem id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_0_taskid_Task" label="Task" resourceAttribute="taskid"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_WorkApproval.MaterialView_0" transitionTo="WorkApproval.MaterialView">
+						<!-- <text label="Item" resourceAttribute="item" editable="false" /> 
+							<text resourceAttribute="itemdesc" editable="false" cssClass="bold textappearance-medium" 
+							/> -->
+						<text editable="false" id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_WorkApproval.MaterialView_0_itemanddescription_Item" label="Item" resourceAttribute="itemanddescription"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_1">
+						<text editable="false" id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_1_quantity_Quantity" label="Quantity" resourceAttribute="quantity"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_2">	
+						<text editable="false" id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_2_unitcost_UnitCost" label="Unit Cost" resourceAttribute="unitcost"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_3">		
+						<text editable="false" id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_3_linecost_LineCost" label="Line Cost" resourceAttribute="linecost"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_4">
+						<text editable="false" id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_4_linetype_LineType" label="Line Type" resourceAttribute="linetype"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_5">
+						<text editable="false" id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_5_storeroom_Storeroom" label="Storeroom" resourceAttribute="storeroom"/>
+						<text editable="false" id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_5_storeroomdesc" resourceAttribute="storeroomdesc"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_6">
+						<checkbox editable="false" id="WorkApproval.PlannedMaterialDetailView_directrequest_checkbox" label="Direct Request" resourceAttribute="directrequest"/>
+					</groupitem>
+				</group>
+				<group id="WorkApproval.PlannedMaterialDetailView_group_1">
+					<groupitem id="WorkApproval.PlannedMaterialDetailView_workOrder_groupitem_7">
+						<lastupdatetext id="WorkApproval.PlannedMaterialDetailView_lastupdatetext"/>
+					</groupitem>
+				</group>
+
+			</container>
+
+			<!-- <eventHandlers> <eventHandler event="show" method="initPlannedMaterialDetailView" 
+				class="application.handlers.PlannedMaterialHandler" /> </eventHandlers> -->
+		</view>
+		<!-- Planned Tools view -->
+
+		<view id="WorkApproval.PlannedToolsView" label="Planned Tools">
+			<requiredResources id="WorkApproval.PlannedToolsView_requiredResources">
+				<requiredResource id="WorkApproval.PlannedToolsView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.PlannedToolsView_workOrder_toollist" name="toollist"/>
+				</requiredResource>
+			</requiredResources>
+			<list attribute="toollist" id="WorkApproval.PlannedToolsView_workOrder_toollist_list" resource="workOrder" transitionTo="WorkApproval.PlannedToolsDetailView">
+
+				<sortOptions id="WorkApproval.PlannedToolsView_workOrder_toollist_list_sortOptions">
+					<sortOption id="WorkApproval.PlannedToolsView_sortOption_TaskIDTool" label="Task ID, Tool">
+						<sortAttribute direction="asc" id="WorkApproval.PlannedToolsView_TaskIDTool_sortAttribute_taskid" name="taskid"/>
+						<sortAttribute direction="asc" id="WorkApproval.PlannedToolsView_TaskIDTool_sortAttribute_toolanddescription" name="toolanddescription"/>
+					</sortOption>
+				</sortOptions>
+
+				<listItemTemplate id="WorkApproval.PlannedToolsView_workOrder_toollist_listItemTemplate_PlannedToolListItem" layout="PlannedToolListItem">
+					<listtext id="WorkApproval.PlannedToolsView_workOrder_PlannedToolListItem_taskid" layoutInsertAt="item1" resourceAttribute="taskid"/>
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.PlannedToolsView_workOrder_PlannedToolListItem_toolanddescription" layoutInsertAt="item2" resourceAttribute="toolanddescription"/>
+					<listtext id="WorkApproval.PlannedToolsView_workOrder_PlannedToolListItem_quantity" layoutInsertAt="item3" resourceAttribute="quantity"/>
+					<listtext id="WorkApproval.PlannedToolsView_workOrder_PlannedToolListItem_linecost" layoutInsertAt="item4" resourceAttribute="linecost"/>
+				</listItemTemplate>
+			</list>
+		</view>
+
+		<!-- Tool Details view -->
+		<view id="WorkApproval.PlannedToolsDetailView" label="Tool Details">
+			<requiredResources id="WorkApproval.PlannedToolsDetailView_requiredResources">
+				<requiredResource id="WorkApproval.PlannedToolsDetailView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.PlannedToolsDetailView_workOrder_toollist" name="toollist"/>
+				</requiredResource>
+			</requiredResources>
+
+			<container attribute="toollist" id="WorkApproval.PlannedToolsDetailView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.PlannedToolsDetailView_group_0">
+					<groupitem id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_0_taskid_Task" label="Task" resourceAttribute="taskid"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_WorkApproval.ToolView_0" transitionTo="WorkApproval.ToolView">
+						<!-- <text label="Tool" resourceAttribute="tool" editable="false" /> 
+							<text resourceAttribute="tooldesc" editable="false" /> -->
+						<text editable="false" id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_WorkApproval.ToolView_0_toolanddescription_Tool" label="Tool" resourceAttribute="toolanddescription"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_1">
+						<text editable="false" id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_1_quantity_Quantity" label="Quantity" resourceAttribute="quantity"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_2">
+						<text editable="false" id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_2_rate_Rate" label="Rate" resourceAttribute="rate"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_3">	
+						<text editable="false" id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_3_hours_Hours" label="Hours" resourceAttribute="hours"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_4">	
+						<text editable="false" id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_4_linecost_LineCost" label="Line Cost" resourceAttribute="linecost"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_5">
+						<text editable="false" id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_5_storeroom_Storeroom" label="Storeroom" resourceAttribute="storeroom"/>
+						<text editable="false" id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_5_storeroomdesc" resourceAttribute="storeroomdesc"/>
+					</groupitem>
+				</group>
+				<group id="WorkApproval.PlannedToolsDetailView_group_1">
+					<groupitem id="WorkApproval.PlannedToolsDetailView_workOrder_groupitem_6">
+						<lastupdatetext id="WorkApproval.PlannedToolsDetailView_lastupdatetext"/>
+					</groupitem>
+				</group>
+
+			</container>
+			<!-- <eventHandlers> <eventHandler event="show" method="initPlannedToolDetailView" 
+				class="application.handlers.PlannedToolHandler" /> </eventHandlers> -->
+		</view>
+
+		<!-- Planned Services view -->
+		<view id="WorkApproval.PlannedServicesView" label="Planned Services">
+			<requiredResources id="WorkApproval.PlannedServicesView_requiredResources">
+				<requiredResource id="WorkApproval.PlannedServicesView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.PlannedServicesView_workOrder_servicelist" name="servicelist"/>
+				</requiredResource>
+			</requiredResources>
+			<list attribute="servicelist" id="WorkApproval.PlannedServicesView_workOrder_servicelist_list" resource="workOrder" transitionTo="WorkApproval.PlannedServicesDetailView">
+
+				<sortOptions id="WorkApproval.PlannedServicesView_workOrder_servicelist_list_sortOptions">
+					<sortOption id="WorkApproval.PlannedServicesView_sortOption_TaskIDService" label="Task ID, Service">
+						<sortAttribute direction="asc" id="WorkApproval.PlannedServicesView_TaskIDService_sortAttribute_taskid" name="taskid"/>
+						<sortAttribute direction="asc" id="WorkApproval.PlannedServicesView_TaskIDService_sortAttribute_serviceanddescription" name="serviceanddescription"/>
+					</sortOption>
+				</sortOptions>
+
+				<listItemTemplate id="WorkApproval.PlannedServicesView_workOrder_servicelist_listItemTemplate_PlannedServiceListItem" layout="PlannedServiceListItem">
+					<listtext id="WorkApproval.PlannedServicesView_workOrder_PlannedServiceListItem_taskid" layoutInsertAt="item1" resourceAttribute="taskid"/>
+					<listtext id="WorkApproval.PlannedServicesView_workOrder_PlannedServiceListItem_serviceanddescription" layoutInsertAt="item2" resourceAttribute="serviceanddescription"/>
+					<listtext id="WorkApproval.PlannedServicesView_workOrder_PlannedServiceListItem_quantity" layoutInsertAt="item3" resourceAttribute="quantity"/>
+					<listtext id="WorkApproval.PlannedServicesView_workOrder_PlannedServiceListItem_linecost" layoutInsertAt="item4" resourceAttribute="linecost"/>
+				</listItemTemplate>
+			</list>
+		</view>
+
+		<!-- Service Details view -->
+		<view id="WorkApproval.PlannedServicesDetailView" label="Service Details">
+			<requiredResources id="WorkApproval.PlannedServicesDetailView_requiredResources">
+				<requiredResource id="WorkApproval.PlannedServicesDetailView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.PlannedServicesDetailView_workOrder_servicelist" name="servicelist"/>
+				</requiredResource>
+			</requiredResources>
+			<container attribute="servicelist" id="WorkApproval.PlannedServicesDetailView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.PlannedServicesDetailView_group_0">
+					<groupitem id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_0_taskid_Task" label="Task" resourceAttribute="taskid"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_WorkApproval.ServiceView_0" transitionTo="WorkApproval.ServiceView">
+						<!-- <text label="Service" resourceAttribute="service" editable="false" 
+							/> <text resourceAttribute="servicedesc" editable="false" /> -->
+						<text editable="false" id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_WorkApproval.ServiceView_0_serviceanddescription_Service" label="Service" resourceAttribute="serviceanddescription"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_1">
+						<text editable="false" id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_1_quantity_Quantity" label="Quantity" resourceAttribute="quantity"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_2">	
+						<text editable="false" id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_2_unitcost_UnitCost" label="Unit Cost" resourceAttribute="unitcost"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_3">		
+						<text editable="false" id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_3_linecost_LineCost" label="Line Cost" resourceAttribute="linecost"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_4">
+						<text editable="false" id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_4_vendor_Vendor" label="Vendor" resourceAttribute="vendor"/>
+					</groupitem>
+					<groupitem id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_5">	
+						<text editable="false" id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_5_linetype_LineType" label="Line Type" resourceAttribute="linetype"/>
+					</groupitem>
+				</group>
+				<group id="WorkApproval.PlannedServicesDetailView_group_1">
+					<groupitem id="WorkApproval.PlannedServicesDetailView_workOrder_groupitem_6">
+						<lastupdatetext id="WorkApproval.PlannedServicesDetailView_lastupdatetext"/>
+					</groupitem>
+				</group>
+
+			</container>
+		</view>
+
+		<!-- Material view with Long Description -->
+		<view id="WorkApproval.MaterialView" label="Material">
+			<requiredResources id="WorkApproval.MaterialView_requiredResources">
+				<requiredResource id="WorkApproval.MaterialView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.MaterialView_workOrder_materiallist" name="materiallist"/>
+				</requiredResource>
+			</requiredResources>
+			<container attribute="materiallist" id="WorkApproval.MaterialView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.MaterialView_group_0">
+					<groupitem id="WorkApproval.MaterialView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.MaterialView_workOrder_groupitem_0_item" resourceAttribute="item"/>
+						<text editable="false" id="WorkApproval.MaterialView_workOrder_groupitem_0_itemdesc" resourceAttribute="itemdesc"/>
+					</groupitem>
+					<groupitem id="WorkApproval.MaterialView_workOrder_groupitem_1">
+						<text cssClass="richText" editable="false" id="WorkApproval.MaterialView_workOrder_groupitem_1_itemlongdesc" resourceAttribute="itemlongdesc"/>
+					</groupitem>
+				</group>
+			</container>
+		</view>
+
+		<!-- Tool view with Long Description -->
+		<view id="WorkApproval.ToolView" label="Tool">
+			<requiredResources id="WorkApproval.ToolView_requiredResources">
+				<requiredResource id="WorkApproval.ToolView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.ToolView_workOrder_toollist" name="toollist"/>
+				</requiredResource>
+			</requiredResources>
+			<container attribute="toollist" id="WorkApproval.ToolView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.ToolView_group_0">
+					<groupitem id="WorkApproval.ToolView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.ToolView_workOrder_groupitem_0_tool" resourceAttribute="tool"/>
+						<text editable="false" id="WorkApproval.ToolView_workOrder_groupitem_0_tooldesc" resourceAttribute="tooldesc"/>
+					</groupitem>
+					<groupitem id="WorkApproval.ToolView_workOrder_groupitem_1">
+						<text cssClass="richText" editable="false" id="WorkApproval.ToolView_workOrder_groupitem_1_toollongdesc" resourceAttribute="toollongdesc"/>
+					</groupitem>
+				</group>
+			</container>
+		</view>
+
+		<!-- Service view with Long Description -->
+		<view id="WorkApproval.ServiceView" label="Service">
+			<requiredResources id="WorkApproval.ServiceView_requiredResources">
+				<requiredResource id="WorkApproval.ServiceView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.ServiceView_workOrder_servicelist" name="servicelist"/>
+				</requiredResource>
+			</requiredResources>
+			<container attribute="servicelist" id="WorkApproval.ServiceView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.ServiceView_group_0">
+					<groupitem id="WorkApproval.ServiceView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.ServiceView_workOrder_groupitem_0_service" resourceAttribute="service"/>
+						<text editable="false" id="WorkApproval.ServiceView_workOrder_groupitem_0_servicedesc" resourceAttribute="servicedesc"/>
+					</groupitem>
+					<groupitem id="WorkApproval.ServiceView_workOrder_groupitem_1">
+						<text cssClass="richText" editable="false" id="WorkApproval.ServiceView_workOrder_groupitem_1_serviceld" resourceAttribute="serviceld"/>
+					</groupitem>
+
+				</group>
+
+			</container>
+		</view>
+
+		<!-- Work Log view -->
+		<view id="WorkApproval.WorkLogView" label="Work Log">
+			<requiredResources id="WorkApproval.WorkLogView_requiredResources">
+				<requiredResource id="WorkApproval.WorkLogView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.WorkLogView_workOrder_workloglist" name="workloglist"/>
+				</requiredResource>
+			</requiredResources>
+			<actions id="WorkApproval.WorkLogView_actions">
+		<!-- Create Work Log view -->
+				<action id="WorkApproval.WorkLogView_CreateWorkLogEntry_action" image="header_add_OFF.svg" label="Create Work Log Entry" transitionTo="WorkApproval.NewWorkLogView">
+					<eventHandlers id="WorkApproval.WorkLogView_CreateWorkLogEntry_action_eventHandlers">
+						<eventHandler class="application.handlers.WorkLogHandler" event="datachange" id="WorkApproval.WorkLogView_CreateWorkLogEntry_action_eventHandlers_datachange_enableAddWorkLogButton" method="enableAddWorkLogButton"/>
+					</eventHandlers>
+				</action>
+			</actions>
+			<list attribute="workloglist" id="WorkApproval.WorkLogView_workOrder_workloglist_list" resource="workOrder" transitionTo="WorkApproval.WorkLogDetailView">
+
+				<sortOptions id="WorkApproval.WorkLogView_workOrder_workloglist_list_sortOptions">
+					<sortOption id="WorkApproval.WorkLogView_sortOption_CreatedDate" label="Created Date">
+						<sortAttribute direction="asc" id="WorkApproval.WorkLogView_CreatedDate_sortAttribute_createdate" name="createdate"/>
+					</sortOption>
+					<sortOption id="WorkApproval.WorkLogView_sortOption_CreatedBy" label="Created By">
+						<sortAttribute direction="asc" id="WorkApproval.WorkLogView_CreatedBy_sortAttribute_createby" name="createby"/>
+					</sortOption>
+				</sortOptions>
+
+				<listItemTemplate id="WorkApproval.WorkLogView_workOrder_workloglist_listItemTemplate_WorkLogListItem" layout="WorkLogListItem">
+					<listtext id="WorkApproval.WorkLogView_workOrder_WorkLogListItem_createdate" layoutInsertAt="item1" resourceAttribute="createdate"/>
+					<listtext id="WorkApproval.WorkLogView_workOrder_WorkLogListItem_createby" layoutInsertAt="item2" resourceAttribute="createby"/>
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.WorkLogView_workOrder_WorkLogListItem_summary" layoutInsertAt="item3" resourceAttribute="summary"/>
+				</listItemTemplate>
+			</list>
+		</view>
+
+		<!-- Work Log Entry view -->
+		<view editableView="WorkApproval.NewWorkLogView" id="WorkApproval.WorkLogDetailView" label="Work Log Entry">
+			<requiredResources id="WorkApproval.WorkLogDetailView_requiredResources">
+				<requiredResource id="WorkApproval.WorkLogDetailView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.WorkLogDetailView_workOrder_workloglist" name="workloglist"/>
+				</requiredResource>
+			</requiredResources>
+			<container attribute="workloglist" id="WorkApproval.WorkLogDetailView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.WorkLogDetailView_group_0">
+					<groupitem id="WorkApproval.WorkLogDetailView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.WorkLogDetailView_workOrder_groupitem_0_createdate" resourceAttribute="createdate"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkLogDetailView_workOrder_groupitem_1">
+						<text editable="false" id="WorkApproval.WorkLogDetailView_workOrder_groupitem_1_createby_CreatedBy" label="Created By" resourceAttribute="createby"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkLogDetailView_workOrder_groupitem_2">
+						<checkbox editable="false" id="WorkApproval.WorkLogDetailView_clientviewable_checkbox" label="Display to Client" resourceAttribute="clientviewable"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkLogDetailView_workOrder_groupitem_3">
+						<text editable="false" id="WorkApproval.WorkLogDetailView_workOrder_groupitem_3_logtype_Type" label="Type" resourceAttribute="logtype"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkLogDetailView_workOrder_groupitem_4">
+						<text editable="false" id="WorkApproval.WorkLogDetailView_workOrder_groupitem_4_summary_Summary" label="Summary" resourceAttribute="summary"/>
+					</groupitem>
+					<groupitem id="WorkApproval.WorkLogDetailView_workOrder_groupitem_5">
+						<text cssClass="richText" editable="false" id="WorkApproval.WorkLogDetailView_workOrder_groupitem_5_details_Details" label="Details" resourceAttribute="details"/>
+					</groupitem>
+				</group>
+				<group id="WorkApproval.WorkLogDetailView_group_1">
+					<groupitem id="WorkApproval.WorkLogDetailView_workOrder_groupitem_6">
+						<lastupdatetext id="WorkApproval.WorkLogDetailView_lastupdatetext"/>
+					</groupitem>
+				</group>
+
+			</container>
+			<eventHandlers id="WorkApproval.WorkLogDetailView_eventHandlers">
+				<eventHandler class="application.handlers.WorkLogHandler" event="show" id="WorkApproval.WorkLogDetailView_eventHandlers_show_initWorkLogDetailView" method="initWorkLogDetailView"/>
+			</eventHandlers>
+		</view>
+
+		<!-- New Work Log Entry view -->
+		<view id="WorkApproval.NewWorkLogView" label="Work Log Entry" showOverflow="false">
+			<requiredResources id="WorkApproval.NewWorkLogView_requiredResources">
+				<requiredResource id="WorkApproval.NewWorkLogView_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.NewWorkLogView_workOrder_workloglist" name="workloglist"/>
+				</requiredResource>
+				<requiredResource id="WorkApproval.NewWorkLogView_domainlogtype" name="domainlogtype"/>
+			</requiredResources>
+			<container attribute="workloglist" id="WorkApproval.NewWorkLogView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.NewWorkLogView_group_0">
+					<groupitem id="WorkApproval.NewWorkLogView_workOrder_groupitem_0">
+						<text editable="false" id="WorkApproval.NewWorkLogView_workOrder_groupitem_0_createdate" resourceAttribute="createdate"/>
+					</groupitem>
+					<groupitem id="WorkApproval.NewWorkLogView_workOrder_groupitem_1">
+						<text editable="false" id="WorkApproval.NewWorkLogView_workOrder_groupitem_1_createby_CreatedBy" label="Created By" resourceAttribute="createby"/>
+					</groupitem>
+					<groupitem id="WorkApproval.NewWorkLogView_workOrder_groupitem_2">
+						<checkbox editable="true" id="WorkApproval.NewWorkLogView_clientviewable_checkbox" label="Display to Client" resourceAttribute="clientviewable"/>
+					</groupitem>
+					<groupitem id="WorkApproval.NewWorkLogView_workOrder_groupitem_3">
+						<text editable="true" id="WorkApproval.NewWorkLogView_workOrder_groupitem_3_logtype_Type" label="Type" lookup="WorkApproval.LogTypeLookup" lookupAttribute="value" placeHolder="Tap to enter" required="true" resourceAttribute="logtype">
+							<eventHandlers id="WorkApproval.NewWorkLogView_workOrder_groupitem_3_logtype_Type_eventHandlers">
+								<eventHandler class="application.handlers.WorkLogHandler" event="validate" id="WorkApproval.NewWorkLogView_workOrder_groupitem_3_logtype_Type_eventHandlers_validate_validateLogType" method="validateLogType"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+					<groupitem id="WorkApproval.NewWorkLogView_workOrder_groupitem_4">
+						<text editable="true" id="WorkApproval.NewWorkLogView_workOrder_groupitem_4_summary_Summary" label="Summary" placeHolder="Tap to enter" resourceAttribute="summary"/>
+					</groupitem>
+					<groupitem id="WorkApproval.NewWorkLogView_workOrder_groupitem_5">
+						<textarea editable="true" id="WorkApproval.NewWorkLogView_details_0" label="Work Log Details" placeHolder="Tap to enter" resourceAttribute="details"/>
+					</groupitem>
+				</group>
+			</container>
+			<footer id="WorkApproval.NewWorkLogView_footer">
+				<button id="WorkApproval.NewWorkLogView_Cancel_button" label="Cancel">
+					<eventHandlers id="WorkApproval.NewWorkLogView_Cancel_button_eventHandlers">
+						<eventHandler class="application.handlers.WorkLogHandler" event="click" id="WorkApproval.NewWorkLogView_Cancel_button_eventHandlers_click_discardNewWorkLogEntry" method="discardNewWorkLogEntry"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="WorkApproval.NewWorkLogView_Create_button" label="Create" primary="true">
+					<eventHandlers id="WorkApproval.NewWorkLogView_Create_button_eventHandlers">
+						<eventHandler class="application.handlers.WorkLogHandler" event="click" id="WorkApproval.NewWorkLogView_Create_button_eventHandlers_click_commitWorkLogEntryView" method="commitWorkLogEntryView"/>
+					</eventHandlers>
+				</button>
+			</footer>
+			<eventHandlers id="WorkApproval.NewWorkLogView_eventHandlers">
+				<eventHandler class="application.handlers.WorkLogHandler" event="initialize" id="WorkApproval.NewWorkLogView_eventHandlers_initialize_initNewWorkLogEntry" method="initNewWorkLogEntry"/>
+				<eventHandler class="application.handlers.WorkLogHandler" event="cleanup" id="WorkApproval.NewWorkLogView_eventHandlers_cleanup_handleBackButtonClick" method="handleBackButtonClick"/>
+				<eventHandler class="application.handlers.WorkLogHandler" event="show" id="WorkApproval.NewWorkLogView_eventHandlers_show_showFooter" method="showFooter"/>
+			</eventHandlers>
+		</view>
+
+		<!-- Search Work Orders view -->
+		<view id="WorkApproval.SearchWorkOrderView" label="Search Work Orders">
+			<requiredResources id="WorkApproval.SearchWorkOrderView_requiredResources">
+				<requiredResource id="WorkApproval.SearchWorkOrderView_searchWorkOrder" name="searchWorkOrder"/>
+				<requiredResource id="WorkApproval.SearchWorkOrderView_workOrder" name="workOrder"/>
+				<requiredResource id="WorkApproval.SearchWorkOrderView_statusChangeResource" name="statusChangeResource"/>
+				<requiredResource id="WorkApproval.SearchWorkOrderView_domainAssetstatus" name="domainAssetstatus"/>
+				<requiredResource id="WorkApproval.SearchWorkOrderView_domainwoclass" name="domainwoclass"/>
+			</requiredResources>
+			<container id="WorkApproval.SearchWorkOrderView_searchWorkOrder_container_0" resource="searchWorkOrder">
+				<group id="WorkApproval.SearchWorkOrderView_group_0">
+					<groupitem id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_0">
+						<text editable="true" id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_0_wonum_WorkOrder" label="Work Order" placeHolder="Tap to enter" resourceAttribute="wonum"/>
+					</groupitem>
+					<groupitem id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_1">
+						<text editable="true" id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_1_description_Description" label="Description" placeHolder="Tap to enter" resourceAttribute="description"/>
+					</groupitem>
+					<groupitem id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_2">
+						<text editable="false" id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_2_statusdesc_Status" label="Status" lookup="WorkApproval.statusLookup" placeHolder="Tap to select from list" resourceAttribute="statusdesc"/>
+					</groupitem>
+					<groupitem id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_3">
+						<text codeScannable="true" editable="true" id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_3_asset_Asset" label="Asset" lookup="WorkApproval.AssetLookup" lookupAttribute="assetnum" placeHolder="Tap to enter" resourceAttribute="asset">
+						</text>
+					</groupitem>
+					<groupitem id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_4">
+						<text codeScannable="true" editable="true" id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_4_location_Location" label="Location" lookup="WorkApproval.LocationLookup" lookupAttribute="location" placeHolder="Tap to enter" resourceAttribute="location">
+						</text>
+					</groupitem>
+					<groupitem id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_5">
+						<text editable="true" id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_5_priority_Priority" label="Priority" placeHolder="Tap to enter" resourceAttribute="priority"/>
+					</groupitem>
+					<groupitem id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_6">
+						<text editable="true" id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_6_startdate_ScheduledStartDateRange" label="Scheduled Start Date Range" placeHolder="Tap to enter start date range" resourceAttribute="startdate"/>
+						<text editable="true" id="WorkApproval.SearchWorkOrderView_searchWorkOrder_groupitem_6_enddate" placeHolder="Tap to enter end date range" resourceAttribute="enddate"/>
+					</groupitem>
+				</group>
+			</container>
+			<footer id="WorkApproval.SearchWorkOrderView_footer">
+				<button id="WorkApproval.SearchWorkOrderView_Clear_button" label="Clear">
+					<eventHandlers id="WorkApproval.SearchWorkOrderView_Clear_button_eventHandlers">
+						<eventHandler class="application.handlers.WODetailsHandler" event="click" id="WorkApproval.SearchWorkOrderView_Clear_button_eventHandlers_click_clearSearchFields" method="clearSearchFields"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="WorkApproval.SearchWorkOrderView_Search_button" label="Search" primary="true">
+					<eventHandlers id="WorkApproval.SearchWorkOrderView_Search_button_eventHandlers">
+						<eventHandler class="application.handlers.WODetailsHandler" event="click" id="WorkApproval.SearchWorkOrderView_Search_button_eventHandlers_click_setSearchQuery" method="setSearchQuery"/>
+					</eventHandlers>
+				</button>
+			</footer>
+			<eventHandlers id="WorkApproval.SearchWorkOrderView_eventHandlers">
+				<eventHandler class="application.handlers.WODetailsHandler" event="initialize" id="WorkApproval.SearchWorkOrderView_eventHandlers_initialize_initSearchData" method="initSearchData"/>
+				<eventHandler class="application.handlers.WODetailsHandler" event="show" id="WorkApproval.SearchWorkOrderView_eventHandlers_show_showSearch" method="showSearch"/>
+				<eventHandler class="application.handlers.WODetailsHandler" event="hide" id="WorkApproval.SearchWorkOrderView_eventHandlers_hide_hideSearch" method="hideSearch"/>
+				<eventHandler class="application.handlers.WODetailsHandler" event="cleanup" id="WorkApproval.SearchWorkOrderView_eventHandlers_cleanup_discardSummaryView" method="discardSummaryView"/>
+			</eventHandlers>
+		</view>
+		
+		<dialog id="WorkApproval.RequiredSearchFieldMissing">
+			<container id="WorkApproval.RequiredSearchFieldMissing_container_0">
+				<text editable="false" id="WorkApproval.RequiredSearchFieldMissing_container_0_Somerequiredfields" value="Some required fields are empty. Specify the missing information."/>
+				<button id="WorkApproval.RequiredSearchFieldMissing_Ok_button" label="Ok">
+	                <eventHandlers id="WorkApproval.RequiredSearchFieldMissing_Ok_button_eventHandlers">
+						<eventHandler class="application.handlers.WODetailsHandler" event="click" id="WorkApproval.RequiredSearchFieldMissing_Ok_button_eventHandlers_click_hideDialog" method="hideDialog"/>
+		            </eventHandlers>
+	            </button>
+			</container>
+		</dialog>		
+		
+		<dialog id="WorkApproval.CancelConfirmationDialog">
+			<container cssClass="mblSimpleDialogText" id="WorkApproval.CancelConfirmationDialog_container_0">
+				<text id="WorkApproval.CancelConfirmationDialog_container_0_Doyouwanttocance" value="Do you want to cancel the work order?"/>
+			</container>
+			<container cssClass="mblSimpleDialogFooter" id="WorkApproval.CancelConfirmationDialog_container_1">						
+			    <button cssClass="mblPrimaryButton" id="WorkApproval.CancelConfirmationDialog_Yes_button" label="Yes">
+					<eventHandlers id="WorkApproval.CancelConfirmationDialog_Yes_button_eventHandlers">
+						<eventHandler class="application.handlers.StatusChangeHandler" event="click" id="WorkApproval.CancelConfirmationDialog_Yes_button_eventHandlers_click_handleYesCancelWorkClick" method="handleYesCancelWorkClick"/>
+					</eventHandlers>
+				</button>	
+				<button id="WorkApproval.CancelConfirmationDialog_No_button" label="No">
+					<eventHandlers id="WorkApproval.CancelConfirmationDialog_No_button_eventHandlers">
+						<eventHandler class="application.handlers.StatusChangeHandler" event="click" id="WorkApproval.CancelConfirmationDialog_No_button_eventHandlers_click_handleNoCancelWorkClick" method="handleNoCancelWorkClick"/>
+					</eventHandlers>
+				</button>								
+			</container>
+		</dialog>
+
+		<dialog id="WorkApproval.WOAssetToLocationDialog">
+			<container cssClass="mblSimpleDialogText" id="WorkApproval.WOAssetToLocationDialog_container_0">
+				<text id="WorkApproval.WOAssetToLocationDialog_container_0_Thespecifiedasset" resolverClass="application.handlers.WODetailsHandler" resolverFunction="resolveAssetLocation" value="The specified asset is in location {0}. Do you want to replace the current location with location {1}? - If you do not want to update the current asset or the current location, click Close."/>
+			</container>
+			<container cssClass="mblSimpleDialogFooter" id="WorkApproval.WOAssetToLocationDialog_container_1">
+
+				<button cssClass="mblPrimaryButton" id="WorkApproval.WOAssetToLocationDialog_Yes_button" label="Yes">
+					<eventHandlers id="WorkApproval.WOAssetToLocationDialog_Yes_button_eventHandlers">
+						<eventHandler class="application.handlers.WODetailsHandler" event="click" id="WorkApproval.WOAssetToLocationDialog_Yes_button_eventHandlers_click_asyncyesOnWOAssetToLocation" method="asyncyesOnWOAssetToLocation"/>
+					</eventHandlers>
+				</button>
+				<button id="WorkApproval.WOAssetToLocationDialog_Close_button" label="Close">
+					<eventHandlers id="WorkApproval.WOAssetToLocationDialog_Close_button_eventHandlers">
+						<eventHandler class="application.handlers.WODetailsHandler" event="click" id="WorkApproval.WOAssetToLocationDialog_Close_button_eventHandlers_click_closeOnWOAssetToLocation" method="closeOnWOAssetToLocation"/>
+					</eventHandlers>
+				</button>
+				<button id="WorkApproval.WOAssetToLocationDialog_No_button" label="No">
+					<eventHandlers id="WorkApproval.WOAssetToLocationDialog_No_button_eventHandlers">
+						<eventHandler class="application.handlers.WODetailsHandler" event="click" id="WorkApproval.WOAssetToLocationDialog_No_button_eventHandlers_click_noOnWOAssetToLocation" method="noOnWOAssetToLocation"/>
+					</eventHandlers>
+				</button>
+
+			</container>
+		</dialog>
+		
+		<dialog id="WorkApproval.WOLocationToAssetDialog">
+			<container cssClass="mblSimpleDialogText" id="WorkApproval.WOLocationToAssetDialog_container_0">
+				<text id="WorkApproval.WOLocationToAssetDialog_container_0_Thespecifiedlocati" resolverClass="application.handlers.WODetailsHandler" resolverFunction="resolveExistingAsset" value="The specified location does not match the location of asset {0}. Do you want to update location and clear the asset? -  If you do not want to apply changes to the location or asset, click Close."/>
+			</container>
+			<container cssClass="mblSimpleDialogFooter" id="WorkApproval.WOLocationToAssetDialog_container_1">
+
+				<button cssClass="mblPrimaryButton" id="WorkApproval.WOLocationToAssetDialog_Yes_button" label="Yes">
+					<eventHandlers id="WorkApproval.WOLocationToAssetDialog_Yes_button_eventHandlers">
+						<eventHandler class="application.handlers.WODetailsHandler" event="click" id="WorkApproval.WOLocationToAssetDialog_Yes_button_eventHandlers_click_yesOnWOLocationToAsset" method="yesOnWOLocationToAsset"/>
+					</eventHandlers>
+				</button>
+				<button id="WorkApproval.WOLocationToAssetDialog_Close_button" label="Close">
+					<eventHandlers id="WorkApproval.WOLocationToAssetDialog_Close_button_eventHandlers">
+						<eventHandler class="application.handlers.WODetailsHandler" event="click" id="WorkApproval.WOLocationToAssetDialog_Close_button_eventHandlers_click_closeOnWOLocationToAsset" method="closeOnWOLocationToAsset"/>
+					</eventHandlers>
+				</button>
+				<button id="WorkApproval.WOLocationToAssetDialog_No_button" label="No">
+					<eventHandlers id="WorkApproval.WOLocationToAssetDialog_No_button_eventHandlers">
+						<eventHandler class="application.handlers.WODetailsHandler" event="click" id="WorkApproval.WOLocationToAssetDialog_No_button_eventHandlers_click_noOnWOLocationToAsset" method="noOnWOLocationToAsset"/>
+					</eventHandlers>
+				</button>
+
+			</container>
+		</dialog>
+		<!-- Asset view -->
+		<view id="WorkApproval.EditAssetView" label="Asset">
+			<requiredResources id="WorkApproval.EditAssetView_requiredResources">
+				<requiredResource id="WorkApproval.EditAssetView_workOrder" name="workOrder"/>
+				<requiredResource id="WorkApproval.EditAssetView_additionalasset" name="additionalasset"/>
+				<requiredResource id="WorkApproval.EditAssetView_domainAssetstatus" name="domainAssetstatus"/>
+			</requiredResources>
+			<container id="WorkApproval.EditAssetView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.EditAssetView_group_0">
+					<groupitem id="WorkApproval.EditAssetView_workOrder_groupitem_0">
+						<text codeScannable="true" editable="true" id="WorkApproval.EditAssetView_workOrder_groupitem_0_asset" lookup="WorkApproval.AssetLookup" lookupAttribute="assetnum" placeHolder="Tap to enter" resourceAttribute="asset">
+							<eventHandlers id="WorkApproval.EditAssetView_workOrder_groupitem_0_asset_eventHandlers">
+								<eventHandler class="application.handlers.WODetailsHandler" event="validate" id="WorkApproval.EditAssetView_workOrder_groupitem_0_asset_eventHandlers_validate_validateAsset" method="validateAsset"/>
+								<eventHandler class="application.handlers.WODetailsHandler" event="render" id="WorkApproval.EditAssetView_workOrder_groupitem_0_asset_eventHandlers_render_initAssetField" method="initAssetField"/>
+							</eventHandlers>
+						</text>
+						<text editable="false" id="WorkApproval.EditAssetView_workOrder_groupitem_0_assetdesc" resourceAttribute="assetdesc"/>
+					</groupitem>
+					<groupitem id="WorkApproval.EditAssetView_workOrder_groupitem_1">
+						<text cssClass="richText" editable="false" id="WorkApproval.EditAssetView_workOrder_groupitem_1_assetld" resourceAttribute="localAssetLd"/>
+					</groupitem>
+				</group>
+			</container>
+			<footer id="WorkApproval.EditAssetView_footer">
+				<button id="WorkApproval.EditAssetView_Cancel_button" label="Cancel">
+					<eventHandlers id="WorkApproval.EditAssetView_Cancel_button_eventHandlers">
+						<eventHandler class="application.handlers.WODetailsHandler" event="click" id="WorkApproval.EditAssetView_Cancel_button_eventHandlers_click_handleBackButtonClickEditAssetView" method="handleBackButtonClickEditAssetView"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="WorkApproval.EditAssetView_Save_button" label="Save" primary="true">
+					<eventHandlers id="WorkApproval.EditAssetView_Save_button_eventHandlers">
+						<eventHandler class="application.handlers.WODetailsHandler" event="click" id="WorkApproval.EditAssetView_Save_button_eventHandlers_click_commitAssetEntryView" method="commitAssetEntryView"/>
+					</eventHandlers>
+				</button>
+			</footer>
+			<eventHandlers id="WorkApproval.EditAssetView_eventHandlers">
+				<eventHandler class="application.handlers.WODetailsHandler" event="initialize" id="WorkApproval.EditAssetView_eventHandlers_initialize_initEditAssetView" method="initEditAssetView"/>
+				<eventHandler class="application.handlers.WODetailsHandler" event="cleanup" id="WorkApproval.EditAssetView_eventHandlers_cleanup_cleanupEditAssetView" method="cleanupEditAssetView"/>
+			</eventHandlers>
+		</view>
+		<!-- Location view -->
+		<view id="WorkApproval.EditLocationView" label="Location">
+			<requiredResources id="WorkApproval.EditLocationView_requiredResources">
+				<requiredResource id="WorkApproval.EditLocationView_workOrder" name="workOrder"/>
+				<requiredResource id="WorkApproval.EditLocationView_domainAssetstatus" name="domainAssetstatus"/>
+				<requiredResource id="WorkApproval.EditLocationView_additionallocations" name="additionallocations"/>
+				<requiredResource id="WorkApproval.EditLocationView_additionalasset" name="additionalasset"/>
+			</requiredResources>
+			<container id="WorkApproval.EditLocationView_workOrder_container_0" resource="workOrder">
+				<group id="WorkApproval.EditLocationView_group_0">
+					<groupitem id="WorkApproval.EditLocationView_workOrder_groupitem_0">
+
+						<text codeScannable="true" editable="true" id="WorkApproval.EditLocationView_workOrder_groupitem_0_location_Location" label="Location" lookup="WorkApproval.LocationLookup" lookupAttribute="location" placeHolder="Tap to enter" resourceAttribute="location">
+							<eventHandlers id="WorkApproval.EditLocationView_workOrder_groupitem_0_location_Location_eventHandlers">
+								<eventHandler class="application.handlers.WODetailsHandler" event="validate" id="WorkApproval.EditLocationView_workOrder_groupitem_0_location_Location_eventHandlers_validate_validateLocation" method="validateLocation"/>
+								<eventHandler class="application.handlers.WODetailsHandler" event="render" id="WorkApproval.EditLocationView_workOrder_groupitem_0_location_Location_eventHandlers_render_initLocationField" method="initLocationField"/>
+							</eventHandlers>
+						</text>
+						<text editable="false" id="WorkApproval.EditLocationView_workOrder_groupitem_0_locationdesc" resourceAttribute="locationdesc"/>
+					</groupitem>
+					<groupitem id="WorkApproval.EditLocationView_workOrder_groupitem_1">
+						<text cssClass="richText" editable="false" id="WorkApproval.EditLocationView_workOrder_groupitem_1_locationld" resourceAttribute="localLocationLd"/>
+					</groupitem>
+
+				</group>
+			</container>
+			<footer id="WorkApproval.EditLocationView_footer">
+				<button id="WorkApproval.EditLocationView_Cancel_button" label="Cancel" layoutInsertAt="button1">
+					<eventHandlers id="WorkApproval.EditLocationView_Cancel_button_eventHandlers">
+						<eventHandler class="application.handlers.WODetailsHandler" event="click" id="WorkApproval.EditLocationView_Cancel_button_eventHandlers_click_discardView" method="discardView"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="WorkApproval.EditLocationView_Save_button" label="Save" layoutInsertAt="button2" primary="true">
+					<eventHandlers id="WorkApproval.EditLocationView_Save_button_eventHandlers">
+						<eventHandler class="application.handlers.WODetailsHandler" event="click" id="WorkApproval.EditLocationView_Save_button_eventHandlers_click_commitActualLocationEntryView" method="commitActualLocationEntryView"/>
+					</eventHandlers>
+				</button>
+			</footer>
+			<eventHandlers id="WorkApproval.EditLocationView_eventHandlers">
+				<eventHandler class="application.handlers.WODetailsHandler" event="cleanup" id="WorkApproval.EditLocationView_eventHandlers_cleanup_cleanupEditLocationView" method="cleanupEditLocationView"/>
+				<eventHandler class="application.handlers.WODetailsHandler" event="initialize" id="WorkApproval.EditLocationView_eventHandlers_initialize_initEditLocationView" method="initEditLocationView"/>
+			</eventHandlers>
+		</view>
+		<!-- Select Log Type view -->
+		<lookup id="WorkApproval.LogTypeLookup" label="Select Log Type" resource="domainlogtype">
+			<requiredResources id="WorkApproval.LogTypeLookup_requiredResources">
+				<requiredResource id="WorkApproval.LogTypeLookup_domainlogtype" name="domainlogtype" reload="true"/>
+			</requiredResources>
+			<list id="WorkApproval.LogTypeLookup_domainlogtype_list" resource="domainlogtype">
+				<searchAttributes id="WorkApproval.LogTypeLookup_domainlogtype_searchAttributes">
+					<searchAttribute id="WorkApproval.LogTypeLookup_domainlogtype_searchAttribute_value" name="value"/>
+					<searchAttribute id="WorkApproval.LogTypeLookup_domainlogtype_searchAttribute_description" name="description"/>
+				</searchAttributes>
+				<listItemTemplate id="WorkApproval.LogTypeLookup_domainlogtype_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.LogTypeLookup_domainlogtype_Item1Desc1_value" layoutInsertAt="item1" resourceAttribute="value"/>
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.LogTypeLookup_domainlogtype_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+		</lookup>
+
+
+
+
+		<!-- *********************** -->
+		<!-- Lookup Section -->
+		<!-- *********************** -->
+
+		<!-- Asset lookup -->
+		<lookup filterClass="application.handlers.WODetailsHandler" filterMethod="filterAssetForLookup" id="WorkApproval.AssetLookup" label="Select Asset" resource="additionalasset">
+			<requiredResources id="WorkApproval.AssetLookup_requiredResources">
+				<requiredResource id="WorkApproval.AssetLookup_additionalasset" name="additionalasset"/>
+				<requiredResource id="WorkApproval.AssetLookup_workOrder" name="workOrder"/>
+			</requiredResources>
+
+			<list id="WorkApproval.AssetLookup_additionalasset_list" resource="additionalasset">
+				<searchAttributes id="WorkApproval.AssetLookup_additionalasset_searchAttributes">
+					<searchAttribute id="WorkApproval.AssetLookup_additionalasset_searchAttribute_assetnum" name="assetnum"/>
+					<searchAttribute id="WorkApproval.AssetLookup_additionalasset_searchAttribute_description" name="description"/>
+					<searchAttribute id="WorkApproval.AssetLookup_additionalasset_searchAttribute_location" name="location"/>
+					<searchAttribute id="WorkApproval.AssetLookup_additionalasset_searchAttribute_locationdesc" name="locationdesc"/>
+				</searchAttributes>
+				<listItemTemplate id="WorkApproval.AssetLookup_additionalasset_listItemTemplate_Item2Desc2" layout="Item2Desc2">
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.AssetLookup_additionalasset_Item2Desc2_assetnum" layoutInsertAt="item1" resourceAttribute="assetnum"/>
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.AssetLookup_additionalasset_Item2Desc2_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+					<listtext id="WorkApproval.AssetLookup_additionalasset_Item2Desc2_location" layoutInsertAt="item2" resourceAttribute="location"/>
+					<listtext id="WorkApproval.AssetLookup_additionalasset_Item2Desc2_locationdesc" layoutInsertAt="desc2" resourceAttribute="locationdesc"/>
+				</listItemTemplate>
+			</list>
+
+			<returnAttributes id="WorkApproval.AssetLookup_returnAttributes">
+				<returnAttribute id="WorkApproval.AssetLookup_assetnum_asset" sourceAttribute="assetnum" targetAttribute="asset"/>
+				<returnAttribute id="WorkApproval.AssetLookup_description_assetdesc" sourceAttribute="description" targetAttribute="assetdesc"/>
+			</returnAttributes>
+
+		</lookup>
+
+		<!-- Location lookup -->
+		<lookup filterClass="application.handlers.WODetailsHandler" filterMethod="filterLocationForLookup" id="WorkApproval.LocationLookup" label="Select Location" resource="additionallocations">
+			<requiredResources id="WorkApproval.LocationLookup_requiredResources">
+				<requiredResource id="WorkApproval.LocationLookup_additionallocations" name="additionallocations"/>
+			</requiredResources>
+
+			<list id="WorkApproval.LocationLookup_additionallocations_list" resource="additionallocations">
+				<searchAttributes id="WorkApproval.LocationLookup_additionallocations_searchAttributes">
+					<searchAttribute id="WorkApproval.LocationLookup_additionallocations_searchAttribute_location" name="location"/>
+					<searchAttribute id="WorkApproval.LocationLookup_additionallocations_searchAttribute_description" name="description"/>
+				</searchAttributes>
+				<listItemTemplate id="WorkApproval.LocationLookup_additionallocations_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.LocationLookup_additionallocations_Item1Desc1_location" layoutInsertAt="item1" resourceAttribute="location"/>
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.LocationLookup_additionallocations_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="WorkApproval.LocationLookup_returnAttributes">
+				<returnAttribute id="WorkApproval.LocationLookup_location_location" sourceAttribute="location" targetAttribute="location"/>
+				<returnAttribute id="WorkApproval.LocationLookup_description_locationdesc" sourceAttribute="description" targetAttribute="locationdesc"/>
+			</returnAttributes>
+		</lookup>
+
+		<!-- Work Order Status lookup -->
+		<lookup filterClass="application.handlers.StatusChangeHandler" filterMethod="filterWOStatus" id="WorkApproval.statusLookup" label="Work Order Status" resource="domainwostatus">
+			<requiredResources id="WorkApproval.statusLookup_requiredResources">
+				<requiredResource id="WorkApproval.statusLookup_domainwostatus" name="domainwostatus"/>
+				<requiredResource id="WorkApproval.statusLookup_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.statusLookup_workOrder_actuallaborlist" name="actuallaborlist"/>
+				</requiredResource>
+			</requiredResources>
+
+			<list id="WorkApproval.statusLookup_domainwostatus_list" resource="domainwostatus">
+				<listItemTemplate id="WorkApproval.statusLookup_domainwostatus_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.statusLookup_domainwostatus_Item1Desc1_value" layoutInsertAt="item1" resourceAttribute="value"/>
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.statusLookup_domainwostatus_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="WorkApproval.statusLookup_returnAttributes">
+				<returnAttribute id="WorkApproval.statusLookup_value_status" sourceAttribute="value" targetAttribute="status"/>
+				<returnAttribute id="WorkApproval.statusLookup_description_statusdesc" sourceAttribute="description" targetAttribute="statusdesc"/>
+			</returnAttributes>
+		</lookup>
+
+
+
+
+		<!-- Task Status lookup -->
+		<lookup filterClass="application.handlers.StatusChangeHandler" filterMethod="filterTaskStatus" id="WorkApproval.taskStatusLookup" label="Task Status" resource="domainwostatus">
+			<requiredResources id="WorkApproval.taskStatusLookup_requiredResources">
+				<requiredResource id="WorkApproval.taskStatusLookup_domainwostatus" name="domainwostatus"/>
+				<requiredResource id="WorkApproval.taskStatusLookup_workOrder" name="workOrder">
+					<requiredAttribute id="WorkApproval.taskStatusLookup_workOrder_actuallaborlist" name="actuallaborlist"/>
+					<requiredAttribute id="WorkApproval.taskStatusLookup_workOrder_tasklist" name="tasklist"/>
+				</requiredResource>
+			</requiredResources>
+
+			<list id="WorkApproval.taskStatusLookup_domainwostatus_list" resource="domainwostatus">
+				<listItemTemplate id="WorkApproval.taskStatusLookup_domainwostatus_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.taskStatusLookup_domainwostatus_Item1Desc1_value" layoutInsertAt="item1" resourceAttribute="value"/>
+					<listtext cssClass="bold textappearance-medium" id="WorkApproval.taskStatusLookup_domainwostatus_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="WorkApproval.taskStatusLookup_returnAttributes">
+				<returnAttribute id="WorkApproval.taskStatusLookup_value_status" sourceAttribute="value" targetAttribute="status"/>
+				<returnAttribute id="WorkApproval.taskStatusLookup_description_statusdesc" sourceAttribute="description" targetAttribute="statusdesc"/>
+			</returnAttributes>
+		</lookup>
+
+
+
+
+
+	</ui>
+
+
+	<!-- Data Definition section -->
+	<data id="data">
+	<!-- Work Order resource -->
+		<resource class="application.business.WorkOrderObject" defaultOrderBy="wonum asc" describedBy="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#WorkOrder" hasManagedQuery="true" id="workOrder" name="workOrder" pageSize="20" providedBy="/oslc/sp/WorkManagement">
+			<attributes id="workOrder_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="workOrder_identifier_dctermsidentifier" index="true" name="identifier"/>
+				<attribute describedByProperty="dcterms:title" id="workOrder_description_dctermstitle" index="true" name="description"/>
+				<attribute describedByProperty="dcterms:description" id="workOrder_longdescription_dctermsdescription" name="longdescription"/>
+				<attribute describedByProperty="spi_wm:woclass" id="workOrder_woclass_spi_wmwoclass" index="true" name="woclass"/>
+				<attribute describedByProperty="oslc:shortTitle" id="workOrder_wonum_oslcshortTitle" index="true" name="wonum"/>
+				<attribute describedByProperty="spi:asset{oslc:shortTitle}" id="workOrder_asset_spiassetoslcshortTitle" index="true" method="assetChanged" name="asset" referenceResource="additionalasset"/>
+				<attribute describedByProperty="spi:asset{dcterms:title}" id="workOrder_assetdesc_spiassetdctermstitle" name="assetdesc"/>
+				<attribute describedByProperty="spi:asset{spi:description_longdescription}" id="workOrder_assetld_spiassetspidescription_longdescription" name="assetld" referenceResource="additionalasset"/>
+				<attribute describedByProperty="spi_wm:schedstart" id="workOrder_starttime_spi_wmschedstart" name="starttime"/>
+				<attribute describedByProperty="spi_wm:schedfinish" id="workOrder_finishtime_spi_wmschedfinish" name="finishtime"/>
+				<attribute describedByProperty="spi_wm:targstartdate" id="workOrder_targetstart_spi_wmtargstartdate" name="targetstart"/>
+				<attribute describedByProperty="spi_wm:targcompdate" id="workOrder_targetfinish_spi_wmtargcompdate" name="targetfinish"/>
+				<attribute describedByProperty="spi:location{oslc:shortTitle}" id="workOrder_location_spilocationoslcshortTitle" name="location"/>
+				<attribute describedByProperty="spi:location{dcterms:title}" id="workOrder_locationdesc_spilocationdctermstitle" name="locationdesc"/>
+				<attribute describedByProperty="spi:location{spi:description_longdescription}" id="workOrder_locationld_spilocationspidescription_longdescription" name="locationld"/>
+				<attribute describedByProperty="spi:status" id="workOrder_status_spistatus" index="true" method="statusChanged" name="status"/>
+				<attribute describedByProperty="spi_wm:siteid" id="workOrder_siteid_spi_wmsiteid" name="siteid"/>
+				<attribute describedByProperty="spi_wm:orgid" id="workOrder_orgid_spi_wmorgid" name="orgid"/>
+				<attribute describedByProperty="spi_wm:worktype" id="workOrder_worktype_spi_wmworktype" name="worktype"/>
+				<attribute describedByProperty="spi_wm:wopriority" id="workOrder_priority_spi_wmwopriority" index="true" name="priority"/>
+				<attribute describedByProperty="spi:woserviceaddress{spi_wm:formattedaddress}" id="workOrder_woserviceaddress_spiwoserviceaddressspi_wmformattedaddress" name="woserviceaddress"/>
+				<attribute describedByProperty="dcterms:creator{foaf:name}" id="workOrder_reportedby_dctermscreatorfoafname" name="reportedby"/>
+				<attribute describedByProperty="dcterms:created" id="workOrder_reporteddate_dctermscreated" name="reporteddate"/>
+				<attribute describedByProperty="spi_wm:glaccount" id="workOrder_glaccount_spi_wmglaccount" name="glaccount"/>
+				<attribute describedByProperty="spi_wm:np_statusmemo" id="workOrder_memo_spi_wmnp_statusmemo" name="memo"/>
+				<attribute describedByProperty="spi_wm:statusdate" id="workOrder_changestatusdate_spi_wmstatusdate" name="changestatusdate"/>
+				<attribute describedByProperty="spi_wm:istask" id="workOrder_istask_spi_wmistask" index="true" name="istask"/>
+				
+				<!-- Complex attributes for supporting data -->
+				<attribute describedByProperty="spi_wm:task" describedByResource="taskResource" id="workOrder_tasklist_spi_wmtask" name="tasklist"/>
+				<attribute describedByProperty="spi_wm:wpservice" describedByResource="plannedServiceResource" id="workOrder_servicelist_spi_wmwpservice" name="servicelist"/>
+				<attribute describedByProperty="spi_wm:wplabor" describedByResource="plannedLaborResource" id="workOrder_laborlist_spi_wmwplabor" name="laborlist"/>
+				<attribute describedByProperty="spi_wm:multiassetlocci" describedByResource="multiAssetLocResource" id="workOrder_multiassetloclist_spi_wmmultiassetlocci" name="multiassetloclist"/>
+				<attribute describedByProperty="spi_wm:wpmaterial" describedByResource="plannedMaterialResource" id="workOrder_materiallist_spi_wmwpmaterial" name="materiallist"/>
+				<attribute describedByProperty="spi_wm:wptool" describedByResource="plannedToolResource" id="workOrder_toollist_spi_wmwptool" name="toollist"/>
+				<attribute describedByProperty="spi_wm:worklog" describedByResource="workLogResource" id="workOrder_workloglist_spi_wmworklog" name="workloglist"/>
+				<attribute describedByProperty="spi_wm:actuallabor" describedByResource="actualLaborResource" id="workOrder_actuallaborlist_spi_wmactuallabor" name="actuallaborlist"/>
+				<attribute describedByProperty="spi_wm:locancestor{spi_wm:ancestor}" id="workOrder_locationancestor_spi_wmlocancestorspi_wmancestor" index="true" name="locationancestor" referenceResource="locancestorResource"/>
+		 		<attribute describedByProperty="spi_wm:assetancestor{spi_wm:ancestor}" id="workOrder_assetancestor_spi_wmassetancestorspi_wmancestor" index="true" name="assetancestor" referenceResource="assetancestorResource"/>
+				
+				<!-- Work Order Cost resource -->
+				
+				<attribute describedByProperty="spi_wm:estintlabhrs" id="workOrder_estintlabhrs_spi_wmestintlabhrs" name="estintlabhrs"/>
+				<attribute describedByProperty="spi_wm:estoutlabhrs" id="workOrder_estoutlabhrs_spi_wmestoutlabhrs" name="estoutlabhrs"/>
+				<attribute describedByProperty="spi_wm:estlabhrs" id="workOrder_estlabhrs_spi_wmestlabhrs" name="estlabhrs"/>
+				<attribute describedByProperty="spi_wm:estintlabcost" id="workOrder_estintlabcost_spi_wmestintlabcost" name="estintlabcost"/>
+				<attribute describedByProperty="spi_wm:estoutlabcost" id="workOrder_estoutlabcost_spi_wmestoutlabcost" name="estoutlabcost"/>
+				<attribute describedByProperty="spi_wm:estlabcost" id="workOrder_estlabcost_spi_wmestlabcost" name="estlabcost"/>
+				<attribute describedByProperty="spi_wm:estmatcost" id="workOrder_estmatcost_spi_wmestmatcost" name="estmatcost"/>
+				<attribute describedByProperty="spi_wm:esttoolcost" id="workOrder_esttoolcost_spi_wmesttoolcost" name="esttoolcost"/>
+				<attribute describedByProperty="spi_wm:estservcost" id="workOrder_estservcost_spi_wmestservcost" name="estservcost"/>
+				<localAttribute dataType="string" id="workOrder_localtotalcost_string" name="localtotalcost"/>
+
+				<localAttribute dataType="dateTime" id="workOrder_statusDate_dateTime" name="statusDate"/>
+				<localAttribute dataType="string" id="workOrder_wonumanddescription_string" name="wonumanddescription"/>
+				<localAttribute dataType="string" id="workOrder_assetnumanddescription_string" name="assetnumanddescription"/>
+				<localAttribute dataType="string" id="workOrder_locationanddescription_string" name="locationanddescription"/>
+				<localAttribute dataType="string" id="workOrder_statusdesc_string" name="statusdesc"/>
+				<localAttribute dataType="string" id="workOrder_classificationdesc_string" name="classificationdesc"/>
+				<localAttribute dataType="string" id="workOrder_classificationpath_string" name="classificationpath"/>
+				<localAttribute dataType="string" formula="${starttime}" id="workOrder_starttimeISO_string" index="true" name="starttimeISO" remoteName="spi_wm:schedstart"/>				
+				<localAttribute dataType="string" formula="${assetld}" id="workOrder_localAssetLd_string" name="localAssetLd"/>
+				<localAttribute dataType="string" formula="${locationld}" id="workOrder_localLocationLd_string" name="localLocationLd"/>
+				
+				
+				<!-- Complex Attribute sizes -->
+				<localAttribute dataType="string" id="workOrder_multiassetloclistsize_string" name="multiassetloclistsize" persistent="false"/>
+				<localAttribute dataType="string" id="workOrder_tasklistsize_string" name="tasklistsize" persistent="false"/>
+				<localAttribute dataType="string" id="workOrder_laborlistsize_string" name="laborlistsize" persistent="false"/>
+				<localAttribute dataType="string" id="workOrder_materiallistsize_string" name="materiallistsize" persistent="false"/>
+				<localAttribute dataType="string" id="workOrder_toollistsize_string" name="toollistsize" persistent="false"/>
+				<localAttribute dataType="string" id="workOrder_servicelistsize_string" name="servicelistsize" persistent="false"/>
+				<localAttribute dataType="string" id="workOrder_workloglistsize_string" name="workloglistsize" persistent="false"/>
+			</attributes>
+			<queryBases id="workOrder_queryBases">
+	 			<queryBase defaultForSearch="true" id="workOrder_queryBase_searchAllWorkOrders" name="searchAllWorkOrders" queryUri="/oslc/os/oslcwodetail"/>
+				<queryBase id="workOrder_queryBase_myapprovals" name="myapprovals" queryUri="/oslc/os/oslcwodetail?savedQuery=myapprovals"/>
+			</queryBases>
+	<!-- Before you modify conditions, you must add users to the ANYWHERE_APPROVER security group in Maximo. By default, all
+	users of an app can change the status values for work orders. You might want some tasks to require authorization by specific
+	groups of users. For example, to specify that only the ANYWHERE_APPROVER group can approve work orders, add the following
+	lines of code to this file:
+	<conditions>
+	<executionOf alias="APPR" requiresRole="ANYWHERE_APPROVER"/>
+	</conditions> 
+	-->
+			<!--  
+			<conditions>
+				<executionOf alias="WAPPR" requiresRole="ANYWHERE_APPROVER" />
+				<executionOf alias="APPR" requiresRole="ANYWHERE_APPROVER" />
+				<executionOf alias="INPRG" requiresRole="ANYWHERE_APPROVER" />
+				<executionOf alias="WSCH" requiresRole="ANYWHERE_APPROVER" />
+				<executionOf alias="WMATL" requiresRole="ANYWHERE_APPROVER" />
+				<executionOf alias="COMP" requiresRole="ANYWHERE_APPROVER" />
+				<executionOf alias="CLOSE" requiresRole="ANYWHERE_APPROVER" />
+				<executionOf alias="CAN" requiresRole="ANYWHERE_APPROVER" />
+			</conditions>
+			 -->
+		</resource>
+
+		<!-- Tasks resource -->
+		<resource class="application.business.TaskObject" id="taskResource" name="taskResource">
+			<attributes id="taskResource_attributes">
+				<attribute describedByProperty="spi_wm:taskid" id="taskResource_taskid_spi_wmtaskid" name="taskid"/>
+				<attribute describedByProperty="dcterms:title" id="taskResource_taskdescription_dctermstitle" name="taskdescription"/>
+				<attribute describedByProperty="spi_wm:description_longdescription" id="taskResource_tasklongdesc_spi_wmdescription_longdescription" name="tasklongdesc"/>
+				<attribute describedByProperty="spi:status" id="taskResource_status_spistatus" method="statusChanged" name="status"/>
+				<attribute describedByProperty="spi:asset{oslc:shortTitle}" id="taskResource_assetnum_spiassetoslcshortTitle" name="assetnum"/>
+				<attribute describedByProperty="spi:asset{dcterms:title}" id="taskResource_assetdescription_spiassetdctermstitle" name="assetdescription"/>
+				<attribute describedByProperty="spi:location{oslc:shortTitle}" id="taskResource_location_spilocationoslcshortTitle" name="location"/>
+				<attribute describedByProperty="spi:location{dcterms:title}" id="taskResource_locationdescription_spilocationdctermstitle" name="locationdescription"/>
+				<attribute describedByProperty="spi_wm:schedstart" id="taskResource_schedstart_spi_wmschedstart" name="schedstart"/>
+				<attribute describedByProperty="spi_wm:parent" id="taskResource_parent_spi_wmparent" name="parent"/>
+				<attribute describedByProperty="spi_wm:istask" id="taskResource_istask_spi_wmistask" name="istask"/>
+				<attribute describedByProperty="spi_wm:statusdate" id="taskResource_changestatusdate_spi_wmstatusdate" name="changestatusdate"/>
+				<attribute describedByProperty="spi_wm:np_statusmemo" id="taskResource_memo_spi_wmnp_statusmemo" name="memo"/>
+				<attribute describedByProperty="spi_wm:siteid" id="taskResource_siteid_spi_wmsiteid" key="2" name="siteid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="taskResource_wonum_oslcshortTitle" key="1" name="wonum"/>
+				<attribute describedByProperty="spi_wm:parentchgsstatus" id="taskResource_inheritstatuschanges_spi_wmparentchgsstatus" name="inheritstatuschanges"/>
+
+				<!-- Cost Attributes for Tasks -->
+				<attribute describedByProperty="spi_wm:estintlabhrs" id="taskResource_estintlabhrs_spi_wmestintlabhrs" name="estintlabhrs"/>
+				<attribute describedByProperty="spi_wm:estoutlabhrs" id="taskResource_estoutlabhrs_spi_wmestoutlabhrs" name="estoutlabhrs"/>
+				<attribute describedByProperty="spi_wm:estlabhrs" id="taskResource_estlabhrs_spi_wmestlabhrs" name="estlabhrs"/>
+				<attribute describedByProperty="spi_wm:estintlabcost" id="taskResource_estintlabcost_spi_wmestintlabcost" name="estintlabcost"/>
+				<attribute describedByProperty="spi_wm:estoutlabcost" id="taskResource_estoutlabcost_spi_wmestoutlabcost" name="estoutlabcost"/>
+				<attribute describedByProperty="spi_wm:estlabcost" id="taskResource_estlabcost_spi_wmestlabcost" name="estlabcost"/>
+				<attribute describedByProperty="spi_wm:estmatcost" id="taskResource_estmatcost_spi_wmestmatcost" name="estmatcost"/>
+				<attribute describedByProperty="spi_wm:esttoolcost" id="taskResource_esttoolcost_spi_wmesttoolcost" name="esttoolcost"/>
+				<attribute describedByProperty="spi_wm:estservcost" id="taskResource_estservcost_spi_wmestservcost" name="estservcost"/>
+				
+				<localAttribute dataType="string" id="taskResource_assetnumanddescription_string" name="assetnumanddescription"/>
+				<localAttribute dataType="string" id="taskResource_locationanddescription_string" name="locationanddescription"/>
+				<localAttribute dataType="string" id="taskResource_statusdesc_string" name="statusdesc"/>
+			</attributes>
+		</resource>
+
+		<!-- Work Log resource -->
+		<resource id="workLogResource" name="workLogResource">
+			<attributes id="workLogResource_attributes">
+			    <attribute describedByProperty="spi_wm:worklogid" id="workLogResource_worklogid_spi_wmworklogid" name="identifier"/>
+				<attribute describedByProperty="spi_wm:createdate" id="workLogResource_createdate_spi_wmcreatedate" name="createdate"/>
+				<attribute describedByProperty="spi_wm:createby" id="workLogResource_createby_spi_wmcreateby" name="createby"/>
+				<attribute describedByProperty="spi_wm:clientviewable" id="workLogResource_clientviewable_spi_wmclientviewable" name="clientviewable"/>
+				<attribute describedByProperty="spi_wm:logtype" id="workLogResource_logtype_spi_wmlogtype" name="logtype"/>
+				<attribute describedByProperty="spi_wm:description" id="workLogResource_summary_spi_wmdescription" name="summary"/>
+				<attribute describedByProperty="spi_wm:description_longdescription" id="workLogResource_details_spi_wmdescription_longdescription" name="details"/>
+				<localAttribute dataType="boolean" id="workLogResource_dontDiscard_boolean" name="dontDiscard"/>
+				<attribute describedByProperty="spi_wm:anywhererefid" id="workLogResource_anywhereRefId_spi_wmanywhererefid" name="anywhereRefId"/>
+			</attributes>
+		</resource>
+
+
+		<!-- Multi Asset Location resource -->
+		<resource class="application.business.MultiAssetLocObject" id="multiAssetLocResource" name="multiAssetLocResource">
+			<attributes id="multiAssetLocResource_attributes">
+			    <attribute describedByProperty="spi_wm:multiid" id="multiAssetLocResource_multiid_spi_wmmultiid" name="identifier"/>
+				<attribute describedByProperty="spi_wm:sequence" id="multiAssetLocResource_sequence_spi_wmsequence" name="sequence"/>
+				<attribute describedByProperty="spi:asset{oslc:shortTitle}" id="multiAssetLocResource_asset_spiassetoslcshortTitle" name="asset"/>
+				<attribute describedByProperty="spi:asset{dcterms:title}" id="multiAssetLocResource_assetdesc_spiassetdctermstitle" name="assetdesc"/>
+				<attribute describedByProperty="spi:location{oslc:shortTitle}" id="multiAssetLocResource_location_spilocationoslcshortTitle" name="location"/>
+				<attribute describedByProperty="spi:location{dcterms:title}" id="multiAssetLocResource_locationdesc_spilocationdctermstitle" name="locationdesc"/>
+				<attribute describedByProperty="spi_wm:progress" id="multiAssetLocResource_progress_spi_wmprogress" name="progress"/>
+				<localAttribute dataType="string" id="multiAssetLocResource_assetnumanddescription_string" name="assetnumanddescription"/>
+				<localAttribute dataType="string" id="multiAssetLocResource_locationanddescription_string" name="locationanddescription"/>
+			</attributes>
+		</resource>
+
+		<!-- Planned Labor resource -->
+		<resource id="plannedLaborResource" name="plannedLaborResource">
+			<attributes id="plannedLaborResource_attributes">
+			    <attribute describedByProperty="spi_wm:wplaborid" id="plannedLaborResource_wplaborid_spi_wmwplaborid" name="identifier"/>
+				<attribute describedByProperty="spi_wm:taskid" id="plannedLaborResource_taskid_spi_wmtaskid" name="taskid"/>
+				<attribute describedByProperty="spi_wm:laborcode" id="plannedLaborResource_laborcode_spi_wmlaborcode" name="laborcode"/>
+				<attribute describedByProperty="spi_wm:craft{oslc:shortTitle}" id="plannedLaborResource_craft_spi_wmcraftoslcshortTitle" name="craft"/>
+				<attribute describedByProperty="spi_wm:skilllevel" id="plannedLaborResource_skilllevel_spi_wmskilllevel" name="skilllevel"/>
+				<attribute describedByProperty="spi_wm:laborhrs" id="plannedLaborResource_hours_spi_wmlaborhrs" name="hours"/>
+
+				<attribute describedByProperty="spi_wm:displayrate" id="plannedLaborResource_rate_spi_wmdisplayrate" name="rate"/>
+				<attribute describedByProperty="spi_wm:linecost" id="plannedLaborResource_linecost_spi_wmlinecost" name="linecost"/>
+
+				<attribute describedByProperty="spi:vendor{oslc:shortTitle}" id="plannedLaborResource_vendor_spivendoroslcshortTitle" name="vendor"/>
+				<attribute describedByProperty="spi_wm:contractnum" id="plannedLaborResource_contractnum_spi_wmcontractnum" name="contractnum"/>
+
+				<attribute describedByProperty="spi_wm:amcrew" id="plannedLaborResource_crew_spi_wmamcrew" name="crew"/>
+				<attribute describedByProperty="spi_wm:crewworkgroup" id="plannedLaborResource_crewworkgroup_spi_wmcrewworkgroup" name="crewworkgroup"/>
+				<attribute describedByProperty="spi_wm:amcrewtype" id="plannedLaborResource_crewtype_spi_wmamcrewtype" name="crewtype"/>
+
+
+			</attributes>
+		</resource>
+
+
+		<!-- Planned Services resource -->
+		<resource class="application.business.PlannedServiceObject" id="plannedServiceResource" name="plannedServiceResource">
+			<attributes id="plannedServiceResource_attributes">
+			    <attribute describedByProperty="spi_wm:wpitemid" id="plannedServiceResource_wpitemid_spi_wpitemid" name="identifier"/>
+				<attribute describedByProperty="spi_wm:taskid" id="plannedServiceResource_taskid_spi_wmtaskid" name="taskid"/>
+				<attribute describedByProperty="spi_wm:itemnum" id="plannedServiceResource_service_spi_wmitemnum" name="service"/>
+				<attribute describedByProperty="spi_wm:description" id="plannedServiceResource_servicedesc_spi_wmdescription" name="servicedesc"/>
+				<attribute describedByProperty="spi_wm:description_longdescription" id="plannedServiceResource_serviceld_spi_wmdescription_longdescription" name="serviceld"/>
+				<attribute describedByProperty="spi_wm:itemqty" id="plannedServiceResource_quantity_spi_wmitemqty" name="quantity"/>
+				<attribute describedByProperty="spi_wm:unitcost" id="plannedServiceResource_unitcost_spi_wmunitcost" name="unitcost"/>
+				<attribute describedByProperty="spi_wm:linecost" id="plannedServiceResource_linecost_spi_wmlinecost" name="linecost"/>
+				<attribute describedByProperty="spi_wm:vendor" id="plannedServiceResource_vendor_spi_wmvendor" name="vendor"/>
+				<attribute describedByProperty="spi_wm:linetype" id="plannedServiceResource_linetype_spi_wmlinetype" name="linetype"/>
+				<localAttribute dataType="string" id="plannedServiceResource_serviceanddescription_string" name="serviceanddescription"/>
+			</attributes>
+		</resource>
+
+		<!-- Planned Materials resource -->
+		<resource class="application.business.PlannedMaterialObject" id="plannedMaterialResource" name="plannedMaterialResource">
+			<attributes id="plannedMaterialResource_attributes">
+			    <attribute describedByProperty="spi_wm:wpitemid" id="plannedMaterialResource_wpitemid_spi_wmwpitemid" name="identifier"/>
+				<attribute describedByProperty="spi_wm:taskid" id="plannedMaterialResource_taskid_spi_wmtaskid" name="taskid"/>
+				<attribute describedByProperty="spi_wm:itemnum" id="plannedMaterialResource_item_spi_wmitemnum" name="item"/>
+				<attribute describedByProperty="spi_wm:description" id="plannedMaterialResource_itemdesc_spi_wmdescription" name="itemdesc"/>
+				<attribute describedByProperty="spi_wm:description_longdescription" id="plannedMaterialResource_itemlongdesc_spi_wmdescription_longdescription" name="itemlongdesc"/>
+				<attribute describedByProperty="spi_wm:itemqty" id="plannedMaterialResource_quantity_spi_wmitemqty" name="quantity"/>
+				<attribute describedByProperty="spi_wm:unitcost" id="plannedMaterialResource_unitcost_spi_wmunitcost" name="unitcost"/>
+				<attribute describedByProperty="spi_wm:linecost" id="plannedMaterialResource_linecost_spi_wmlinecost" name="linecost"/>
+				<attribute describedByProperty="spi_wm:linetype" id="plannedMaterialResource_linetype_spi_wmlinetype" name="linetype"/>
+				<attribute describedByProperty="spi:location{oslc:shortTitle}" id="plannedMaterialResource_storeroom_spilocationoslcshortTitle" name="storeroom"/>
+				<attribute describedByProperty="spi:location{dcterms:title}" id="plannedMaterialResource_storeroomdesc_spilocationdctermstitle" name="storeroomdesc"/>
+				<attribute describedByProperty="spi_wm:directreq" id="plannedMaterialResource_directrequest_spi_wmdirectreq" name="directrequest"/>
+				<localAttribute dataType="string" id="plannedMaterialResource_itemanddescription_string" name="itemanddescription"/>
+			</attributes>
+		</resource>
+
+		<!-- Planned Tools resource -->
+		<resource class="application.business.PlannedToolObject" id="plannedToolResource" name="plannedToolResource">
+			<attributes id="plannedToolResource_attributes">
+			    <attribute describedByProperty="spi_wm:wpitemid" id="plannedToolResource_wpitemid_spi_wmwpitemid" name="identifier"/>
+				<attribute describedByProperty="spi_wm:itemnum" id="plannedToolResource_tool_spi_wmitemnum" name="tool"/>
+				<attribute describedByProperty="spi_wm:taskid" id="plannedToolResource_taskid_spi_wmtaskid" name="taskid"/>
+				<attribute describedByProperty="spi_wm:description" id="plannedToolResource_tooldesc_spi_wmdescription" name="tooldesc"/>
+				<attribute describedByProperty="spi_wm:description_longdescription" id="plannedToolResource_toollongdesc_spi_wmdescription_longdescription" name="toollongdesc"/>
+				<attribute describedByProperty="spi_wm:itemqty" id="plannedToolResource_quantity_spi_wmitemqty" name="quantity"/>
+				<attribute describedByProperty="spi_wm:hours" id="plannedToolResource_hours_spi_wmhours" name="hours"/>
+				<attribute describedByProperty="spi_wm:linecost" id="plannedToolResource_linecost_spi_wmlinecost" name="linecost"/>
+				<attribute describedByProperty="spi_wm:rate" id="plannedToolResource_rate_spi_wmrate" name="rate"/>
+				<attribute describedByProperty="spi:location{oslc:shortTitle}" id="plannedToolResource_storeroom_spilocationoslcshortTitle" name="storeroom"/>
+				<attribute describedByProperty="spi:location{dcterms:title}" id="plannedToolResource_storeroomdesc_spilocationdctermstitle" name="storeroomdesc"/>
+				<localAttribute dataType="string" id="plannedToolResource_toolanddescription_string" name="toolanddescription"/>
+			</attributes>
+		</resource>
+
+		<!-- Actual Labor resource - used to disable canceling of work orders that have actual labor -->
+		<resource id="actualLaborResource" name="actualLaborResource">
+			<attributes id="actualLaborResource_attributes">
+				<attribute describedByProperty="spi_wm:taskid" id="actualLaborResource_actualstaskid_spi_wmtaskid" name="actualstaskid"/>
+			</attributes>
+		</resource>
+
+
+		<!-- Work Order Cost Local resource - used to calculate work order costs -->
+		<resource id="workCosts" name="workCosts" singleton="true">
+			<attributes id="workCosts_attributes">
+				<localAttribute dataType="" id="workCosts_localestintlabhrs" name="localestintlabhrs"/>
+				<localAttribute dataType="" id="workCosts_localestoutlabhrs" name="localestoutlabhrs"/>
+				<localAttribute dataType="" id="workCosts_localestlabhrs" name="localestlabhrs"/>
+				<localAttribute dataType="" id="workCosts_localestintlabcost" name="localestintlabcost"/>
+				<localAttribute dataType="" id="workCosts_localestoutlabcost" name="localestoutlabcost"/>
+				<localAttribute dataType="" id="workCosts_localestlabcost" name="localestlabcost"/>
+				<localAttribute dataType="" id="workCosts_localestmatcost" name="localestmatcost"/>
+				<localAttribute dataType="" id="workCosts_localesttoolcost" name="localesttoolcost"/>
+				<localAttribute dataType="" id="workCosts_localestservcost" name="localestservcost"/>
+				<localAttribute dataType="" id="workCosts_localesttotalcost" name="localesttotalcost"/>
+			</attributes>
+		</resource>
+
+		<!-- Local resource - used to calculate PO & PR totals for Work Order Costs -->
+		<resource id="workOrderPOInfo" name="workOrderPOInfo" singleton="true">
+			<attributes id="workOrderPOInfo_attributes">
+				<localAttribute dataType="" id="workOrderPOInfo_pototal" name="pototal"/>
+				<localAttribute dataType="" id="workOrderPOInfo_prtotal" name="prtotal"/>
+			</attributes>
+		</resource>
+		<!-- Work Log Entry resource -->
+		<resource id="workLogEntry" name="workLogEntry" singleton="true">
+			<attributes id="workLogEntry_attributes">
+				<localAttribute dataType="string" id="workLogEntry_person_string" index="true" name="person"/>
+				<localAttribute dataType="dateTime" id="workLogEntry_createdDate_dateTime" name="createdDate"/>
+			</attributes>
+		</resource>
+
+
+		<!-- Resource for storing a status change. -->
+		<resource id="statusChangeResource" name="statusChangeResource" singleton="true">
+			<attributes id="statusChangeResource_attributes">
+				<localAttribute dataType="string" id="statusChangeResource_status_string" name="status"/>
+				<localAttribute dataType="string" id="statusChangeResource_statusdesc_string" name="statusdesc"/>
+				<localAttribute dataType="dateTime" id="statusChangeResource_changedate_dateTime" name="changedate"/>
+				<localAttribute dataType="string" id="statusChangeResource_memo_string" maxSize="50" name="memo"/>
+			</attributes>
+		</resource>
+
+		<!--  Resource for searching work orders -->
+		<resource id="searchWorkOrder" name="searchWorkOrder">
+			<attributes id="searchWorkOrder_attributes">
+				<localAttribute dataType="string" id="searchWorkOrder_wonum_string" index="true" name="wonum"/>
+				<localAttribute dataType="string" id="searchWorkOrder_description_string" name="description"/>
+				<localAttribute dataType="string" id="searchWorkOrder_statusdesc_string" name="statusdesc"/>
+				<localAttribute dataType="string" id="searchWorkOrder_asset_string" name="asset"/>
+				<localAttribute dataType="string" id="searchWorkOrder_location_string" name="location"/>
+				<localAttribute dataType="string" id="searchWorkOrder_priority_string" name="priority"/>
+				<localAttribute dataType="date" id="searchWorkOrder_startdate_date" name="startdate"/>
+				<localAttribute dataType="date" id="searchWorkOrder_enddate_date" name="enddate"/>
+			</attributes>
+			<whereClause id="searchWorkOrder_whereClause"/>
+		</resource>
+		
+		<!-- Ancestor resources -->
+		<resource describedBy="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#LocationAncestor" id="locancestorResource" name="locancestorResource" providedBy="/oslc/sp/WorkManagement">			
+		    <attributes id="locancestorResource_attributes">
+   		        <attribute describedByProperty="dcterms:identifier" id="locancestorResource_identifier_dctermsidentifier" name="identifier"/>
+				<attribute describedByProperty="spi_wm:ancestor" id="locancestorResource_ancestor_spi_wmancestor" name="ancestor"/>
+			</attributes>
+			<queryBases id="locancestorResource_queryBases">
+			    <queryBase id="locancestorResource_queryBase_getlocancestor" name="getlocancestor" queryUri="/oslc/shapes/oslcwodetail/locancestor"/>
+	 		</queryBases>
+		</resource>	
+	 	<resource describedBy="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#AssetAncestor" id="assetancestorResource" name="assetancestorResource" providedBy="/oslc/sp/WorkManagement">
+			<attributes id="assetancestorResource_attributes">
+			    <attribute describedByProperty="dcterms:identifier" id="assetancestorResource_identifier_dctermsidentifier" name="identifier"/>
+				<attribute describedByProperty="spi_wm:ancestor" id="assetancestorResource_ancestor_spi_wmancestor" name="ancestor"/>
+			</attributes>	
+			<queryBases id="assetancestorResource_queryBases">
+			    <queryBase id="assetancestorResource_queryBase_getassetancestor" name="getassetancestor" queryUri="/oslc/shapes/oslcwodetail/assetancestor"/>
+	 		</queryBases>
+		</resource>
+		
+		<!-- *********************** -->
+		<!-- ADDITIONAL DATA SECTION -->
+		<!-- *********************** -->
+		<!-- Asset resource -->
+
+		<resource additionalData="true" describedBy="http://open-services.net/ns/asset#Asset" id="additionalasset" name="additionalasset" pageSize="1000" providedBy="/oslc/sp/AssetManagement">
+			<attributes id="additionalasset_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="additionalasset_assetid_dctermsidentifier" name="assetid"/>
+				<attribute describedByProperty="spi:orgid" id="additionalasset_orgid_spiorgid" index="true" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="additionalasset_siteid_spisiteid" index="true" isExactMatchIndex="true" name="siteid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="additionalasset_assetnum_oslcshortTitle" index="true" name="assetnum"/>
+				<attribute describedByProperty="dcterms:title" id="additionalasset_description_dctermstitle" index="true" name="description"/>
+				<!-- <attribute name="saddresscode" describedByProperty="spi:saddresscode" 
+					/> -->
+				<attribute describedByProperty="spi:location{oslc:shortTitle}" id="additionalasset_location_spilocationoslcshortTitle" index="true" method="locationChanged" name="location" referenceResource="additionallocations"/>
+				<attribute describedByProperty="spi:location{dcterms:title}" id="additionalasset_locationdesc_spilocationdctermstitle" index="true" name="locationdesc" referenceResource="additionallocations"/>
+				<!-- <attribute name="serialnum" describedByProperty="spi:serialnum" 
+					/> -->
+				<attribute describedByProperty="spi:status" id="additionalasset_status_spistatus" index="true" isExactMatchIndex="true" name="status"/>
+				<attribute describedByProperty="spi:itemnum" id="additionalasset_itemnum_spiitemnum" index="true" name="itemnum"/>
+				<attribute describedByProperty="spi:itemsetid" id="additionalasset_itemsetid_spiitemsetid" index="true" name="itemsetid"/>
+				<!--<attribute name="assettag" describedByProperty="spi:assettag" /> -->
+				<!--<attribute name="assetuid" describedByProperty="spi:assetuid" /> -->
+				<!--<attribute name="changeby" describedByProperty="spi:changeby" /> -->
+				<!--<attribute name="changedate" describedByProperty="spi:changedate" 
+					/> -->
+				<!--<attribute name="children" describedByProperty="spi:children" /> -->
+				<!-- <attribute name="disabled" describedByProperty="spi:disabled" /> -->
+				<!-- <attribute name="failurecode" describedByProperty="spi:failurecode" 
+					/> -->
+				<!-- <attribute name="isrunning" describedByProperty="spi:isrunning" 
+					/> -->
+				<!-- <attribute name="manufacturer" describedByProperty="spi:manufacturer" 
+					/> -->
+				<attribute describedByProperty="spi:parent" id="additionalasset_parent_spiparent" index="true" name="parent"/>
+				<!-- <attribute name="priority" describedByProperty="spi:priority" /> -->
+				<!-- <attribute name="vendor" describedByProperty="spi:vendor" /> -->
+				<attribute describedByProperty="spi:description_longdescription" id="additionalasset_assetlongdesc_spidescription_longdescription" name="assetlongdesc"/>
+				<localAttribute dataType="boolean" formula="${itemnum} != null" id="additionalasset_itemnumnotnull_boolean" index="true" name="itemnumnotnull"/>
+			</attributes>
+			<queryBases id="additionalasset_queryBases">
+ 	 			<queryBase id="additionalasset_queryBase_getadditionalasset" name="getadditionalasset" queryUri="/oslc/os/oslcasset"/>
+	 		</queryBases>			
+			<whereClause clause="spi:status in [${domainAssetstatus[maxvalue=OPERATING].value}]" id="additionalasset_whereClause"/>
+		</resource>
+
+
+		<!-- Location resource -->
+		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Location" id="additionallocations" name="additionallocations" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="additionallocations_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="additionallocations_locationsid_dctermsidentifier" name="locationsid"/>
+				<attribute describedByProperty="spi:siteid" id="additionallocations_siteid_spisiteid" index="true" isExactMatchIndex="true" name="siteid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="additionallocations_location_oslcshortTitle" index="true" name="location"/>
+				<attribute describedByProperty="dcterms:title" id="additionallocations_description_dctermstitle" index="true" name="description"/>
+				<!-- <attribute name="autowogen" describedByProperty="spi:autowogen" 
+					/> -->
+				<!-- <attribute name="changeby" describedByProperty="spi:changeby" /> -->
+				<!-- <attribute name="changedate" describedByProperty="spi:changedate" 
+					/> -->
+				<!-- <attribute name="disabled" describedByProperty="spi:disabled" /> -->
+				<!-- <attribute name="glaccount" describedByProperty="spi:glaccount" 
+					/> -->
+				<!-- <attribute name="isdefault" describedByProperty="spi:isdefault" 
+					/> -->
+				<!-- <attribute name="isrepairfacility" describedByProperty="spi:isrepairfacility" 
+					/> -->
+				<attribute describedByProperty="spi:status" id="additionallocations_status_spistatus" index="true" isExactMatchIndex="true" name="status"/>
+				<!-- <attribute name="statusdate" describedByProperty="spi:statusdate" 
+					/> -->
+				<!-- <attribute name="type" describedByProperty="spi:type" /> -->
+				<!-- <attribute name="useinpopr" describedByProperty="spi:useinpopr" 
+					/> -->
+				<!-- <attribute name="locationld" describedByProperty="spi:description_longdescription" 
+					/> -->
+			</attributes>
+			<queryBases id="additionallocations_queryBases">
+ 	 			<queryBase id="additionallocations_queryBase_getlocation" name="getlocation" queryUri="/oslc/os/oslclocations"/>
+	 		</queryBases>									
+			<whereClause clause="spi:status in [${domainAssetstatus[maxvalue=OPERATING].value}]" id="additionallocations_whereClause"/>
+		</resource>
+
+		<!-- DOMAINS resources -->
+		<!-- Asset Status domain -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domainAssetstatus" isSystem="true" name="domainAssetstatus" pageSize="100" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="domainAssetstatus_attributes">
+				<attribute describedByProperty="spi:orgid" id="domainAssetstatus_orgid_spiorgid" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="domainAssetstatus_siteid_spisiteid" name="siteid"/>
+				<attribute describedByProperty="spi:maxvalue" id="domainAssetstatus_maxvalue_spimaxvalue" name="maxvalue"/>
+				<attribute describedByProperty="spi:value" id="domainAssetstatus_value_spivalue" name="value"/>
+				<attribute describedByProperty="dcterms:title" id="domainAssetstatus_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:defaults" id="domainAssetstatus_defaults_spidefaults" name="defaults"/>
+				<attribute describedByProperty="oslc:shortTitle" id="domainAssetstatus_domainid_oslcshortTitle" name="domainid"/>
+				<attribute describedByProperty="dcterms:identifier" id="domainAssetstatus_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
+			</attributes>
+			<queryBases id="domainAssetstatus_queryBases">
+ 	 			<queryBase id="domainAssetstatus_queryBase_getdomainAssetstatus" name="getdomainAssetstatus" queryUri="/oslc/os/oslcsynonymdomain"/>
+	 		</queryBases>			
+			<whereClause clause="oslc:shortTitle='LOCASSETSTATUS' and spi:siteid!='*' and spi:orgid!='*'" id="domainAssetstatus_whereClause"/>
+		</resource>
+
+		<!-- Work Order Status domain -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domainwostatus" isSystem="true" name="domainwostatus" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="domainwostatus_attributes">
+				<attribute describedByProperty="spi:orgid" id="domainwostatus_orgid_spiorgid" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="domainwostatus_siteid_spisiteid" name="siteid"/>
+				<attribute describedByProperty="spi:maxvalue" id="domainwostatus_maxvalue_spimaxvalue" name="maxvalue"/>
+				<attribute describedByProperty="spi:value" id="domainwostatus_value_spivalue" name="value"/>
+				<attribute describedByProperty="dcterms:title" id="domainwostatus_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:defaults" id="domainwostatus_defaults_spidefaults" name="defaults"/>
+				<attribute describedByProperty="oslc:shortTitle" id="domainwostatus_domainid_oslcshortTitle" name="domainid"/>
+				<attribute describedByProperty="dcterms:identifier" id="domainwostatus_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
+			</attributes>
+			<queryBases id="domainwostatus_queryBases">
+ 	 			<queryBase id="domainwostatus_queryBase_getdomainwostatus" name="getdomainwostatus" queryUri="/oslc/os/oslcsynonymdomain"/>
+	 		</queryBases>			
+			<whereClause clause="oslc:shortTitle='WOSTATUS'" id="domainwostatus_whereClause"/>
+		</resource>
+
+		<!-- Work Log Type domain -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domainlogtype" isSystem="true" name="domainlogtype" pageSize="10" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="domainlogtype_attributes">
+				<!-- <attribute name="orgid" describedByProperty="spi:orgid" /> -->
+				<!-- <attribute name="siteid" describedByProperty="spi:siteid" /> -->
+				<attribute describedByProperty="spi:maxvalue" id="domainlogtype_maxvalue_spimaxvalue" name="maxvalue"/>
+				<attribute describedByProperty="spi:value" id="domainlogtype_value_spivalue" name="value"/>
+				<attribute describedByProperty="dcterms:title" id="domainlogtype_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:defaults" id="domainlogtype_defaults_spidefaults" name="defaults"/>
+				<attribute describedByProperty="oslc:shortTitle" id="domainlogtype_domainid_oslcshortTitle" name="domainid"/>
+				<attribute describedByProperty="dcterms:identifier" id="domainlogtype_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
+			</attributes>
+			<queryBases id="domainlogtype_queryBases">
+ 	 			<queryBase id="domainlogtype_queryBase_getdomainlogtypes" name="getdomainlogtypes" queryUri="/oslc/os/oslcsynonymdomain"/>
+	 		</queryBases>			
+			<whereClause clause="oslc:shortTitle='LOGTYPE'" id="domainlogtype_whereClause"/>
+		</resource>
+
+		<!-- Work Order Class domain -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domainwoclass" isSystem="true" name="domainwoclass" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="domainwoclass_attributes">
+				<attribute describedByProperty="spi:orgid" id="domainwoclass_orgid_spiorgid" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="domainwoclass_siteid_spisiteid" name="siteid"/>
+				<attribute describedByProperty="spi:maxvalue" id="domainwoclass_maxvalue_spimaxvalue" name="maxvalue"/>
+				<attribute describedByProperty="spi:value" id="domainwoclass_value_spivalue" name="value"/>
+				<attribute describedByProperty="dcterms:title" id="domainwoclass_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:defaults" id="domainwoclass_defaults_spidefaults" name="defaults"/>
+				<attribute describedByProperty="oslc:shortTitle" id="domainwoclass_domainid_oslcshortTitle" name="domainid"/>
+				<attribute describedByProperty="dcterms:identifier" id="domainwoclass_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
+			</attributes>
+			<queryBases id="domainwoclass_queryBases">
+ 	 		   <queryBase id="domainwoclass_queryBase_getdomainwoclass" name="getdomainwoclass" queryUri="/oslc/os/oslcsynonymdomain"/>
+	 		</queryBases>			
+			<whereClause clause="oslc:shortTitle='WOCLASS'" id="domainwoclass_whereClause"/>
+		</resource>
+		
+		<!-- UserInfo attribute list -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#MaxUser" id="userInfo" name="userInfo" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">	
+	        <attributes id="userInfo_attributes">
+		        <attribute describedByProperty="dcterms:identifier" id="userInfo_maxuserid_dctermsidentifier" name="maxuserid"/>
+		        <attribute describedByProperty="spi:userid" id="userInfo_userid_spiuserid" name="userid"/>
+		        <attribute describedByProperty="spi:loginid" id="userInfo_loginid_spiloginid" name="loginid"/>
+		        <attribute describedByProperty="spi:storeroomsite" id="userInfo_storeroomsite_spistoreroomsite" name="storeroomsite"/>
+		        <attribute describedByProperty="spi:type" id="userInfo_type_spitype" name="type"/>
+		        <attribute describedByProperty="spi:personid" id="userInfo_personid_spipersonid" name="personid"/>
+		        <attribute describedByProperty="spi:sysuser" id="userInfo_sysuser_spisysuser" name="sysuser"/>
+		        <attribute describedByProperty="spi:querywithsite" id="userInfo_querywithsite_spiquerywithsite" name="querywithsite"/>
+		        <attribute describedByProperty="spi:defsite" id="userInfo_defsite_spidefsite" name="defsite"/>
+		        <attribute describedByProperty="spi:status" id="userInfo_status_spistatus" name="status"/>
+		        <attribute describedByProperty="spi:emailpswd" id="userInfo_emailpswd_spiemailpswd" name="emailpswd"/>
+		        <attribute describedByProperty="spi:screenreader" id="userInfo_screenreader_spiscreenreader" name="screenreader"/>
+		        <attribute describedByProperty="spi:failedlogins" id="userInfo_failedlogins_spifailedlogins" name="failedlogins"/>
+		        <attribute describedByProperty="spi:inactivesites" id="userInfo_inactivesites_spiinactivesites" name="inactivesites"/>
+		        <attribute describedByProperty="spi:groupuser" describedByResource="userRoles" id="userInfo_groupList_spigroupuser" name="groupList"/>
+		     </attributes>
+		     <queryBases id="userInfo_queryBases">
+				<queryBase id="userInfo_queryBase_currentUser" name="currentUser" queryUri="/oslc/os/oslcmaxuser?savedQuery=currentUser"/>
+			</queryBases>
+	    </resource>
+	    
+		<!-- Roles attribute list -->				
+	    <resource id="userRoles" name="userRoles">
+			<attributes id="userRoles_attributes">
+				<attribute describedByProperty="spi:groupname" id="userRoles_roleName_spigroupname" name="roleName"/>			
+			</attributes>
+		</resource>
+		
+	</data>
+
+	<!-- ERROR MESSAGES SECTION -->
+	<messages id="messages">
+		<message defaultMessage="Invalid User" id="INVALID_USER_NAME"/>
+		<message defaultMessage="Time Out" id="TIME_OUT"/>
+		<message defaultMessage="Cannot connect to the server" id="CONNECTION FAILURE"/>
+		<message defaultMessage="Work Order" id="primaryResourceSingleLabel"/>
+		<message defaultMessage="Work Orders" id="primaryResourcePluralLabel"/>
+		<message defaultMessage="IBM Maximo Supervisor" id="applicationName"/>
+		<message defaultMessage="The work order status cannot change from {0} to {1}." id="invalidstatustransition"/>
+		<message defaultMessage="" id="changePasswordInfo"/>
+		<message defaultMessage="Specify a date that is later than the date of the last status change on {0}." id="statusDateinFuture"/>
+		<message defaultMessage="The specified log type was not found. Check your entry." id="invalidLogType"/>
+	</messages>
+</app>

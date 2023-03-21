@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="ISM Library Delta Release Script" basedir=".">
+
+	<description>
+		Package and Release the Application Project Folder and its
+		related Platform
+		and OSLC Contents
+	</description>
+
+	<!-- :: Begin Common Setup Steps -->
+	<basename property="ant.file.basename" file="${ant.file}"
+		suffix=".xml" />
+	<record name="${basedir}/${ant.file.basename}.log" logLevel="verbose" />
+	<include file="${basedir}/build-taskdef.xml" />
+	<!-- :: End Common Setup Steps -->
+
+	<macrodef name="genVersion">
+		<attribute name="versionFile" />
+		<attribute name="buildTime" />
+		<sequential>
+			<echo file="@{versionFile}" append="false">
+				build.datetime=@{buildTime}${line.separator}
+				build.label=${buildLabel}${line.separator}
+				build.resultUUID=${buildResultUUID}
+			</echo>
+		</sequential>
+	</macrodef>
+
+	<!-- :: Begin Property Definitions -->
+
+	<tstamp>
+		<format property="build.timestamp" pattern="yyyyMMddHHmm" />
+	</tstamp>
+	<property name="publish-dir" value="" />
+	<property name="current.release.version" value="7.6.3.1" />
+	<property name="previous.release.version" value="7.6.3.0" />
+	<property name="previous.release.version.ga" value="7.6.3.0" />
+	<property name="internal.sourcescan" value="" />
+	<property name="platform.name" value="platform" />
+	<property name="platform.zip.name" value="AnywherePlatformLBS2017ISMLib.zip" />
+	<property name="application.zip.name" value="MaximoAnywhereLBS2017ISMLib.zip" />
+	<property name="oslcpmp.zip.name" value="OSLCPMPLBS2017.zip" />
+	<property name="anywhereadminpmp.zip.name" value="ANYWHEREADMINPMPLBS2017.zip" />
+	<property name="temp-dir" value="${basedir}/bin/ISMLibrary" />
+	<property name="fixpack-dir" value="${temp-dir}/fixpack" />
+	<property name="final.zipname.release" value="MaximoAnywhereLBS2017Release.zip" />
+	<property name="previous.gsa.release.location" value="7.6" />
+	<property name="current.gsa.release.location" value="LBS" />
+	<property name="current.platform.release.version" value="7.6.3.1" />
+		
+	<property name="readme.filename" value="Readme_MaximoAnywhereLBS2017Release.txt" />
+	<property name="mif.ifix.filename" value="7604MIFLAFixNotifications.zip" />
+		
+	<!-- ::End Property Definitions -->
+
+	<target name="init"
+		description="Create all necessary folders, files, and properties needed for this build">
+
+		<if>
+			<isset property="anywhere.debug" />
+			<then>
+				<echoproperties></echoproperties>
+			</then>
+		</if>
+
+		<mkdir dir="${basedir}/bin/ISMLibrary" />
+
+		<if>
+			<isset property="internal.sourcescan.build" />
+			<then>
+				<ant antfile="${basedir}/anywhere-platform-installer.xml"
+					target="-retrieve" useNativeBasedir="true" />
+			</then>
+		</if>
+	</target>
+
+	<target name="pre-package">
+		<!-- sets build.time if not already specified -->
+		<!-- sets build.timestamp if not already specified -->
+		<!-- now shipping with this file that our builds can expect to use to set application timestamp -->
+		<tstamp>
+			<format property="build.time" pattern="yyyyMMdd_HHmmssZ" />
+		</tstamp>
+		<tstamp>
+			<format property="build.timestamp" pattern="yyyyMMdd_HHmmssZ" />
+		</tstamp>
+		
+		<genVersion versionFile="${basedir}/version.txt"
+			buildTime="${build.time}" />
+	</target>
+
+
+	<target name="build-application-delta-zip" depends="pre-package, init">
+		<echo>Package Application FIXPACK Delta File</echo>
+
+		<basename property="project.name" file="${basedir}" />
+
+		<delete dir="${fixpack-dir}" />
+		<mkdir dir="${fixpack-dir}" />
+
+		<!-- :: Zip application from workspace and unzip it in the temporary directory -->
+ 
+		<fileset dir="${basedir}" id="application.files">
+			<exclude name="ISMLib-package-release.xml" />
+			<exclude name="README.txt" />
+			<exclude name="build-bvt.xml" />
+			<exclude name="**/*.log" />
+			<exclude name="**/internal*.*" />
+			<exclude name="**/.jazzignore" />
+			<exclude name="build.properties" />
+			<exclude name="worklight.properties" />
+			<exclude name=".changetrack/" />
+			<exclude name=".settings/" />
+			<exclude name=".externalToolBuilders/" />
+			<exclude name="server/" />
+			<exclude name="services/" />
+			<exclude name="libs/codegen/" />
+			<exclude name="libs/test/" />
+			<exclude name="www/" />
+			<exclude name="bin/" />
+			<exclude name="components/" />
+			<exclude name="client-runtime-test/" />
+			<exclude name="installer/" />
+			<exclude name="adapters/" />
+			<exclude name="apps/WorkExecutionDemo/" />
+		</fileset>
+		
+		<!--  :: take the current MaximoAnywhere project and zip it up to move to a temp location for use -->
+		<zip
+			destfile="${fixpack-dir}/${project.name}_${current.release.version}.latest.zip"
+			update="true">
+			<fileset refid="application.files" />
+		</zip>
+
+		<unzip
+			src="${fixpack-dir}/${project.name}_${current.release.version}.latest.zip"
+			dest="${fixpack-dir}/${project.name}_${current.release.version}.latest/MaximoAnywhere">
+		</unzip>
+
+		<!-- :: Get previous release application zip from GA and unzip it -->
+		<echo> Get previous release application zip from GA and unzip it </echo>
+		<property name="ga.previous.appproject.dir"
+			value="http://pokgsa.ibm.com/projects/m/maximoanywhereplatform/${previous.gsa.release.location}/releases/released_to_qa/apps" />
+
+		<property name="ga.previous.appproject.filename"
+			value="${project.name}_${previous.release.version.ga}.latest.zip" />
+
+		<get src="${ga.previous.appproject.dir}/${ga.previous.appproject.filename}"
+			dest="${fixpack-dir}/${project.name}_${previous.release.version.ga}.latest.GA.zip"
+			usetimestamp="false" verbose="on" />
+
+		<echo
+			message="Unzip ${fixpack-dir}/${project.name}_${previous.release.version.ga}.latest.GA.zip" />
+
+		<unzip
+			src="${fixpack-dir}/${project.name}_${previous.release.version.ga}.latest.GA.zip"
+			dest="${fixpack-dir}/${project.name}_${previous.release.version.ga}.latest.GA" />
+		
+		<!-- download the artifact-processor jar to use the AWArtifactDiff class from it -->
+        <property name="current.artifact.processor.gsa.location"
+            value="http://pokgsa.ibm.com/projects/m/maximoanywhereplatform/${current.gsa.release.location}/releases/released_to_qa/platform" />
+		
+		<property name="current.artifact.processor.package.filename" 
+			  value="artifact-processor_${current.platform.release.version}.latest.zip "/>
+		
+	    <get src="${current.artifact.processor.gsa.location}/${current.artifact.processor.package.filename}"
+	         dest="${fixpack-dir}/${current.artifact.processor.package.filename}"
+	         usetimestamp="false" verbose="on" />
+		
+        <unzip
+            src="${fixpack-dir}/${current.artifact.processor.package.filename}"
+            dest="${basedir}/libs/codegen">
+            <patternset>
+                <include name="artifact-processor_${current.platform.release.version}.jar"/>
+            </patternset>
+        </unzip>
+		
+		<!-- we need to build the mxs files for all of the app.xmls -->
+		<!-- the 3 parameters are: -->
+		<!-- app.ga.released.location - the location of the previous MaximoAnywhere release -->
+		<!-- app.latest.released.location - the location of the current MaximoAnywhere release -->
+		<!--  the full path of the version.txt from the GA release to load the previous build timestamp -->
+          <ant antfile="app-sparse-xml-processor.xml" target="generate-all-mxsfiles" useNativeBasedir="true">
+              <property name="app.ga.released.location" value="${fixpack-dir}/${project.name}_${previous.release.version}.latest.GA"/>
+              <property name="app.latest.released.location" value="${fixpack-dir}/${project.name}_${current.release.version}.latest"/>
+              <property name="version.latest.released.location" value="${fixpack-dir}/${project.name}_${current.release.version}.latest/MaximoAnywhere" />
+          </ant>      
+
+          <echo message="[package] generate the fixpack-XXX.properties delta files"/>
+                          
+          <!-- we need to remove the app.xml for each app from the new folder, but not touch the miniapps -->
+          <foreach target="-remove-app-artifacts" param="application.home" inheritall="true">
+              <path>
+                  <dirset dir="${fixpack-dir}/${project.name}_${current.release.version}.latest/MaximoAnywhere/apps">
+                  	  <exclude name="WorkExecutionDemo" />
+                      <include name="*" />
+                  </dirset>
+              </path>
+          </foreach>
+		
+		<!-- :: Create delta zip file -->				
+		<echo>Create delta application zip file</echo>
+			
+		<zip destfile="${temp-dir}/${application.zip.name}" update="true" filesonly="true">
+			<fileset
+				dir="${fixpack-dir}/${project.name}_${current.release.version}.latest">
+				<different
+					targetdir="${fixpack-dir}/${project.name}_${previous.release.version}.latest.GA"
+					ignoreFileTimes="true" />
+				<patternset id="non.delta.files">
+					<exclude name="**/build.properties" />					
+				</patternset>
+			</fileset>
+		</zip>
+
+		<!-- clean up work dir -->
+		<echo message="clean ${fixpack-dir}" />
+	    <delete dir="${fixpack-dir}" failonerror="false" />
+	</target>
+	
+    <target name="-remove-app-artifacts" description="removes the app.xml for each app from the latest app package">
+    	<basename property="app.name" file="${application.home}" />
+    	
+         <if>
+            <available file="${application.home}/artifact/${app.name}.mxs" />
+            <then>
+            	<echo> Removing app.xml from latest delta zip because we are shipping mxs files instead for ${app.name}</echo>
+            	<delete file="${application.home}/artifact/app.xml" verbose="true" />   
+            </then>
+         	<else>
+                <echo> Skipping removal of app.xml for app: [${app.name}] because an mxs file was not generated </echo>
+         	</else>
+         </if>         
+     </target>
+
+	<target name="build-platform-delta-zip" depends="pre-package, init">
+
+		<echo>Package Platform FIXPACK Delta File</echo>
+
+		<property name="fixpack-dir" value="${temp-dir}/fixpack" />
+
+		<delete dir="${fixpack-dir}" />
+		<mkdir dir="${fixpack-dir}" />
+
+		<!-- :: Get latest platform delta from GSA -->
+
+		<property name="ga.current.platformproject.dir"
+			value="http://pokgsa.ibm.com/projects/m/maximoanywhereplatform/${current.gsa.release.location}/releases/released_to_qa/platform" />
+
+		<property name="ga.current.platformproject.filename" value="${platform.name}-Latest.delta.zip" />
+		
+		<get
+			src="${ga.current.platformproject.dir}/${ga.current.platformproject.filename}"
+			dest="${temp-dir}/${platform.zip.name}"
+			usetimestamp="false" verbose="on" />
+		
+		<!-- clean up work dir -->
+
+		<echo message="clean ${fixpack-dir}" />
+		<delete dir="${fixpack-dir}" failonerror="false" />
+
+	</target>
+
+	<target name="build-oslcpmp-delta-zip">
+
+		<delete dir="${fixpack-dir}" />
+		<mkdir dir="${fixpack-dir}" />
+
+		<!-- :: Get latest OSLCOS_PMP from GSA and unzip it -->
+
+		<property name="ga.current.oslcospmp.dir"
+			value="http://pokgsa.ibm.com/projects/m/maximoanywhereplatform/${current.gsa.release.location}/releases/released_to_qa/platform" />
+
+		<property name="ga.current.oslcospmp.filename" value="oslcos_pmp_deploy_latest.zip" />
+
+		<get src="${ga.current.oslcospmp.dir}/${ga.current.oslcospmp.filename}"
+			dest="${fixpack-dir}/oslcos_pmp_latest.current.GA.zip" usetimestamp="false"
+			verbose="on" />
+
+		<echo message="Unzip ${fixpack-dir}/oslcos_pmp_latest.current.GA.zip" />
+
+		<unzip src="${fixpack-dir}/oslcos_pmp_latest.current.GA.zip" dest="${fixpack-dir}/oslcos_pmp_latest.current.GA" />
+		
+		<echo message="Packaging the delta OSLC Files" />
+		
+	    <fileset dir="${fixpack-dir}/oslcos_pmp_latest.current.GA" id="oslc.files"
+			includes="applications/maximo/properties/product/oslcos_pmp.xml,tools/maximo/**,applications/maximo/businessobjects/classes/**"
+			excludes="tools/maximo/en/oslcos_pmp/V7510*, tools/maximo/en/oslcos_pmp/V7511*,tools/maximo/en/oslcos_pmp/V7512*,tools/maximo/en/oslcos_pmp/V7520*,tools/maximo/en/oslcos_pmp/V7521*,tools/maximo/en/oslcos_pmp/V7522*,tools/maximo/en/oslcos_pmp/internal*,tools/maximo/en/oslcos_pmp/readme.txt,tools/maximo/MaximoAnywhere_752.pkg">
+		</fileset>
+
+		<zip destfile="${temp-dir}/${oslcpmp.zip.name}" update="true">
+			<fileset refid="oslc.files" />
+		</zip>
+
+		<delete dir="${fixpack-dir}" failonerror="false" />
+	</target>
+			
+	<target name="build-anywhereadminpmp-delta-zip">
+
+		<property name="admin_pmp.latest.current.GA.filename" value="anywhereadmin_pmp_latest.current.GA.zip" />
+		<property name="admin_pmp.latest.current.GA.foldername" value="anywhereadmin_pmp_latest.current.GA" />
+			
+		<delete dir="${fixpack-dir}" />
+		<mkdir dir="${fixpack-dir}" />
+
+		<!-- :: Get latest current ANYWHEREADMIN_PMP from GA and unzip it -->
+
+		<property name="ga.current.anywhereadminpmp.dir"
+			value="http://pokgsa.ibm.com/projects/m/maximoanywhereplatform/${current.gsa.release.location}/releases/released_to_qa/platform" />
+
+		<property name="ga.current.anywhereadminpmp.filename" value="anywhereadmin_pmp_deploy_latest.zip" />
+
+		<get src="${ga.current.anywhereadminpmp.dir}/${ga.current.anywhereadminpmp.filename}"
+			dest="${fixpack-dir}/${admin_pmp.latest.current.GA.filename}" usetimestamp="false"
+			verbose="on" />
+
+		<echo message="Unzip ${fixpack-dir}/${admin_pmp.latest.current.GA.filename}" />
+
+		<unzip src="${fixpack-dir}/${admin_pmp.latest.current.GA.filename}" dest="${fixpack-dir}/${admin_pmp.latest.current.GA.foldername}" />
+		
+		<echo message="Packaging the delta OSLC Files" />
+		
+	    <fileset dir="${fixpack-dir}/${admin_pmp.latest.current.GA.foldername}" id="anywhereadmin.files"
+			includes="applications/maximo/properties/product/anywhereadmin_pmp.xml,tools/maximo/**,applications/maximo/businessobjects/classes/**,applications/maximo/maximouiweb/webmodule/WEB-INF/classes/**"
+			excludes="tools/maximo/en/anywhereadmin_pmp/V7520*,tools/maximo/en/anywhereadmin_pmp/V7521*,tools/maximo/en/anywhereadmin_pmp/V7522*">
+		</fileset>
+
+		<zip destfile="${temp-dir}/${anywhereadminpmp.zip.name}" update="true">
+			<fileset refid="anywhereadmin.files" />
+		</zip>
+
+		<delete dir="${fixpack-dir}" failonerror="false" />
+	</target>
+	
+	<target name="get-readme-file">
+        <get src="http://pokgsa.ibm.com/projects/m/maximoanywhereplatform/${current.gsa.release.location}/releases/released_to_qa/apps/${readme.filename}"
+			dest="${temp-dir}" usetimestamp="false"	verbose="on" />
+	</target>
+	
+	<target name="get-mif-ifix">
+        <get src="http://pokgsa.ibm.com/projects/m/maximoanywhereplatform/${current.gsa.release.location}/releases/released_to_qa/apps/${mif.ifix.filename}"
+			dest="${temp-dir}" usetimestamp="false"	verbose="on" />
+	</target>
+
+	<target name="package-ISMLibrary-zip" depends="build-application-delta-zip,	build-platform-delta-zip, build-oslcpmp-delta-zip, build-anywhereadminpmp-delta-zip, get-readme-file">
+
+		<zip destfile="${basedir}/bin/${final.zipname.release}"
+			basedir="${temp-dir}" includes="*.zip,*.README" update="true" excludes="**/*.log">
+		</zip>
+		<delete dir="${temp-dir}" />
+	</target>
+
+	<target name="publish"
+		description="publishes generated MaximoAnywhere Current Release.zip to some location">
+		<echo>Publish to GSA if build process was successful</echo>
+
+		<copy file="${basedir}/bin/${final.zipname.release}"
+			todir="${publish-dir}" verbose="true" overwrite="true" />
+	</target>
+
+	<target name="clean"
+		description="removes all folders created by the build, resetting the build environment">
+		<delete failonerror="false" file="${basedir}/bin/${final.zipname.release}" verbose="true" />
+		<delete failonerror="false" dir="${temp-dir}" verbose="true" />
+	</target>
+
+	<target name="all"
+		depends="clean,
+	    init,
+		package-ISMLibrary-zip,
+		publish">
+	</target>
+
+</project>

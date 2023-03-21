@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Anywhere-Admin-Loader" basedir="." default="allApps">
+	
+	<loadproperties srcfile="${basedir}/build.properties" />
+
+    <!-- definition of additional tasks needed to install platform -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${basedir}/libs/build/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<path id="admin.classpath">
+		<pathelement location="${basedir}/libs/codegen/artifact-processor_7.6.4.jar"/>
+		<pathelement location="${basedir}/libs/codegen/json4j.jar"/>
+		<pathelement location="${basedir}/libs/build/commons-codec-1.9.jar"/>
+    </path>
+
+	<basename property="ant.file.basename" file="${ant.file}" suffix=".xml"/>
+	<record name="${basedir}/${ant.file.basename}.log" logLevel="info"/>
+
+	<property name="adminloader.testmode" value="false"/>
+	<property name="adapter.connection.user" value="" />
+	<property name="adapter.connection.password" value="" />
+		
+	<fail
+		message="To load the admin data, it is required to provide the connecting credentials of both username and password, suggestion:&#10;
+		Use command line script, example:&#10;
+		&#09;ant -f admin-config-loader.xml allApps -Dadapter.connection.user=wilson -Dadapter.connection.password=wilson">
+		<condition>
+			<or>
+				<equals arg1="${adapter.connection.user}" arg2="" />
+				<equals arg1="${adapter.connection.password}" arg2="" />
+			</or>
+		</condition>
+	</fail>
+
+	<!--  process all app artifacts -->
+    <target name="allApps"
+		description="Parses all application artifacts and loads the resources for each">
+        <foreach target="-process-app-artifact" param="temp.dir">
+			<path>
+				<!-- Just apps on appsToBuild property need be checked and processed -->
+				<dirset dir="${basedir}/apps" includes='${appsToBuild}'>
+				</dirset>
+			</path>
+		</foreach>
+	</target>
+ 
+	<target name="-process-app-artifact"
+		description="Parse the application artifact and load  the resources">
+        <echo message="processing app ${temp.dir}"/>
+	    <basename property="artifact.name" file="${temp.dir}" />
+	    <antcall target="admin-loader">
+	        <param name="param.filename" value="${temp.dir}/artifact/app.xml"/>
+		</antcall>
+	</target>
+	
+	<target name="workApproval" description="Work Approval loader">
+		<antcall target="admin-loader">
+	    	<param name="param.filename" value="${basedir}/apps/WorkApproval/artifact/app.xml"/>
+	    </antcall>
+	</target>
+
+	<target name="workExecution" description="Work Execution loader">
+		<antcall target="admin-loader">
+	    	<param name="param.filename" value="${basedir}/apps/WorkExecution/artifact/app.xml"/>
+	    </antcall>	
+	</target>
+
+	<target name="inspections" description="Inspections loader">
+		<antcall target="admin-loader">
+	    	<param name="param.filename" value="${basedir}/apps/Inspection/artifact/app.xml"/>
+	    </antcall>
+	</target>
+
+	<target name="physicalCount" description="Physical Count loader">
+		<antcall target="admin-loader">
+	    	<param name="param.filename" value="${basedir}/apps/PhysicalCount/artifact/app.xml"/>
+	    </antcall>
+	</target>
+
+	<target name="issuesReturns" description="Issues and Returns loader">
+		<antcall target="admin-loader">
+	    	<param name="param.filename" value="${basedir}/apps/IssuesReturns/artifact/app.xml"/>
+	    </antcall>
+	</target>
+	
+	<target name="admin-loader" description="Loads the app.xml resources into that admin app">
+    	<java classname="com.ibm.tivoli.si.build.admin.AdminConfigLoader" failonerror="true" fork="true">
+		<classpath refid="admin.classpath" />
+		<!-- <jvmarg value="-Xdebug" />
+		<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=7777" /> -->
+		
+		<arg value="-a${param.filename}" />
+	 	<arg value="-u${adapter.connection.user}" />
+		<arg value="-p${adapter.connection.password}" />
+	    <arg value="-t${adminloader.testmode}" />
+		<arg value="-b${basedir}/build.properties" />
+		<arg value="-w${basedir}/server/conf/worklight.properties" />
+		</java>
+	</target>
+</project>

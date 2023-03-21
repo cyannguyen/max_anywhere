@@ -1,0 +1,2 @@
+     [echo] Default Maxauth 
+     [echo] 2021-06-01 14:23:40> Problem found when trying to use cURL to upload zip to maximo. Please make sure it is installed before running deploy command,. You may also upload the zip manually.

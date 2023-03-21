@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updatescript version="20220526_155012-0400">
+	<app apptype="anywhere" id="ServiceRequest">
+		<add before="ServiceRequest.CreateSR_priorityDomain" container="ServiceRequest.CreateSR_requiredResources" control="requiredResource">
+			<set property="id" value="ServiceRequest.CreateSR_myPerson"/>
+			<set property="name" value="myPerson"/>
+		</add>
+		<add before="ServiceRequest.AssetLookup_description_assetdesc" container="ServiceRequest.AssetLookup_returnAttributes" control="returnAttribute">
+			<set property="id" value="ServiceRequest.AssetLookup_assetsite_id"/>
+			<set property="sourceAttribute" value="siteid"/>
+			<set property="targetAttribute" value="assetsiteid"/>
+		</add>
+		<add before="appDocType" container="data" control="resource">
+			<set property="describedBy" value="http://xmlns.com/foaf/0.1/Person"/>
+			<set property="id" value="myPerson"/>
+			<set property="isSystem" value="true"/>
+			<set property="name" value="myPerson"/>
+			<set property="pageSize" value="10"/>
+			<set property="providedBy" value="/oslc/sp/FriendOfAFriend"/>
+			<set property="refreshOnLogin" value="true"/>
+		</add>
+		<add container="myPerson" control="attributes">
+			<set property="id" value="myPerson_attributes"/>
+		</add>
+		<add container="myPerson_attributes" control="attribute">
+			<set property="describedByProperty" value="dcterms:identifier"/>
+			<set property="id" value="myPerson_personuid"/>
+			<set property="name" value="personuid"/>
+		</add>
+		<add container="myPerson_attributes" control="attribute">
+			<set property="describedByProperty" value="foaf:name"/>
+			<set property="id" value="myPerson_displayname"/>
+			<set property="name" value="displayname"/>
+		</add>
+		<add container="myPerson_attributes" control="attribute">
+			<set property="describedByProperty" value="foaf:givenName"/>
+			<set property="id" value="myPerson_firstname"/>
+			<set property="name" value="firstname"/>
+		</add>
+		<add container="myPerson_attributes" control="attribute">
+			<set property="describedByProperty" value="foaf:familyName"/>
+			<set property="id" value="myPerson_lastname"/>
+			<set property="name" value="lastname"/>
+		</add>
+		<add container="myPerson_attributes" control="attribute">
+			<set property="describedByProperty" value="oslc:shortTitle"/>
+			<set property="id" value="myPerson_personid"/>
+			<set property="name" value="personid"/>
+		</add>
+		<add container="myPerson" control="queryBases">
+			<set property="id" value="person_queryBases"/>
+		</add>
+		<add container="person_queryBases" control="queryBase">
+			<set property="id" value="person_queryBase_getperson"/>
+			<set property="name" value="getperson"/>
+			<set property="queryUri" value="/oslc/os/oslcperson"/>
+		</add>
+		<add container="myPerson" control="whereClause">
+			<set property="clause" value="oslc:shortTitle=${personid}"/>
+			<set property="id" value="myPerson_whereclause"/>
+		</add>
+		<add before="serviceRequest_spi_wm_status" container="serviceRequest_attributes" control="attribute">
+			<set property="describedByProperty" value="spi_wm:assetsiteid"/>
+			<set property="id" value="serviceRequest_spi_wm_assetsiteid"/>
+			<set property="index" value="true"/>
+			<set property="name" value="assetsiteid"/>
+		</add>
+	</app>
+</updatescript>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout id="ViewSpecs">
+	<row id="row_0">
+		<column colspan="4" columnid="item1" id="item1_column"/>
+		<column colspan="8" columnid="desc1" id="desc1_column"/>
+	</row>
+	<row id="row_1">
+		<column colspan="4" columnid="val2" id="val2_column"/>
+		<column colspan="8" columnid="uom2" id="uom2_column"/>
+	</row>	
+</layout>

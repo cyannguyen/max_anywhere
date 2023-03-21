@@ -1,0 +1,18 @@
+/* 
+ * Licensed Materials - Property of IBM
+ * "Restricted Materials of IBM"
+ *
+ * ${product.id}
+ *
+ * (C) COPYRIGHT IBM CORP. ${copyright.year} All Rights Reserved.
+ * US Government Users Restricted Rights - Use, duplication or
+ * disclosure restricted by GSA ADP Schedule Contract with
+ * IBM Corp. 
+ *
+ */
+ 
+//----------------------------------------------------------------//
+// This is auto generated code. Do not modify it manually.
+// Product and Version: IBM Maximo Anywhere Version ${version}
+// Build: ${build.year}-${build.month}-${build.day} ${build.hour}:${build.minute}:${build.second}
+//----------------------------------------------------------------//

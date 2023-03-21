@@ -1,0 +1,241 @@
+<project name="Anywhere-Artifact-Processor" default="process-artifact-all-apps"
+	basedir=".">
+	
+	<import file="util.xml" />
+	<loadproperties srcfile="${basedir}/build.properties" />
+	
+	<condition property="appsToBuild" else="*">
+    	<isset property="appsToBuild" />
+	</condition>
+
+	<!-- definition of additional tasks needed to install platform -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${basedir}/libs/build/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<path id="app.gen.classpath">
+		<pathelement location="${basedir}/libs/codegen/*" />
+		<pathelement location="${basedir}/oslc-docs" />
+	</path>
+
+	<target name="process-artifact-all-apps"
+		description="Parses the application's artifact for all applications and generate the javascript files for all">
+		<!-- clean up older artifact-processor -->
+		<echotimestamp>appsToBuild ${appsToBuild}</echotimestamp>
+		<delete file="${basedir}/libs/codegen/artifact-processor_7.5.1.jar" failonerror="false"/>
+		<delete file="${basedir}/libs/codegen/artifact-processor_7.5.2.jar" failonerror="false"/>
+		<delete file="${basedir}/libs/codegen/artifact-processor_7.6.2.1.jar" failonerror="false"/>
+		<delete file="${basedir}/libs/codegen/artifact-processor_7.6.3.jar" failonerror="false"/>
+		<delete file="${basedir}/libs/codegen/artifact-processor_7.6.3.1.jar" failonerror="false"/>
+		<foreach target="process-artifact" param="application.home"
+			inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps" includes='${appsToBuild}'>
+				</dirset>
+			</path>
+		</foreach>
+	</target>
+
+	<target name="-check-artifact-exists">
+		<condition property="artifact-exists">
+			<resourceexists>
+				<file file="${application.home}/artifact/app.xml" />
+			</resourceexists>
+		</condition>
+	</target>
+
+	<target name="process-artifact" depends="-check-artifact-exists"
+		if="artifact-exists"
+		description="Parses the application's artifact and generate the javascript files">
+		
+			<basename property="application.name" file="${application.home}"/>
+	    
+			<echotimestamp message="Trying to determine if code needs to be generated for app: ${application.name}"/>
+		
+			<pathconvert property="classpathProp" refid="app.gen.classpath" />
+
+		    <!-- The following code is added to make sure the codegen is triggerred 
+		         only when some artifact files are modified. 
+		    -->
+			
+			<!-- 
+			    First load an existing total checksum value for all files stored in the file .changetrack.artifactchecksum
+			    This file has a property called 'artifactchecksum' that indicates the checksum for all files in
+			    artifact folder. Similar to the artifact checksum, maintain oslcdocchecksum to keep track of oslc doc changes.
+			-->
+			<property file="${basedir}/.changetrack/${application.name}/.artifactchecksum"/>
+			<property file="${basedir}/.changetrack/${application.name}/.oslcdocchecksum"/>
+			<property file="${basedir}/.changetrack/${application.name}/.buildconfigchecksum"/>
+			<property file="${basedir}/.changetrack/${application.name}/.appfeatureandplatformchecksum"/>
+						
+			<!-- Generate a checksum for all files in the .changetrack folder. After these checksums are generated,
+				 a total checksum is set to the property 'newartifactchecksum' for artifacts 
+				 and 'newoslcdocchecksum' for oslc docs
+			 -->
+			<checksum totalproperty="newartifactchecksum" 
+			    todir="${basedir}/.changetrack/${application.name}/artifact">
+			  <fileset dir="${application.home}/artifact">
+			      <include name="**/*.*"/>
+			  </fileset>    
+			</checksum>
+			
+			<checksum totalproperty="newappfeatureandplatformchecksum" 
+			    todir="${basedir}/.changetrack/${application.name}">
+			  <fileset dir="${application.home}">
+			      <include name="app-feature.properties"/>
+			      <include name="platform-artifacts/**"/>
+			  </fileset>    
+			</checksum>
+			    
+			<checksum totalproperty="newoslcdocchecksum"
+			    todir="${basedir}/.changetrack/${application.name}/oslcdoc">
+			  <fileset dir="${basedir}/oslc-docs/resources/rdf/oslc">
+			      <include name="**/*"/> 
+			  </fileset>    
+			</checksum>
+			
+			<checksum totalproperty="newbuildconfigchecksum"
+			    todir="${basedir}/.changetrack/${application.name}/buildconfig">
+			  <fileset dir="${basedir}/server/conf/">
+			      <include name="**/*"/> 
+			  </fileset>    
+			</checksum>
+						
+			<!-- Compare if the old total checksum values matches with the new one or not. -->
+			<condition property="checksumMatches" else="false">
+			    <and>
+			    	<equals arg1="${newartifactchecksum}" arg2="${artifactchecksum}"/>
+			    	<equals arg1="${newoslcdocchecksum}" arg2="${oslcdocchecksum}"/>
+			    	<equals arg1="${newbuildconfigchecksum}" arg2="${buildconfigchecksum}"/>
+			    	<equals arg1="${newappfeatureandplatformchecksum}" arg2="${appfeatureandplatformchecksum}"/>
+			    </and>
+			</condition>         
+
+			<echotimestamp message="previous artifact checksum = ${artifactchecksum}, new artifact checksum = ${newartifactchecksum}" />
+			<echotimestamp message="previous oslcdoc checksum = ${oslcdocchecksum}, new oslcdoc checksum = ${newoslcdocchecksum}" />
+			<echotimestamp message="previous buildconfig checksum = ${buildconfigchecksum}, new buildconfig checksum = ${newbuildconfigchecksum}" />
+			<echotimestamp message="previous appfeature and platform checksum = ${appfeatureandplatformchecksum}, new appfeature and platform checksum = ${newappfeatureandplatformchecksum}" />
+			<echotimestamp message="checksums match? = ${checksumMatches}" />      
+			
+			
+			<!-- Check to see if the generated folder exists or not. If the folder does not exist, then we need to force a codegen. -->
+			<available file="${application.home}/common/js/generated" type="dir" property="application.generatedfolderexists"/>
+			
+			<!-- If the total checksum matches, then we don't have to do anything, otherwise
+				 trigger the codegen process. Also, if the generated folder does not exist, then
+				 force a codegen.
+			-->
+			<if>
+			<and>
+				<equals arg1="${checksumMatches}" arg2="true" />
+				<equals arg1="${application.generatedfolderexists}" arg2="true" />
+			</and>
+			<then>
+				<echotimestamp>Code Generated for application [${application.name}] is up-to-date with application artifacts and oslc resources files.
+				</echotimestamp>
+			</then>
+			<else>
+				<echotimestamp>Generating code for application [${application.name}] as application artifacts or oslc resources files are modified or the codegen generated folder does not exist.
+				</echotimestamp>
+			    <java classname="com.ibm.tivoli.si.build.entry.AppBuildEntry"
+					failonerror="true" fork="true">
+				<!-- 
+					<jvmarg value="-Xdebug"></jvmarg>
+					<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=6666"></jvmarg>
+				-->
+					<classpath refid="app.gen.classpath" />
+
+					<arg value="--appHomeDir" />
+					<arg value="${application.home}/artifact" />
+
+					<arg value="--generatedAppBaseDir" />
+					<arg value="${application.home}" />
+
+					<arg value="--miniAppsDir" />
+					<arg value="${application.home}/platform-artifacts" />
+
+					<arg value="--configDir" />
+					<arg value="${config.dir}" />
+					
+					<sysproperty key="map.enabled" value="${map.enabled}"/>
+					
+					<sysproperty key="gps.enabled" value="${gps.enabled}"/>
+					
+					<sysproperty key="barcode.enabled" value="${barcode.enabled}"/>
+					
+					<sysproperty key="attachments.enabled" value="${attachments.enabled}"/>
+				</java>
+				
+				<echotimestamp>Copying generated artifact en over real translation</echotimestamp>
+				<copy file="${application.home}/common/js/generated/application/translation/nls/artifact.js" tofile="${application.home}/common/js/application/translation/nls/artifact.js"/>
+				
+				<echotimestamp>Copying artifact en to en-gb to support UK</echotimestamp>
+				<copy file="${application.home}/common/js/generated/application/translation/nls/artifact.js" tofile="${application.home}/common/js/generated/application/translation/nls/en-gb/artifact.js"/>
+				<copy file="${application.home}/common/js/application/translation/nls/artifact.js" tofile="${application.home}/common/js/application/translation/nls/en-gb/artifact.js"/>
+
+				<echotimestamp>Copying artifact en to en to support windows8.1 dojo locale</echotimestamp>
+				<copy file="${application.home}/common/js/generated/application/translation/nls/artifact.js" tofile="${application.home}/common/js/generated/application/translation/nls/en/artifact.js"/>
+				<copy file="${application.home}/common/js/application/translation/nls/artifact.js" tofile="${application.home}/common/js/application/translation/nls/en/artifact.js"/>
+				
+				<echotimestamp>Copying artifact en to en-US to support windows8.1 dojo locale</echotimestamp>
+				<copy file="${application.home}/common/js/generated/application/translation/nls/artifact.js" tofile="${application.home}/common/js/generated/application/translation/nls/en-us/artifact.js"/>
+				<copy file="${application.home}/common/js/application/translation/nls/artifact.js" tofile="${application.home}/common/js/application/translation/nls/en-us/artifact.js"/>
+
+			</else>
+		</if>
+		
+		<!-- Update the generated total checksum since we are successful, so we can compare for next run -->
+		<propertyfile
+		    file="${basedir}/.changetrack/${application.name}/.artifactchecksum"
+		    comment="Change checksum properties">
+		  <entry  key="artifactchecksum" value="${newartifactchecksum}"/>
+		</propertyfile>       
+		
+		<propertyfile
+		    file="${basedir}/.changetrack/${application.name}/.appfeatureandplatformchecksum"
+		    comment="Change checksum properties">
+		  <entry  key="appfeatureandplatformchecksum" value="${newappfeatureandplatformchecksum}"/>
+		</propertyfile> 
+		  
+		<propertyfile
+		    file="${basedir}/.changetrack/${application.name}/.oslcdocchecksum"
+		    comment="Change checksum properties">
+		  <entry  key="oslcdocchecksum" value="${newoslcdocchecksum}"/>
+		</propertyfile>       
+
+		<propertyfile
+		    file="${basedir}/.changetrack/${application.name}/.buildconfigchecksum"
+		    comment="Change checksum properties">
+		  <entry  key="buildconfigchecksum" value="${newbuildconfigchecksum}"/>  
+		</propertyfile> 
+
+	</target>
+
+	<target name="clean-changetrack"
+		description="removes all folders created by this file, resetting the build environment">
+		
+		<foreach target="clean-app-changetrack" param="application.home"
+			inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps" includes="${appsToBuild}">
+				</dirset>
+			</path>
+		</foreach>
+  
+	</target>
+
+	<target name="clean-app-changetrack" 
+		description="Removes application's artifact relared generated files and change track files">
+		
+			<basename property="application.name" file="${application.home}"/>
+	    
+			<echotimestamp message="Removing generated files for app: ${application.name}"/>
+			<delete includeemptydirs="true" failonerror="false">
+    			<fileset dir="${basedir}/.changetrack/${application.name}" includes="**/*"/>
+  			</delete>
+			<delete dir="${application.home}/common/js/generated" />
+	</target>
+		
+</project>

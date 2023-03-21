@@ -1,0 +1,193 @@
+
+upgrade-previous-release-app-artifacts:
+    [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\config\app_artifacts_previous.zip into C:\IBM\Anywhere\MaximoAnywhere\apps
+
+apply-mxs-artifacts:
+
+-apply-mxs-artifact:
+
+-applymxs:
+     [echo] 2023-03-13 10:09:57> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit/artifact/app.xml]
+     [java] 
+     [java] MAXIMO ANYWHERE Artifact Upgrade - Update Utility - v1.0
+     [java] Processing Artifact Update Transactions
+     [java] -- Processing Complete.
+     [echo] 2023-03-13 10:09:57>  Success applying msx file for AssetAudit, backing up original 
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\artifact
+     [echo] 2023-03-13 10:09:57>  Renaming applied_app.xml to app.xml for AssetAudit
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\artifact\applied_app.xml
+     [echo] 2023-03-13 10:09:57>  Renaming AssetAudit.mxs to AssetAudit.mxs.bak
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\artifact\AssetAudit.mxs
+
+-apply-mxs-artifact:
+
+-applymxs:
+     [echo] 2023-03-13 10:09:57> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager/artifact/app.xml]
+     [java] 
+     [java] MAXIMO ANYWHERE Artifact Upgrade - Update Utility - v1.0
+     [java] Processing Artifact Update Transactions
+     [java] 
+     [java] -- AppName = AssetDataManager
+     [java] INFO:  Force Update is set, ignoring verison check.
+     [java] -- Warning: (AssetDataManager) Cannot DELETE control (AssetDataManager.shiftLookup_description_statusdesc). ID does not exist
+     [java] -- Warning: (AssetDataManager) Cannot DELETE control (AssetDataManager.calendarLookup_description_statusdesc). ID does not exist
+     [java] -- Processing Complete.
+     [echo] 2023-03-13 10:09:58>  Success applying msx file for AssetDataManager, backing up original 
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\artifact
+     [echo] 2023-03-13 10:09:58>  Renaming applied_app.xml to app.xml for AssetDataManager
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\artifact\applied_app.xml
+     [echo] 2023-03-13 10:09:58>  Renaming AssetDataManager.mxs to AssetDataManager.mxs.bak
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\artifact\AssetDataManager.mxs
+
+-apply-mxs-artifact:
+
+-applymxs:
+     [echo] 2023-03-13 10:09:58> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection/artifact/app.xml]
+     [java] 
+     [java] MAXIMO ANYWHERE Artifact Upgrade - Update Utility - v1.0
+     [java] Processing Artifact Update Transactions
+     [java] 
+     [java] -- AppName = Inspection
+     [java] INFO:  Force Update is set, ignoring verison check.
+     [java] 
+     [java] -- 	   NOTE: Duplicate id. Performing a REMOVE before the ADD for id: WorkExecution.WorkDetailView_Map_action
+     [java] -- Warning: (Inspection) Cannot DELETE control (WorkExecution.MapView_action_offline_maps). ID does not exist
+     [java] -- Info: Removing children for duplicate id WorkExecution.WorkDetailView_Map_action
+     [java] -- Processing Complete.
+     [echo] 2023-03-13 10:09:58>  Success applying msx file for Inspection, backing up original 
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\artifact
+     [echo] 2023-03-13 10:09:58>  Renaming applied_app.xml to app.xml for Inspection
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\artifact\applied_app.xml
+     [echo] 2023-03-13 10:09:58>  Renaming Inspection.mxs to Inspection.mxs.bak
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\artifact\Inspection.mxs
+
+-apply-mxs-artifact:
+
+-applymxs:
+     [echo] 2023-03-13 10:09:58> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns/artifact/app.xml]
+     [java] 
+     [java] MAXIMO ANYWHERE Artifact Upgrade - Update Utility - v1.0
+     [java] Processing Artifact Update Transactions
+     [java] 
+     [java] -- AppName = issuesReturns
+     [java] INFO:  Force Update is set, ignoring verison check.
+     [java] -- Processing Complete.
+     [echo] 2023-03-13 10:09:58>  Success applying msx file for IssuesReturns, backing up original 
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\artifact
+     [echo] 2023-03-13 10:09:58>  Renaming applied_app.xml to app.xml for IssuesReturns
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\artifact\applied_app.xml
+     [echo] 2023-03-13 10:09:58>  Renaming IssuesReturns.mxs to IssuesReturns.mxs.bak
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\artifact\IssuesReturns.mxs
+
+-apply-mxs-artifact:
+
+-applymxs:
+     [echo] 2023-03-13 10:09:58> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount/artifact/app.xml]
+     [java] 
+     [java] MAXIMO ANYWHERE Artifact Upgrade - Update Utility - v1.0
+     [java] Processing Artifact Update Transactions
+     [java] -- Processing Complete.
+     [echo] 2023-03-13 10:09:59>  Success applying msx file for PhysicalCount, backing up original 
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\artifact
+     [echo] 2023-03-13 10:09:59>  Renaming applied_app.xml to app.xml for PhysicalCount
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\artifact\applied_app.xml
+     [echo] 2023-03-13 10:09:59>  Renaming PhysicalCount.mxs to PhysicalCount.mxs.bak
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\artifact\PhysicalCount.mxs
+
+-apply-mxs-artifact:
+
+-applymxs:
+     [echo] 2023-03-13 10:09:59> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest/artifact/app.xml]
+     [java] 
+     [java] MAXIMO ANYWHERE Artifact Upgrade - Update Utility - v1.0
+     [java] Processing Artifact Update Transactions
+     [java] 
+     [java] -- AppName = ServiceRequest
+     [java] INFO:  Force Update is set, ignoring verison check.
+     [java] 
+     [java] -- 	   NOTE: Duplicate id. Performing a REMOVE before the ADD for id: ServiceRequest.AssetLookup_assetsite_id
+     [java] 
+     [java] -- 	   NOTE: Duplicate id. Performing a REMOVE before the ADD for id: serviceRequest_spi_wm_assetsiteid
+     [java] -- Info: Removing children for duplicate id ServiceRequest.AssetLookup_assetsite_id
+     [java] -- Info: Removing children for duplicate id serviceRequest_spi_wm_assetsiteid
+     [java] -- Processing Complete.
+     [echo] 2023-03-13 10:09:59>  Success applying msx file for ServiceRequest, backing up original 
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\artifact
+     [echo] 2023-03-13 10:09:59>  Renaming applied_app.xml to app.xml for ServiceRequest
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\artifact\applied_app.xml
+     [echo] 2023-03-13 10:09:59>  Renaming ServiceRequest.mxs to ServiceRequest.mxs.bak
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\artifact\ServiceRequest.mxs
+
+-apply-mxs-artifact:
+
+-applymxs:
+     [echo] 2023-03-13 10:09:59> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers/artifact/app.xml]
+     [java] 
+     [java] MAXIMO ANYWHERE Artifact Upgrade - Update Utility - v1.0
+     [java] Processing Artifact Update Transactions
+     [java] -- Processing Complete.
+     [echo] 2023-03-13 10:09:59>  Success applying msx file for Transfers, backing up original 
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\artifact
+     [echo] 2023-03-13 10:09:59>  Renaming applied_app.xml to app.xml for Transfers
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\artifact\applied_app.xml
+     [echo] 2023-03-13 10:09:59>  Renaming Transfers.mxs to Transfers.mxs.bak
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\artifact\Transfers.mxs
+
+-apply-mxs-artifact:
+
+-applymxs:
+     [echo] 2023-03-13 10:10:00> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval/artifact/app.xml]
+     [java] 
+     [java] MAXIMO ANYWHERE Artifact Upgrade - Update Utility - v1.0
+     [java] Processing Artifact Update Transactions
+     [java] -- Processing Complete.
+     [echo] 2023-03-13 10:10:00>  Success applying msx file for WorkApproval, backing up original 
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\artifact
+     [echo] 2023-03-13 10:10:00>  Renaming applied_app.xml to app.xml for WorkApproval
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\artifact\applied_app.xml
+     [echo] 2023-03-13 10:10:00>  Renaming WorkApproval.mxs to WorkApproval.mxs.bak
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\artifact\WorkApproval.mxs
+
+-apply-mxs-artifact:
+
+-applymxs:
+     [echo] 2023-03-13 10:10:00> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution/artifact/app.xml]
+     [java] 
+     [java] MAXIMO ANYWHERE Artifact Upgrade - Update Utility - v1.0
+     [java] Processing Artifact Update Transactions
+     [java] 
+     [java] -- AppName = WorkExecution
+     [java] INFO:  Force Update is set, ignoring verison check.
+     [java] 
+     [java] -- 	   NOTE: Duplicate id. Performing a REMOVE before the ADD for id: WorkExecution.FollowUpWorkOrderView_eventHandlers_cleanup_handleBackButton
+     [java] 
+     [java] -- 	   NOTE: Duplicate id. Performing a REMOVE before the ADD for id: WorkExecution.EditStatusView_additionalworktype
+     [java] -- Info: Removing children for duplicate id WorkExecution.FollowUpWorkOrderView_eventHandlers_cleanup_handleBackButton
+     [java] -- Info: Removing children for duplicate id WorkExecution.EditStatusView_additionalworktype
+     [java] -- Processing Complete.
+     [echo] 2023-03-13 10:10:00>  Success applying msx file for WorkExecution, backing up original 
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\artifact
+     [echo] 2023-03-13 10:10:00>  Renaming applied_app.xml to app.xml for WorkExecution
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\artifact\applied_app.xml
+     [echo] 2023-03-13 10:10:00>  Renaming WorkExecution.mxs to WorkExecution.mxs.bak
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\artifact
+   [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\artifact\WorkExecution.mxs
+
+BUILD SUCCESSFUL

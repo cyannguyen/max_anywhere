@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updatescript version="20220526_155012-0400">
+	<app apptype="anywhere" id="Inspection">
+		<add container="WorkExecution.WorkDetailView_actions" control="action">
+			<set property="enableFeatureByProperty" value="map.enabled"/>
+			<set property="id" value="WorkExecution.WorkDetailView_Map_action"/>
+			<set property="image" value="header_mapView_OFF.svg"/>
+			<set property="label" value="Map"/>
+			<set property="transition" value="fade"/>
+			<set property="transitionTo" value="WorkExecution.MapView"/>
+		</add>
+		<modify control="WorkExecution.LaborCraftRateLookup">
+			<set property="filterMethod" value="filterLaborCraftRateForLookup"/>
+		</modify>
+		<remove container="WorkExecution.MapView_actions" control="WorkExecution.MapView_action_offline_maps"/>
+	</app>
+</updatescript>

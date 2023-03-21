@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Licensed Materials - Property of IBM
+			 5725-I43 (C) Copyright IBM Corp. 2006, 2013. All Rights Reserved.
+			 US Government Users Restricted Rights - Use, duplication or
+             disclosure restricted by GSA ADP Schedule Contract with IBM Corp. --><!-- Attribute "id" must be identical to application folder name --><application xmlns="http://www.worklight.com/application-descriptor" id="AssetDataManager" platformVersion="7.1.0.00.20190319-1506">
+    <displayName>IBMManage</displayName>
+    <description>Asset Data Manager</description>
+    <author>
+        <name>application's author</name>
+        <email>application author's e-mail</email>
+        <homepage>http://mycompany.com</homepage>
+        <copyright>Copyright My Company</copyright>
+    </author>
+    <mainFile>index.html</mainFile>
+    <features>
+        <JSONStore/>
+    </features>
+    <thumbnailImage>common/images/thumbnail.png</thumbnailImage>
+    <iphone applicationId="Asset Data Manager" bundleId="com.ibm.maximo.anywhere.assetdatamanager" version="7.6.4">
+        <worklightSettings include="true"/>
+    </iphone>
+    <android version="7.6.4">
+        <worklightSettings include="true"/>
+        <security>
+            <encryptWebResources enabled="false"/>
+            <testWebResourcesChecksum enabled="false" ignoreFileExtensions="png, jpg, jpeg, gif, mp4, mp3"/>
+            <publicSigningKey/>
+			<packageName>com.ibm.maximo.anywhere.assetdatamanager</packageName>
+        </security>
+        <compressWebResources enabled="true"/>
+    </android>
+    <windows8 version="7.6.4">
+        <uuid>385ea2ec-9767-4809-ab66-cf7aeefe1888</uuid>
+    </windows8>
+<windowsphoneuniversal version="7.6.4">
+        <uuid>1f349731-4cb2-45c7-b0bf-2c10b605b589</uuid>
+    </windowsphoneuniversal>
+</application>

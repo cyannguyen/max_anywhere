@@ -1,0 +1,14 @@
+<application xmlns="http://www.worklight.com/application-descriptor" id="WorkExecution" platformVersion="7.1.0.00.20171101-1704">
+    <appName>ServiceRequest</appName>
+    <packageName>com.ibm.maximo.anywhere.servicerequest</packageName>
+    <displayName>IBMRequest</displayName>
+    <description>Service Request</description>
+    <author>
+        <name>application's author</name>
+        <email>application author's e-mail</email>
+        <homepage>http://mycompany.com</homepage>
+        <copyright>Copyright My Company</copyright>
+    </author>
+    <mainFile>index.html</mainFile>
+    <appIcon>common/images/thumbnail.png</appIcon>
+</application>

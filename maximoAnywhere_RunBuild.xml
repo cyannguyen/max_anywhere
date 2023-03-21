@@ -1,0 +1,442 @@
+<!--
+  Begin Standard Header
+
+  Licensed Materials - Property of IBM
+
+  Restricted Materials of IBM
+
+  5725-M39
+
+  (C) COPYRIGHT IBM CORP. 2014, 2019.  All Rights Reserved.
+
+  US Government Users Restricted Rights - Use, duplication or
+  disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+
+  End Standard Header
+-->
+
+<project name="MaximoAnywhere_RunBuild" basedir="." default="RunBuild">
+
+	<description>
+        This script has utility functions for use by the installer.  
+        Currently there are:
+        - update_build_prop : update mobile next build properties file
+   </description>
+
+	<target name="checkos">
+		<echo message="RunBuild - checkos target" />
+		<condition property="isWindows">
+			<os family="windows" />
+		</condition>
+		<condition property="isLinux">
+			<os family="unix" />
+		</condition>
+		<condition property="isMac">
+			<os family="mac" />
+		</condition>
+	</target>
+
+	<target name="init">
+		<echo message="RunBuild - init target" />
+		<condition property="run_on_install">
+			<and>
+				<equals arg1="${im_action}" arg2="install" casesensitive="false" trim="true" />
+				<available file="build.xml" />
+			</and>
+		</condition>
+		<condition property="run_on_update">
+			<and>
+				<equals arg1="${im_action}" arg2="update" casesensitive="false" trim="true" />
+				<available file="build.xml" />
+			</and>
+		</condition>
+		<condition property="noPrevFailure">
+			<or>
+				<not>
+					<isset property="${execRC}" />
+				</not>
+				<not>
+					<equals arg1="${execRC}" arg2="0" />
+				</not>
+			</or>
+		</condition>
+		<condition property="runWin">
+			<and>
+				<equals arg1="${noPrevFailure}" arg2="true" casesensitive="false" trim="true" />
+				<os family="windows" />
+			</and>
+		</condition>
+		<condition property="runNotWin">
+			<and>
+				<equals arg1="${noPrevFailure}" arg2="true" casesensitive="false" trim="true" />
+				<not>
+					<os family="windows" />
+				</not>
+			</and>
+		</condition>
+		<condition property="prevVer_is_7631">
+			<and>
+				<equals arg1="${prevVer}" arg2="7.6.30010" casesensitive="false" trim="true" />
+			</and>
+		</condition>
+		<condition property="prevVer_is_763">
+			<and>
+				<equals arg1="${prevVer}" arg2="7.6.3000" casesensitive="false" trim="true" />
+			</and>
+		</condition>
+		<condition property="prevVer_is_7621">
+			<and>
+				<equals arg1="${prevVer}" arg2="7.6.2010" casesensitive="false" trim="true" />
+			</and>
+		</condition>
+	</target>
+
+	<target name="PlatformUpgradePrep" depends="init,PlatformFrom7621,PlatformFrom763,PlatformFrom7631" description="Preparing for upgrade">
+		<echo message="previous version: ${prevVer} im_action: ${im_action} and instDir: ${instDir}" />
+		<echo message="Prep completed" />
+	</target>
+
+	<target name="PlatformFrom7621" depends="init" if="prevVer_is_7621" description="Platform upgrade from 7621">
+		<echo message="*******************************************************" />
+		<echo message="*           Platform upgrade from 7.6.2.1             *" />
+		<echo message="*******************************************************" />
+		<record name="logs/Plfm764Build.log" action="start" />
+		<antcall target="runAntCall">
+			<param name="bldfile" value="build.xml" />
+			<param name="bldFileTarget" value="install-platform" />
+			<!-- param name="bldFileTarget" value="update-platform" / -->
+		</antcall>
+		<record name="logs/Plfm764Build.log" action="stop" />
+	</target>
+
+	<target name="PlatformFrom763" depends="init" if="prevVer_is_763" description="Platform upgrade from 762">
+		<echo message="*******************************************************" />
+		<echo message="*           Platform upgrade from 7.6.3               *" />
+		<echo message="*******************************************************" />
+		<record name="logs/Plfm764Build.log" action="start" />
+		<antcall target="runAntCall">
+			<param name="bldfile" value="build.xml" />
+			<param name="bldFileTarget" value="install-platform" />
+		</antcall>
+		<record name="logs/Plfm764Build.log" action="stop" />
+	</target>
+
+	<target name="PlatformFrom7631" depends="init" if="prevVer_is_7631" description="Platform upgrade from 762">
+		<echo message="*******************************************************" />
+		<echo message="*           Platform upgrade from 7.6.3.1             *" />
+		<echo message="*******************************************************" />
+		<record name="logs/Plfm764Build.log" action="start" />
+		<antcall target="runAntCall">
+			<param name="bldfile" value="build.xml" />
+			<param name="bldFileTarget" value="install-platform" />
+		</antcall>
+		<record name="logs/Plfm764Build.log" action="stop" />
+	</target>
+
+	<target name="UpgradePrep" depends="init,from7621,from763,from7631" description="Preparing for upgrade">
+		<echo message="previous version: ${prevVer} im_action: ${im_action} and instDir: ${instDir}" />
+		<echo message="Prep completed" />
+	</target>
+
+	<target name="from7621" depends="init" if="prevVer_is_7621" description="Set up for upgrade from 7621">
+		<echo message="*******************************************************" />
+		<echo message="*           Prep for upgrade from 7.6.2.1             *" />
+		<echo message="*******************************************************" />
+		<ant antfile='${instDir}/MaximoAnywhere/app-sparse-xml-processor.xml' target="upgrade-previous-previous-previous-release-app-artifacts" description='upgrade 7621 app artifacts' dir='${instDir}/MaximoAnywhere' />
+	</target>
+
+	<target name="from763" depends="init" if="prevVer_is_763" description="Set up for upgrade from 763">
+		<echo message="*******************************************************" />
+		<echo message="*           Prep for upgrade from 7.6.3               *" />
+		<echo message="*******************************************************" />
+		<ant antfile='${instDir}/MaximoAnywhere/app-sparse-xml-processor.xml' target="upgrade-previous-previous-release-app-artifacts" description='upgrade 763 app artifacts' dir='${instDir}/MaximoAnywhere' />
+	</target>
+
+	<target name="from7631" depends="init" if="prevVer_is_7631" description="Set up for upgrade from 7631">
+		<echo message="*******************************************************" />
+		<echo message="*           Prep for upgrade from 7.6.3.1             *" />
+		<echo message="*******************************************************" />
+		<ant antfile='${instDir}/MaximoAnywhere/app-sparse-xml-processor.xml' target="upgrade-previous-release-app-artifacts" description='upgrade 7631 app artifacts ' dir='${instDir}/MaximoAnywhere' />
+	</target>
+
+	<target name="runRdfPuller" depends="init" description="run RDF Puller">
+		<echo message="running rdf puller" />
+		<antcall target="runAntCall">
+			<param name="bldfile" value="anywhere-rdfs-puller.xml" />
+			<param name="bldFileTarget" value="all -Dadapter.connection.user=${adapter.connection.user} -Dadapter.connection.password=${adapter.connection.password}" />
+		</antcall>
+		<echo message="running rdf puller finished with: ${rdfFailed}" />
+	</target>
+
+	<target name="runAdmLdr" depends="init" description="run Admin Loader">
+		<echo message="running adminloader" />
+		<antcall target="runAntCall">
+			<param name="bldfile" value="admin-config-loader.xml" />
+			<param name="bldFileTarget" value="allApps -Dadapter.connection.user=${adapter.connection.user} -Dadapter.connection.password=${adapter.connection.password}" />
+		</antcall>
+		<echo message="running adminloader finished with: ${admLdrFailed}" />
+	</target>
+
+	<!-- target name="runPlfmBuild" depends="init" description="run builder for apps" -->
+	<target name="runPlfmBuild" depends="init,runPlfmBuildInstall,runPlfmBuildUpdateInstall" description="run builder for apps">
+		<echo message="ran build for 764 platform" />
+
+		<echo message="platform build completed" />
+	</target>
+	<target name="runPlfmBuildInstall" depends="init" if="run_on_install" description="run install for platform">
+		<echo message="running install build for platform" />
+		<record name="logs/Plfm764Build.log" action="start" />
+		<antcall target="runAntCall">
+			<param name="bldfile" value="build.xml" />
+			<param name="bldFileTarget" value="install-platform" />
+		</antcall>
+		<record name="logs/Plfm764Build.log" action="stop" />
+		<echo message="running install build for platform finished with: ${platformFailed}" />
+	</target>
+
+	<target name="runPlfmBuildUpdateInstall" depends="init" if="run_on_update" description="run install for platform">
+		<echo message="Plfm Running patch properties next" />
+		<antcall target="RunPatchProperties" />
+		<echo message="Update properties file with correct version" />
+		<propertyfile file="${instDir}\MaximoAnywhere\build.properties">
+			<entry key="version.name" value="7.6.4" />
+		</propertyfile>
+		<echo message="running clean install build for updating the platform" />
+		<record name="logs/Plfm764Build.log" action="start" />
+		<antcall target="runAntCall">
+			<param name="bldfile" value="build.xml" />
+			<param name="bldFileTarget" value="clean-platform" />
+		</antcall>
+		<antcall target="runAntCall">
+			<param name="bldfile" value="build.xml" />
+			<param name="bldFileTarget" value="clean" />
+		</antcall>
+		<antcall target="runAntCall">
+			<param name="bldfile" value="build.xml" />
+			<param name="bldFileTarget" value="install-platform" />
+		</antcall>
+		<record name="logs/Plfm764Build.log" action="stop" />
+		<echo message="running install build for platform finished with: ${platform3Failed}" />
+	</target>
+
+	<target name="runPlfmBuildUpgrade" depends="init,PlatformFrom7621,PlatformFrom763,PlatformFrom7631" description="Preparing for upgrade">
+		<echo message="Platform upgrade from previous version: ${prevVer} im_action: ${im_action} and instDir: ${instDir}" />
+		<echo message="Platform upgrade completed" />
+	</target>
+
+	<target name="runAppBuild" depends="init" description="run builder for apps">
+		<echo message="running build for apps" />
+		<!-- changing for 7631 fixpack -->
+		<!-- antcall target="runAntCall">
+			<param name="bldfile" value="build.xml" />
+			<param name="bldFileTarget" value="all-gen" />
+		</antcall>
+		<antcall target="runAntCall">
+			<param name="bldfile" value="build.xml" />
+			<param name="bldFileTarget" value="build-war" />
+		</antcall -->
+		<antcall target="runAntCall">
+			<param name="bldfile" value="build.xml" />
+			<param name="bldFileTarget" value="all" />
+		</antcall>
+		<echo message="running build for apps finished with: ${appBuildFailed}" />
+	</target>
+
+	<target name="runMergeAppXml" depends="init" description="merge app.xml">
+		<echo message="merging new information into existing app.xml files for each app" />
+		<antcall target="runAntCall">
+			<param name="bldfile" value="app-sparse-xml-processor.xml" />
+			<param name="bldFileTarget" value="apply-mxs-artifacts" />
+		</antcall>
+		<echo message="running build for apps finished with: ${appBuildFailed}" />
+	</target>
+
+	<target name="run_build_install" depends="init" if="run_on_install" description="Run 'install-anywhere-platform-only'">
+		<echo message="Running install-anywhere-platform-only target" />
+		<echo message="*******************************************************" />
+		<echo message="*             Running new install build               *" />
+		<echo message="*******************************************************" />
+		<echo message="2 im_action: ${im_action} and instDir: ${instDir}" />
+		<!-- record name="logs/Plfm763Build.log" action="start" />
+		<antcall target="runPlfmBuild" />
+		<record name="logs/Plfm763Build.log" action="stop" / -->
+		<echo message="Running all-gen and build-war" />
+		<record name="logs/AdmLdr764Build.log" action="start" />
+		<antcall target="runAdmLdr" />
+		<record name="logs/AdmLdr764Build.log" action="stop" />
+		<record name="logs/AppBld764Build.log" action="start" />
+		<antcall target="runAppBuild" />
+		<record name="logs/AppBld764Build.log" action="stop" />
+	</target>
+	<target name="run_build_update" depends="init,checkos" if="run_on_update" description="building with the new updates">
+		<antcall target="run_build_update_win" />
+		<antcall target="run_build_update_notWin" />
+		<echo message="upgrade complete" />
+	</target>
+	<target name="run_build_update_win" depends="init,checkos" if="isWindows" description="building with the new updates on windows">
+		<echo message="*******************************************************" />
+		<echo message="*         Running upgrade build for windows            *" />
+		<echo message="*******************************************************" />
+		<!-- Run rdfpuller -->
+		<echo message="Running rdfpuller" />
+		<record name="logs/rdfpuller764.log" action="start" />
+		<exec executable="cmd" dir="${instDir}\MaximoAnywhere" failonerror="false" resultproperty="execRC">
+			<arg value="/c" />
+			<arg value="${instDir}\MaximoAnywhere\build.cmd -buildfile ${instDir}\MaximoAnywhere\anywhere-rdfs-puller.xml all -Dadapter.connection.user=${adapter.connection.user} -Dadapter.connection.password=${adapter.connection.password}" />
+		</exec>
+		<record name="logs/rdfpuller764.log" action="stop" />
+		<echo message="RDFPuller finished with return code: ${execRC}" />
+		<condition property="rdfFailed">
+			<not>
+				<equals arg1="${execRC}" arg2="0" casesensitive="false" trim="true" />
+			</not>
+		</condition>
+		<!-- app.xml files under each app may have been customized.  Handle file -->
+		<echo message="*       handle app.xml files       *" />
+		<move file="${instDir}/MaximoAnywhere/apps/AssetAudit/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/AssetAudit/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/AssetAudit/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/AssetAudit/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/AssetDataManager/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/AssetDataManager/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/AssetDataManager/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/AssetDataManager/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/Inspection/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/Inspection/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/Inspection/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/Inspection/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/IssuesReturns/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/IssuesReturns/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/IssuesReturns/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/IssuesReturns/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/PhysicalCount/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/PhysicalCount/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/PhysicalCount/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/PhysicalCount/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/ServiceRequest/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/ServiceRequest/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/ServiceRequest/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/ServiceRequest/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/Transfers/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/Transfers/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/Transfers/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/Transfers/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/WorkApproval/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/WorkApproval/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/WorkApproval/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/WorkApproval/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/WorkExecution/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/WorkExecution/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/WorkExecution/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/WorkExecution/artifact/app.xml" />
+		<antcall target="startAppXmlMerge" />
+		<!-- Run admin loader -->
+		<echo message="*        run admin loader          *" />
+		<record name="logs/AdmLdr764Build.log" action="start" />
+		<antcall target="runAdmLdr" />
+		<record name="logs/AdmLdr764Build.log" action="stop" />
+		<echo message="*         startAppBuild            *" />
+		<!-- Run app build -->
+		<antcall target="startAppBld" />
+		<echo message="upgrade complete" />
+	</target>
+	<target name="run_build_update_notWin" depends="init,checkos" unless="isWindows" description="building with the new updates on non-windows">
+		<echo message="*******************************************************" />
+		<echo message="*       Running upgrade build for non-windows         *" />
+		<echo message="*******************************************************" />
+		<echo message="Running rdfpuller" />
+		<record name="logs/rdfpuller764.log" action="start" />
+		<exec executable="${instDir}/MaximoAnywhere/build.sh" dir="${instDir}/MaximoAnywhere" failonerror="false" resultproperty="execRC">
+			<arg value="-buildfile ${instDir}/MaximoAnywhere/anywhere-rdfs-puller.xml all -Dadapter.connection.user=${adapter.connection.user} -Dadapter.connection.password=${adapter.connection.password}" />
+		</exec>
+		<record name="logs/rdfpuller764.log" action="stop" />
+		<echo message="RDFPuller finished with return code: ${execRC}" />
+		<condition property="rdfFailed">
+			<not>
+				<equals arg1="${execRC}" arg2="0" casesensitive="false" trim="true" />
+			</not>
+		</condition>
+		<!-- app.xml files under each app may have been customized.  Handle file -->
+		<echo message="*       handle app.xml files       *" />
+		<move file="${instDir}/MaximoAnywhere/apps/AssetAudit/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/AssetAudit/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/AssetAudit/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/AssetAudit/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/AssetDataManager/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/AssetDataManager/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/AssetDataManager/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/AssetDataManager/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/Inspection/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/Inspection/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/Inspection/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/Inspection/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/IssuesReturns/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/IssuesReturns/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/IssuesReturns/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/IssuesReturns/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/PhysicalCount/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/PhysicalCount/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/PhysicalCount/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/PhysicalCount/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/ServiceRequest/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/ServiceRequest/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/ServiceRequest/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/ServiceRequest/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/Transfers/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/Transfers/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/Transfers/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/Transfers/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/WorkApproval/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/WorkApproval/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/WorkApproval/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/WorkApproval/artifact/app.xml" />
+		<move file="${instDir}/MaximoAnywhere/apps/WorkExecution/artifact/app.xml" tofile="${instDir}/MaximoAnywhere/apps/WorkExecution/artifact/app_764.xml" />
+		<copy file="${instDir}/MaximoAnywhere/apps/WorkExecution/artifact/app.xml.backup" tofile="${instDir}/MaximoAnywhere/apps/WorkExecution/artifact/app.xml" />
+		<antcall target="startAppXmlMerge" />
+		<!-- Run admin loader -->
+		<echo message="*        run admin loader          *" />
+		<record name="logs/AdmLdr764Build.log" action="start" />
+		<antcall target="runAdmLdr" />
+		<record name="logs/AdmLdr764Build.log" action="stop" />
+		<echo message="*         startAppBuild            *" />
+		<!-- Run app build -->
+		<antcall target="startAppBld" />
+		<echo message="upgrade complete" />
+	</target>
+	<target name="startRdfPuller" depends="init" description="running RDF Puller">
+		<echo message="Running rdfpuller" />
+		<record name="logs/rdfpuller764.log" action="start" />
+		<antcall target="runRdfPuller" />
+		<record name="logs/rdfpuller764.log" action="stop" />
+		<echo message="RDFPuller finished with return code: ${execRC}" />
+	</target>
+	<target name="startAppBld" depends="init" unless="rdfFailed" description="building apps">
+		<echo message="Running runAppBuild next" />
+		<record name="logs/AppBld764Build.log" action="start" />
+		<antcall target="runAppBuild" />
+		<record name="logs/AppBld764Build.log" action="stop" />
+	</target>
+	<target name="startAppXmlMerge" depends="init" description="building apps">
+		<echo message="Running mergeAppXml next" />
+		<record name="logs/mergeAppXml.log" action="start" />
+		<antcall target="runMergeAppXml" />
+		<record name="logs/mergeAppXml.log" action="stop" />
+	</target>
+	<target name="runAntCall" depends="init,checkos,runBat,runSh">
+		<echo message="runAntCall completed" />
+	</target>
+	<target name="runBat" depends="init" if="isWindows">
+		<echo message="Run Bat with ${instDir}" />
+		<exec executable="cmd" dir="${instDir}\MaximoAnywhere" failonerror="false" resultproperty="execRC">
+			<arg value="/c" />
+			<arg value="${instDir}\MaximoAnywhere\build.cmd -buildfile ${instDir}\MaximoAnywhere\${bldfile} ${bldFileTarget}" />
+		</exec>
+		<echo message="Run Bat with ${instDir} and bldfile: ${bldfile} completed with RC: ${execRC}" />
+	</target>
+	<target name="runSh" depends="init" unless="isWindows">
+		<echo message="Run Sh with ${instDir}" />
+		<exec executable="${instDir}/MaximoAnywhere/build.sh" dir="${instDir}/MaximoAnywhere" failonerror="false" resultproperty="execRC">
+			<arg value="-buildfile ${instDir}/MaximoAnywhere/${bldfile} ${bldFileTarget}" />
+		</exec>
+		<echo message="Run sh with ${instDir} and bldfile: ${bldfile} completed with RC: ${execRC}" />
+	</target>
+
+	<target name="runCleanAntCall" depends="checkos,runCleanBat,runCleanSh" />
+	<target name="runCleanBat" depends="checkos" if="isWindows">
+		<echo message="Run Bat with ${instDir}" />
+		<exec executable="cmd" dir="${instDir}\MaximoAnywhere">
+			<arg value="/c" />
+			<arg value="${instDir}\MaximoAnywhere\build.cmd -buildfile ${instDir}\MaximoAnywhere\${bldfile} ${cleanTarget} ${bldFileTarget}" />
+		</exec>
+	</target>
+	<target name="runCleanSh" depends="checkos" unless="isWindows">
+		<echo message="Run Sh with ${instDir}" />
+		<exec executable="${instDir}/MaximoAnywhere/build.sh" dir="${instDir}/MaximoAnywhere">
+			<arg value="-buildfile ${instDir}/MaximoAnywhere/${bldfile} ${cleanTarget} ${bldFileTarget}" />
+		</exec>
+	</target>
+
+	<target name="RunPatchProperties" depends="init" description="Run patch properties">
+		<echo message="running patch properties" />
+		<echo>current directory: ${basedir}</echo>
+		<echo>inst directory: ${instDir}</echo>
+		<echo message="calling build.xml with patch-properties" />
+		<record name="logs/PatchProps764.log" action="start" />
+		<antcall target="runAntCall">
+			<param name="bldfile" value="build.xml" />
+			<param name="bldFileTarget" value="patch-properties" />
+		</antcall>
+		<record name="logs/PatchProps764.log" action="stop" />
+	</target>
+
+	<target name="RunBuild" depends="init,run_build_install,run_build_update" description="Run Build based on action: ${im_action}">
+		<echo message="im_action: ${im_action} and instDir: ${instDir} and prevVer: ${prevVer}" />
+		<echo message="Build should be finished" />
+	</target>
+</project>

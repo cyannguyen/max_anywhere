@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Anywhere Build Configuration" basedir="." default="all">
+
+    <import file="util.xml" />
+    
+	<description>
+	Configures the following files before performing the application
+	build process. All 'configuration' tasks should be implemented
+	in this file.
+	
+	apps/app-folder/android/native/AndroidManifest.xml
+	server/conf/authenticationConfig.xml
+	server/conf/worklight.properties
+	</description>
+
+	<!-- :: Begin Common Setup Steps -->
+	<basename property="ant.file.basename" file="${ant.file}" suffix=".xml"/>
+	<record name="${basedir}/${ant.file.basename}.log" logLevel="verbose"/>
+	<loadproperties srcfile="${basedir}/build.properties" />
+	<include file="${basedir}/build-taskdef.xml"/>
+	<!-- :: Done Common Setup Steps -->
+
+	<path id="projectpbx.compile.classpath">
+		<fileset dir="${basedir}/libs">
+			<include name="**/commons-codec-1.9.jar" />
+			<include name="**/commons-io-2.4.jar" />
+			<include name="**/dd-plist.jar" />
+			<include name="**/isiprojectpbx.jar" />
+		</fileset>
+	</path>
+	<path id="full.classpath">
+		<path refid="projectpbx.compile.classpath" />
+	</path>
+	
+	<taskdef name="pbx" classname="com.ibm.tivoli.si.pbxproject.ISIPBXUtil">
+		<classpath refid="full.classpath" />
+	</taskdef>
+	
+	<target name="init"
+		description="creates all the necessary folders used by the build">
+		<if>
+			<isset property="debug" />
+			<then>
+				<echoproperties></echoproperties>
+			</then>
+		</if>
+		
+		<property file="${basedir}/.changetrack/.buildconfig/.buildconfigchecksum"/>
+		<echotimestamp message="buildconfigchecksum = ${buildconfigchecksum}" />
+				
+		<checksum totalproperty="newbuildconfigchecksum" 
+		    todir="${basedir}/.changetrack/.buildconfig/buildconfig">
+		  <fileset dir="${basedir}">
+		      <include name="build.properties"/> 
+		      <include name="apps/**/app-feature.properties"/> 
+		  </fileset>    
+		</checksum>
+		<echotimestamp message="newbuildconfigchecksum = ${newbuildconfigchecksum}" />
+						
+		<condition property="buildConfigChecksumMatches" else="false">
+	    	<equals arg1="${newbuildconfigchecksum}" arg2="${buildconfigchecksum}"/>
+		</condition>   
+		
+		<echotimestamp message="previous buildconfig checksum = ${buildconfigchecksum}, new buildconfig checksum = ${newbuildconfigchecksum}" />
+		<echotimestamp message="checksums match? = ${buildConfigChecksumMatches}" />
+				
+		<propertyfile
+		    file="${basedir}/.changetrack/.buildconfig/.buildconfigchecksum"
+		    comment="Change checksum properties">
+		  <entry  key="buildconfigchecksum" value="${newbuildconfigchecksum}"/>
+		</propertyfile>       
+		
+		<if>
+			<and>
+				<equals arg1="${buildConfigChecksumMatches}" arg2="true" />
+			</and>
+			<then>
+				<property name="performBuildConfig" value="true"/>
+			</then>
+		</if>
+	</target>
+	
+	<target name="clean"
+		description="removes all folders created by the build, resetting the build environment">
+		
+	</target>
+
+	<target name="clean-changetrack"
+		description="removes all build config change tracking information">
+		
+		<delete includeemptydirs="true" failonerror="false">
+    		<fileset dir="${basedir}/.changetrack/.buildconfig" includes="**/*"/>
+  		</delete>
+  
+	</target>
+	
+	<target name="configure" 
+		depends="configure-androidmanifest,
+		configure-adapter,
+		configure-authenticationconfig,
+		configure-worklightproperties,
+		configure-dataEncryption,
+		configure-androidprojectproperties"
+		description="Configures the environment for build">
+		
+	</target>
+
+	<target name="configure-androidprojectproperties" >
+		<foreach target="--configure-androidprojectproperties-impl" 
+			param="application.home" 
+			inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps">
+					<include name="*"/>
+				</dirset>
+			</path>
+	    </foreach>
+	</target>
+	
+	<target name="--configure-androidprojectproperties-impl">
+	    <echotimestamp message="[config] checking android project properties ${application.home}"/>
+	    <if>
+	        <available file="${application.home}/android/native/project.properties"/>
+	        <then>
+	            <propertyfile file="${application.home}/android/native/project.properties">
+  					<entry  key="target" value="${Android_TARGET_DEVICE_NAME}"/>
+				</propertyfile>
+				<echotimestamp message="[config] set android project.properties target to ${Android_TARGET_DEVICE_NAME}"/>
+	        </then>
+	    </if>
+	</target>
+
+
+	<target name="configure-dataEncryption" unless="performBuildConfig">
+		<foreach target="--configure-dataEncryption" 
+			param="application.home" 
+			inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps">
+					<include name="*"/>
+				</dirset>
+			</path>
+	    </foreach>
+	</target>
+	
+	
+	<!-- Requires: Input argument: application.home -->
+	<target name="--configure-dataEncryption">
+		<!-- if enableDataEncryption=true then switch js file -->
+		<echotimestamp message="Check Enable JsonStore DataEncryption? ${enableDataEncryption}"/>
+		<if>
+			<and>
+				<isset property="enableDataEncryption" />
+				<equals arg1="${enableDataEncryption}" arg2="true"/>
+			</and>
+			<then>
+				<echotimestamp
+					message="Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js">
+				</echotimestamp>
+				<copy overwrite="true"
+					  file="${application.home}/common/js/platform/store/_StoreProviderSecurityEncrypted.js"
+					tofile="${application.home}/common/js/platform/store/_StoreProviderSecurity.js" />
+			</then>
+			<else>
+				<echotimestamp
+					message="Overwriting file _StoreProviderSecurityNotEncrypted.js to _StoreProviderSecurity.js">
+				</echotimestamp>
+				<copy overwrite="true"
+					  file="${application.home}/common/js/platform/store/_StoreProviderSecurityNotEncrypted.js"
+					tofile="${application.home}/common/js/platform/store/_StoreProviderSecurity.js" />
+			</else>
+		</if>
+	</target>
+
+
+	<!-- Requires: Input Argument: target -->
+	<target name="configure-features-app" unless="performBuildConfig">
+		<property name="framework"
+			value="${basedir}/build/tools/ArcGIS/iOS/ArcGIS.framework" />
+		<dirname property="target.dir" file="${target}"/>
+		<basename property="app.name" file="${local.application.home}"/>
+		<loadproperties srcFile="${local.application.home}/app-feature.properties" prefix="local"/>
+		<echotimestamp>${target.dir}</echotimestamp>
+		<echotimestamp>${app.name}</echotimestamp>
+		<echotimestamp>${framework}</echotimestamp>
+		<if>
+			<or>
+				<equals arg1="${map.enabled}" arg2="true" />
+				<equals arg1="${local.map.enabled}" arg2="true"/>
+			</or>
+			<then>
+				<echotimestamp>Map enabled</echotimestamp>
+				<property name="extractmaplibrary" value="true"/>
+			</then>
+			<else>
+			    <echotimestamp>Map not enabled</echotimestamp>
+				<property name="extractmaplibrary" value="false"/>
+			</else>
+		</if>
+		
+		<if>
+			<and>
+				<equals arg1="${extractmaplibrary}" arg2="true"/>
+				<not>
+					<equals arg1="${app.name}" arg2="PhysicalCount"/>
+				</not>
+				<not>
+					<equals arg1="${app.name}" arg2="WorkApproval"/>
+				</not>
+			</and>
+			<then>
+			     <echotimestamp> Updating pbxproj to contain map </echotimestamp>
+						<pbx action="addFrameworkSearchPaths" 
+							projectpbxpath="${target.dir}"
+							filename="${framework}" />
+				 
+						<pbx action="addClass" 
+							projectpbxpath="${target.dir}"
+							filename="libISIMapStaticLibProject.a" />
+						
+						<pbx action="addOtherLdFlags" 
+							projectpbxpath="${target.dir}"
+							filename="-objC -framework ArcGIS -l c++" />
+			</then>
+		</if>
+	</target>
+	
+	<target name="configure-features">
+		<foreach target="configure-features-app" param="target" inheritall="true">
+			<fileset dir="${local.application.home}">
+				<include name="**/project.pbxproj"/>
+				<exclude name="**/CordovaLib.xcodeproj/project.pbxproj"/>
+			</fileset>
+		</foreach>
+	</target>
+	
+	<target name="configure-ios-features">
+	</target>
+
+	<target name="configure-androidmanifest" unless="performBuildConfig">
+		<foreach target="--configure-androidmanifest" 
+			param="application.home" 
+			inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps">
+					<include name="*"/>
+				</dirset>
+			</path>
+	    </foreach>
+	</target>
+	
+	<target name="--configure-androidmanifest">
+		<echotimestamp message="configuring androidmanifest..."/>
+		
+		<property name="app.home" value="${application.home}" />
+		<property name="android.manifest.file"
+				 value="${app.home}/android/native/AndroidManifest.xml" />
+
+		 <if>
+	        <available file="${android.manifest.file}"/>
+	        <then>
+			<if>
+				<or>
+					<equals arg1="${android.manifest.enable.debugging}" arg2="true" />
+					<equals arg1="${android.manifest.enable.debugging}" arg2="false" />
+				</or>
+				<then>
+					<xmltask source="${android.manifest.file}" dest="${android.manifest.file}"
+						failWithoutMatch="true" preserveType="true" report="true">					
+						<attr path="/manifest/application" attr="android:debuggable"
+							value="${android.manifest.enable.debugging}" />
+					</xmltask>
+					<echotimestamp message="AndroidManifest.xml updated debuggable set to ${android.manifest.enable.debugging}"></echotimestamp>
+				</then>
+			</if>
+			</then>
+			</if>
+	</target>
+
+	<target name="update-manifest" description="Update AndroidManifest.xml given App folder name. (ie. build -f build-configure.xml -Dapp-folder=WorkExecution update-manifest)">
+		<if>
+			<available file="${basedir}/apps/${app-folder}"/>
+			<then>
+				<echotimestamp message="Update AndroidManifest.xml for application : ${app-folder}"/>
+				<antcall target="update-manifest-clean">
+					<param name="app.home" value="${basedir}/apps/${app-folder}"/>
+				</antcall>
+				<antcall target="update-manifest-permissions">
+					<param name="app.home" value="${basedir}/apps/${app-folder}"/>
+				</antcall>
+				<antcall target="update-manifest-screens">
+					<param name="app.home" value="${basedir}/apps/${app-folder}"/>
+				</antcall>
+				<antcall target="update-manifest-sdk">
+					<param name="app.home" value="${basedir}/apps/${app-folder}"/>
+				</antcall>
+			</then>
+			<else>
+				<echotimestamp message="No action performed. ${basedir}/apps/${app-folder} does not exists."/>
+				<echotimestamp message="   Please specify -Dapp-folder=APP_NAME (example: -Dapp-folder=WorkExecution)"/>
+			</else>
+		</if>
+	</target>
+
+	<target name="update-manifest-all" description="updates the AndroidManifest.xml with Anywhere specific settings">
+		<antcall target="update-manifest-clean"/>
+		<antcall target="update-manifest-permissions"/>
+		<antcall target="update-manifest-screens"/>
+		<antcall target="update-manifest-sdk"/>
+	</target>
+
+	<target name="update-manifest-clean" description="removes permisissions and features before inserting to ensure no duplicates">
+		<property name="app.home" 		value="/Users/cdoan/Downloads/test" />
+		<property name="android.manifest.file" 	value="${app.home}/android/native/AndroidManifest.xml" />
+		<echotimestamp message="${android.manifest.file}"/>
+		 <if>
+	        <available file="${android.manifest.file}"/>
+	        <then>
+		<xmltask 
+			source="${android.manifest.file}" 
+			dest="${android.manifest.file}"
+			failWithoutMatch="false" preserveType="true" report="true">
+			<remove path="/manifest/uses-permission[@android:name='android.permission.ACCESS_FINE_LOCATION']"/>
+			<remove path="/manifest/uses-permission[@android:name='android.permission.ACCESS_COARSE_LOCATION']"/>
+			<remove path="/manifest/uses-permission[@android:name='android.permission.ACCESS_LOCATION_EXTRA_COMMANDS']"/>
+		</xmltask>
+		<xmltask 
+			source="${android.manifest.file}" 
+			dest="${android.manifest.file}"
+			failWithoutMatch="false" preserveType="true" report="true">
+			<remove path="/manifest/uses-feature[@android:name='android.hardware.camera']"/>
+			<remove path="/manifest/uses-feature[@android:name='android.hardware.camera.front']"/>
+			<remove path="/manifest/uses-feature[@android:name='android.hardware.camera.autofocus']"/>
+			<remove path="/manifest/uses-feature[@android:name='android.hardware.camera.flash']"/>
+			<remove path="/manifest/uses-feature[@android:name='android.hardware.screen.landscape']"/>
+			<remove path="/manifest/uses-feature[@android:name='android.hardware.wifi']"/>
+			<remove path="/manifest/uses-feature[@android:name='android.hardware.touchscreen']"/>
+		</xmltask>
+		<xmltask 
+			source="${android.manifest.file}" 
+			dest="${android.manifest.file}"
+			failWithoutMatch="false" preserveType="true" report="true">
+			<remove path="/manifest/uses-permission[@android:name='android.permission.CAMERA']"/>
+			<remove path="/manifest/uses-permission[@android:name='android.permission.INTERNET']"/>
+			<remove path="/manifest/uses-permission[@android:name='android.permission.VIBRATE']"/>
+			<remove path="/manifest/uses-permission[@android:name='android.permission.FLASHLIGHT']"/>
+			<remove path="/manifest/uses-permission[@android:name='android.permission.WRITE_EXTERNAL_STORAGE']"/>
+			<remove path="/manifest/uses-permission[@android:name='android.permission.CHANGE_WIFI_STATE']"/>
+			<remove path="/manifest/uses-permission[@android:name='android.permission.ACCESS_WIFI_STATE']"/>
+		</xmltask>
+		<xmltask 
+			source="${android.manifest.file}" 
+			dest="${android.manifest.file}"
+			failWithoutMatch="false" preserveType="true" report="true">
+			<remove path="/manifest/activity[@android:name='com.google.zxing.client.android.CaptureActivity']"/>
+			<remove path="/manifest/activity[@android:name='com.google.zxing.client.android.encode.EncodeActivity']"/>
+		</xmltask>
+		</then>
+		</if>
+	</target>
+
+	<target name="update-manifest-sdk" description="updates the mininal sdk level">
+		<property name="app.home" value="/Users/cdoan/Downloads/test" />
+		<property name="android.manifest.file"
+				 value="${app.home}/android/native/AndroidManifest.xml" />
+		<echotimestamp message="${android.manifest.file}"/>
+		
+		  <if>
+	        <available file="${android.manifest.file}"/>
+	        <then>
+	
+		<!--
+		Platform		API Level	Version Code
+		========		=========	============
+		Android 4.4		19		KITKAT
+		Android 4.3		18		JELLY BEAN MR2
+		Android 4.2,4.2.2	17		JELLY BEAN MR1
+		Android 4.1,4.1.1	16		JELLY BEAN
+		Android 4.0.3,4.0.4	15		ICE CREAM SANDWICH MR1
+		Android 4.0,4.0.1,4.0.2	14		ICE CREAM SANDWICH
+		-->
+
+		<xmltask 
+			source="${android.manifest.file}" 
+			dest="${android.manifest.file}"
+			failWithoutMatch="false" preserveType="true" report="true">
+			<attr path="/manifest/uses-sdk[@android:minSdkVersion]" attr="android:minSdkVersion" value="16"/>
+		</xmltask>
+		</then>
+		</if>
+	
+	</target>
+
+	<target name="update-manifest-screens" description="removes and then inserts back the uses-screen definition">
+		<property name="app.home" value="/Users/cdoan/Downloads/test" />
+		<property name="android.manifest.file"
+				 value="${app.home}/android/native/AndroidManifest.xml" />
+		<echotimestamp message="${android.manifest.file}"/>
+		 <if>
+	        <available file="${android.manifest.file}"/>
+	        <then>
+		<xmltask 
+			source="${android.manifest.file}" 
+			dest="${android.manifest.file}"
+			failWithoutMatch="false" preserveType="true" report="true">
+			<remove path="/*[name()='manifest']/*[name()='supports-screens']"/>
+		</xmltask>
+		<xmltask 
+			source="${android.manifest.file}" 
+			dest="${android.manifest.file}"
+			failWithoutMatch="true" preserveType="true" report="true">
+            <insert path="/manifest/uses-sdk" position="after">
+<![CDATA[
+     <supports-screens xmlns:android="http://schemas.android.com/apk/res/android" android:anyDensity="false" android:largeScreens="true" android:normalScreens="true" android:resizeable="false" android:smallScreens="true" android:xlargeScreens="true"/>
+]]>
+			</insert>
+		</xmltask>
+		</then>
+		</if>
+	</target>
+
+	<target name="update-manifest-permissions" description="inserts the uses-permissions and uses-features">
+
+		<echotimestamp message="1.1.1 Update uses-permission"/>
+
+		<property name="app.home" value="/Users/cdoan/Downloads/test" />
+		<property name="android.manifest.file"
+				 value="${app.home}/android/native/AndroidManifest.xml" />
+		<echotimestamp message="${android.manifest.file}"/>
+	  <if>
+	        <available file="${android.manifest.file}"/>
+	        <then>
+		<!-- the android manifest uses the xmlns:android , its too bad that xmltask
+		     does not make it easy to define the name space for the entire insert -->
+		<xmltask 
+			source="${android.manifest.file}" 
+			dest="${android.manifest.file}"
+			failWithoutMatch="true" preserveType="true" report="true">
+            <insert path="/manifest/application" position="before">
+<![CDATA[
+    <!-- MAP_PERMISSIONS: START -->
+    <uses-permission xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
+    <!-- MAP_PERMISSIONS: END -->
+    <!-- BARCODE_FEATURES: START -->
+    <uses-feature xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.hardware.camera" android:required="false"/>
+    <uses-feature xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.hardware.camera.front" android:required="false"/>
+    <uses-feature xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.hardware.camera.autofocus" android:required="false"/>
+    <uses-feature xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.hardware.camera.flash" android:required="false"/>
+    <uses-feature xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.hardware.screen.landscape"/>
+    <uses-feature xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.hardware.wifi" android:required="false"/>
+    <uses-feature xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.hardware.touchscreen"/>
+    <!-- BARCODE_FEATURES: END -->
+    <!-- BARCODE_PERMISSIONS: START -->
+    <uses-permission xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.permission.CAMERA"/>
+    <uses-permission xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.permission.INTERNET"/>
+    <uses-permission xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.permission.VIBRATE"/>
+    <uses-permission xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.permission.FLASHLIGHT"/>
+    <uses-permission xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission xmlns:android="http://schemas.android.com/apk/res/android" android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <!-- BARCODE_PERMISSIONS: END -->
+]]>
+             </insert>
+		
+             <insert path="/manifest/application/receiver" position="before">
+<![CDATA[
+        <!-- BARCODE_ACTIVITIES: START -->  
+        <activity xmlns:android="http://schemas.android.com/apk/res/android" android:clearTaskOnLaunch="true" android:configChanges="orientation|keyboardHidden|screenSize" android:name="com.google.zxing.client.android.CaptureActivity" android:screenOrientation="landscape" android:stateNotNeeded="true" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:windowSoftInputMode="stateAlwaysHidden"> 
+            <intent-filter> 
+                <action android:name="com.ibm.tivoli.si.codeScanner.barcode.WorkExecution.SCAN"/>  
+                <category android:name="android.intent.category.DEFAULT"/> 
+            </intent-filter> 
+        </activity>  
+        <activity xmlns:android="http://schemas.android.com/apk/res/android" android:name="com.google.zxing.client.android.encode.EncodeActivity" android:stateNotNeeded="true"> 
+            <intent-filter> 
+                <action android:name="com.google.zxing.client.android.ENCODE"/>  
+                <category android:name="android.intent.category.DEFAULT"/> 
+            </intent-filter>  
+            <!-- This allows us to handle the Share button in Contacts. -->  
+            <intent-filter> 
+                <action android:name="android.intent.action.SEND"/>  
+                <category android:name="android.intent.category.DEFAULT"/>  
+                <data android:mimeType="text/x-vcard"/> 
+            </intent-filter>  
+            <!-- This allows us to handle sharing any plain text . -->  
+            <intent-filter> 
+                <action android:name="android.intent.action.SEND"/>  
+                <category android:name="android.intent.category.DEFAULT"/>  
+                <data android:mimeType="text/plain"/> 
+            </intent-filter> 
+        </activity>  
+        <!-- BARCODE_ACTIVITIES: END -->  
+]]>
+            </insert>
+        </xmltask>	
+		</then>
+		</if>
+	</target>
+
+	<target name="configure-adapter" unless="performBuildConfig">
+		<echotimestamp message="configure adapter xml"/>
+		<property name="adapter.xml" value="${basedir}/adapters/OSLCGenericAdapter/OSLCGenericAdapter.xml" />
+	    <replaceregexp file="${adapter.xml}"
+               match="&lt;protocol&gt;.*&lt;/protocol&gt;"
+               replace="&lt;protocol&gt;${adapter.connection.protocol}&lt;/protocol&gt;"/>
+	    <replaceregexp file="${adapter.xml}"
+               match="&lt;domain&gt;.*&lt;/domain&gt;"
+               replace="&lt;domain&gt;${adapter.connection.domain}&lt;/domain&gt;"/>
+	    <replaceregexp file="${adapter.xml}"
+               match="&lt;port&gt;.*&lt;/port&gt;"
+               replace="&lt;port&gt;${adapter.connection.port}&lt;/port&gt;"/>
+	</target>
+	
+	<target name="configure-authenticationconfig" unless="performBuildConfig">
+		<echotimestamp message="configure authenticationconfig"/>
+        <property name="auth.config.xml" value="${basedir}/server/conf/authenticationConfig.xml" />
+	    <replaceregexp file="${auth.config.xml}"
+               match='(&lt;parameter\s*name="protocol"\s*value=")[^"]*'
+               replace="\1${adapter.connection.protocol}"/>
+	    <replaceregexp file="${auth.config.xml}"
+               match='(&lt;parameter\s*name="domain"\s*value=")[^"]*'
+               replace="\1${adapter.connection.domain}"/>
+	    <replaceregexp file="${auth.config.xml}"
+               match='(&lt;parameter\s*name="port"\s*value=")[^"]*'
+               replace="\1${adapter.connection.port}"/>
+	    <replaceregexp file="${auth.config.xml}"
+               match='(&lt;parameter\s*name="context"\s*value=")[^"]*'
+               replace="\1${adapter.connection.context}"/>
+               
+	</target>
+
+	<target name="configure-worklightproperties" unless="performBuildConfig">
+		<echotimestamp message="configure worklight properties"/>
+
+		<!-- Set worklight.properties:si.platform.context to build.properties:adapter.connection.context -->
+        <propertyfile file="${basedir}/server/conf/worklight.properties">
+        	<entry key="si.platform.context" value="${adapter.connection.context}"/>
+        </propertyfile>
+        
+        <!-- Internal Set the Esri Server username/password -->
+        <if>
+        	<equals arg1="${internal.build}" arg2="true"/>
+        	<then>
+        		<echotimestamp>INTERNAL - Setting esri account information</echotimestamp>
+		        <propertyfile file="${basedir}/server/conf/worklight.properties">
+		        	<entry key="si.map.esri.username" value="MXanywhere1"/>
+		        	<entry key="si.map.esri.password" value="MXanywhere1"/>
+		        </propertyfile>
+        	</then>
+        </if>
+ 
+ 		<!-- perform internal setup and configuration -->       
+        <if>
+        	<available file="${basedir}/build-internal.xml"/>
+        	<then>
+        		<ant antfile="${basedir}/build-internal.xml"/>
+        	</then>
+        </if>
+                
+        <echotimestamp message="Updated worklight.properties..."/>	
+	</target>
+
+	<target name="export"
+		description="publishes all generated binary files to the BIN output folder">
+	
+	</target>
+	
+	<target name="-eclipse-refresh-server-war">
+		
+		<property file="${basedir}/.changetrack/.buildprop/.buildpropchecksum"/>
+		<echotimestamp message="buildpropchecksum = ${buildpropchecksum}" />
+				
+		<checksum totalproperty="newbuildpropchecksum" 
+		    todir="${basedir}/.changetrack/.buildprop/buildprop">
+		  <fileset dir="${basedir}">
+		      <include name="build.properties"/> 
+		      <include name="apps/**/app-feature.properties"/> 
+		  </fileset>    
+		</checksum>
+		<echotimestamp message="newbuildpropchecksum = ${newbuildpropchecksum}" />
+						
+		<condition property="buildpropChecksumMatches" else="false">
+	    	<equals arg1="${newbuildpropchecksum}" arg2="${buildpropchecksum}"/>
+		</condition> 
+				
+		<propertyfile
+		    file="${basedir}/.changetrack/.buildprop/.buildpropchecksum"
+		    comment="Change checksum properties">
+		  <entry  key="buildpropchecksum" value="${newbuildpropchecksum}"/>
+		</propertyfile>       
+		
+		<if>
+			<equals arg1="${buildpropChecksumMatches}" arg2="false" />
+			<then>
+				<echotimestamp>  Refreshing ${worklight.server.context}/server/conf </echotimestamp>
+				<eclipse.refreshLocal resource="${worklight.server.context}/server/conf" depth="infinite" />
+			</then>
+		</if>
+	</target>
+	
+	<target name="all" 
+		depends="clean,
+		init,
+		configure,
+		export" >
+		<echotimestamp message="All build targets completed!"></echotimestamp>
+	
+	</target>
+	
+</project>

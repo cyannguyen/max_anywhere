@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="43px" height="32px" viewBox="0 0 43 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>header_app_Inspection_back_OFF</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="header_app_Inspection_back_OFF" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="header_app_Inspection_noBack" transform="translate(15.000000, 4.000000)">
+            <path d="M18,1 L23,1 L23,12 L21,12 L21,3 L18,3 L18,1 Z M0,12 L2,12 L2,21 L10,21 L10,23 L0,23 L0,12 Z" id="board" fill="#FFFFFF"></path>
+            <g id="Group-2" stroke="#FFFFFF">
+                <g id="Group">
+                    <path d="M7.5,12 C4.85114283,10.7376244 3,7.85461155 3,4.5 C3,1.14538845 4.85114283,-1.73762439 7.5,-3 C10.1488572,-1.73762439 12,1.14538845 12,4.5 C12,7.85461155 10.1488572,10.7376244 7.5,12 Z" id="Combined-Shape" transform="translate(7.500000, 4.500000) rotate(-90.000000) translate(-7.500000, -4.500000) "></path>
+                </g>
+                <circle id="Oval-7" cx="7.5" cy="4.5" r="2.5"></circle>
+            </g>
+            <polygon id="Shape" fill="#FFFFFF" points="23.8920455 14 16.1363636 21.9104478 13.0340909 18.7761194 12 19.8208955 16.1363636 24 25 15.0447761"></polygon>
+            <path d="M11,11 L16,17" id="Path-5" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="2,1"></path>
+        </g>
+        <g id="nany-icon-/-back-arrow" fill="#FFFFFF">
+            <polygon id="header_back_OFF" points="4.09980033 16 7.53567422 22.5 4.18511389 22.5 1 16 4.64943967 9.5 8 9.5"></polygon>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,1227 @@
+
+init:
+     [echo] RunBuild - init target
+
+checkos:
+     [echo] RunBuild - checkos target
+
+runBat:
+     [echo] Run Bat with C:\IBM\Anywhere
+     [exec] C:\IBM\Anywhere\MaximoAnywhere\build\tools\curl\win64
+     [exec] 
+     [exec] SUCCESS: Specified value was saved.
+     [exec] Buildfile: C:\IBM\Anywhere\MaximoAnywhere\build.xml
+     [exec] 
+     [exec] install-platform:
+     [exec]      [echo] 2021-06-01 07:33:44> The install-platform target command searches the maximo-anywhere-platform and artifact-processor compressed files, extracts them, and installs the platform files into the apps.
+     [exec] 
+     [exec] -clean-platform-folders-from-all-apps:
+     [exec] 
+     [exec] -clean-platform-folders:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\platform-artifacts
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\initOptions.js
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\Startup.js
+     [exec] 
+     [exec] -clean-platform-folders:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\platform-artifacts
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\initOptions.js
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\Startup.js
+     [exec] 
+     [exec] -clean-platform-folders:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\platform-artifacts
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\initOptions.js
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\Startup.js
+     [exec] 
+     [exec] -clean-platform-folders:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\platform-artifacts
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\initOptions.js
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\Startup.js
+     [exec] 
+     [exec] -clean-platform-folders:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\platform-artifacts
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\initOptions.js
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\Startup.js
+     [exec] 
+     [exec] -clean-platform-folders:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\platform-artifacts
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\initOptions.js
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\Startup.js
+     [exec] 
+     [exec] -clean-platform-folders:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\platform-artifacts
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\initOptions.js
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\Startup.js
+     [exec] 
+     [exec] -clean-platform-folders:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\platform-artifacts
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\initOptions.js
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\Startup.js
+     [exec] 
+     [exec] -clean-platform-folders:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\platform-artifacts
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\initOptions.js
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\Startup.js
+     [exec] 
+     [exec] retrieve:
+     [exec]      [echo] 2021-06-01 07:33:51> install.fixpack.dependencies: false 
+     [exec]      [echo] 2021-06-01 07:33:51> removing old cached platform zip to support new structure
+     [exec]      [echo] 2021-06-01 07:33:51> removing old cached platform fixpack zip to support new structure
+     [exec]      [echo] 2021-06-01 07:33:51> Resolving full install dependencies 
+     [exec] 
+     [exec] -resolve-full-install-files:
+     [exec] [ivy:resolve] :: Apache Ivy 2.3.0 - 20130110142753 :: http://ant.apache.org/ivy/ ::
+     [exec] [ivy:resolve] :: loading settings :: file = C:\IBM\Anywhere\MaximoAnywhere\ivysettings.xml
+     [exec] [ivy:resolve] :: resolving dependencies :: com.ibm.csi.si.maximo.anywhere#anywhere;working@maximo02
+     [exec] [ivy:resolve] 	confs: [javascript]
+     [exec] [ivy:resolve] 	found com.ibm.csi.si#maximo-anywhere-platform;.202002190944 in maximo-anywhere-platform-file
+     [exec] [ivy:resolve] 	[.202002190944] com.ibm.csi.si#maximo-anywhere-platform;latest.integration
+     [exec] [ivy:resolve] downloading C:\IBM\Anywhere\MaximoAnywhere\platform\maximo-anywhere-platform_7.6.4.202002190944.zip ...
+     [exec] [ivy:resolve] ............................................................. (3831kB)
+     [exec] [ivy:resolve] 	[SUCCESSFUL ] com.ibm.csi.si#maximo-anywhere-platform;.202002190944!maximo-anywhere-platform.zip (15ms)
+     [exec] [ivy:resolve] :: resolution report :: resolve 234ms :: artifacts dl 31ms
+     [exec] 	---------------------------------------------------------------------
+     [exec] 	|                  |            modules            ||   artifacts   |
+     [exec] 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+     [exec] 	---------------------------------------------------------------------
+     [exec] 	|    javascript    |   1   |   1   |   0   |   0   ||   1   |   1   |
+     [exec] 	---------------------------------------------------------------------
+     [exec] [ivy:resolve] :: resolving dependencies :: com.ibm.csi.si.maximo.anywhere#anywhere;working@maximo02
+     [exec] [ivy:resolve] 	confs: [artifact-processor]
+     [exec] [ivy:resolve] 	found com.ibm.csi.si#artifact-processor;.202002190944 in maximo-anywhere-platform-file
+     [exec] [ivy:resolve] 	[.202002190944] com.ibm.csi.si#artifact-processor;latest.integration
+     [exec] [ivy:resolve] downloading C:\IBM\Anywhere\MaximoAnywhere\platform\artifact-processor_7.6.4.202002190944.zip ...
+     [exec] [ivy:resolve] ......................................................................................................................................................................................................................................................... (15850kB)
+     [exec] [ivy:resolve] 	[SUCCESSFUL ] com.ibm.csi.si#artifact-processor;.202002190944!artifact-processor.zip (31ms)
+     [exec] [ivy:resolve] :: resolution report :: resolve 31ms :: artifacts dl 31ms
+     [exec] 	---------------------------------------------------------------------
+     [exec] 	|                  |            modules            ||   artifacts   |
+     [exec] 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+     [exec] 	---------------------------------------------------------------------
+     [exec] 	|artifact-processor|   1   |   1   |   0   |   0   ||   1   |   1   |
+     [exec] 	---------------------------------------------------------------------
+     [exec] 
+     [exec] -retrieve-full-install-files:
+     [exec] [ivy:retrieve] :: resolving dependencies :: com.ibm.csi.si.maximo.anywhere#anywhere;working@maximo02
+     [exec] [ivy:retrieve] 	confs: [javascript]
+     [exec] [ivy:retrieve] 	found com.ibm.csi.si#maximo-anywhere-platform;.202002190944 in maximo-anywhere-platform-file
+     [exec] [ivy:retrieve] 	[.202002190944] com.ibm.csi.si#maximo-anywhere-platform;latest.integration
+     [exec] [ivy:retrieve] :: resolution report :: resolve 32ms :: artifacts dl 0ms
+     [exec] 	---------------------------------------------------------------------
+     [exec] 	|                  |            modules            ||   artifacts   |
+     [exec] 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+     [exec] 	---------------------------------------------------------------------
+     [exec] 	|    javascript    |   1   |   0   |   0   |   0   ||   1   |   0   |
+     [exec] 	---------------------------------------------------------------------
+     [exec] [ivy:retrieve] :: retrieving :: com.ibm.csi.si.maximo.anywhere#anywhere
+     [exec] [ivy:retrieve] 	confs: [javascript]
+     [exec] [ivy:retrieve] 	1 artifacts copied, 0 already retrieved (3831kB/0ms)
+     [exec] [ivy:retrieve] :: resolving dependencies :: com.ibm.csi.si.maximo.anywhere#anywhere;working@maximo02
+     [exec] [ivy:retrieve] 	confs: [artifact-processor]
+     [exec] [ivy:retrieve] 	found com.ibm.csi.si#artifact-processor;.202002190944 in maximo-anywhere-platform-file
+     [exec] [ivy:retrieve] 	[.202002190944] com.ibm.csi.si#artifact-processor;latest.integration
+     [exec] [ivy:retrieve] :: resolution report :: resolve 32ms :: artifacts dl 0ms
+     [exec] 	---------------------------------------------------------------------
+     [exec] 	|                  |            modules            ||   artifacts   |
+     [exec] 	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+     [exec] 	---------------------------------------------------------------------
+     [exec] 	|artifact-processor|   1   |   0   |   0   |   0   ||   1   |   0   |
+     [exec] 	---------------------------------------------------------------------
+     [exec] [ivy:retrieve] :: retrieving :: com.ibm.csi.si.maximo.anywhere#anywhere
+     [exec] [ivy:retrieve] 	confs: [artifact-processor]
+     [exec] [ivy:retrieve] 	1 artifacts copied, 0 already retrieved (15850kB/47ms)
+     [exec] 
+     [exec] -install-platform:
+     [exec] 
+     [exec] -extract-platform-js:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common
+     [exec]      [move] Moving 744 files to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common
+     [exec]      [move] Moved 112 empty directories to 1 empty directory under C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common
+     [exec] 
+     [exec] -copy-app-icons:
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\images\mdpi\header_app_AssetAudit_back_ON.png to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\ui\control\images\mdpi\header_back_ON.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\images\mdpi\header_app_AssetAudit_back_OFF.png to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\ui\control\images\mdpi\header_back_OFF.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\images\mdpi\header_app_AssetAudit_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\images\mdpi\header_app_AssetAudit_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec] 
+     [exec] -extract-platform-js-and-configure-message-bundle:
+     [exec] 
+     [exec] -enable-real-bundle:
+     [exec] 
+     [exec] -extract-platform-miniapps:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\platform-artifacts
+     [exec]      [move] Moving 34 files to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\platform-artifacts
+     [exec]      [move] Moved 23 empty directories to 9 empty directories under C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\platform-artifacts
+     [exec] 
+     [exec] -extract-app-xsd:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-dojo-lib:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\www
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-platform:
+     [exec] 
+     [exec] -extract-platform-js:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common
+     [exec]      [move] Moving 744 files to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common
+     [exec]      [move] Moved 112 empty directories to 1 empty directory under C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common
+     [exec] 
+     [exec] -copy-app-icons:
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\images\mdpi\header_app_AssetDataManager_back_ON.png to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\ui\control\images\mdpi\header_back_ON.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\images\mdpi\header_app_AssetDataManager_back_OFF.png to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\ui\control\images\mdpi\header_back_OFF.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\images\mdpi\header_app_AssetDataManager_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\images\mdpi\header_app_AssetDataManager_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec] 
+     [exec] -extract-platform-js-and-configure-message-bundle:
+     [exec] 
+     [exec] -enable-real-bundle:
+     [exec] 
+     [exec] -extract-platform-miniapps:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\platform-artifacts
+     [exec]      [move] Moving 34 files to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\platform-artifacts
+     [exec]      [move] Moved 23 empty directories to 9 empty directories under C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\platform-artifacts
+     [exec] 
+     [exec] -extract-app-xsd:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-dojo-lib:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\www
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-platform:
+     [exec] 
+     [exec] -extract-platform-js:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common
+     [exec]      [move] Moving 744 files to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common
+     [exec]      [move] Moved 112 empty directories to 1 empty directory under C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common
+     [exec] 
+     [exec] -copy-app-icons:
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\images\mdpi\header_app_Inspection_back_ON.png to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\ui\control\images\mdpi\header_back_ON.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\images\mdpi\header_app_Inspection_back_OFF.png to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\ui\control\images\mdpi\header_back_OFF.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\images\mdpi\header_app_Inspection_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\images\mdpi\header_app_Inspection_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec] 
+     [exec] -extract-platform-js-and-configure-message-bundle:
+     [exec] 
+     [exec] -enable-real-bundle:
+     [exec] 
+     [exec] -extract-platform-miniapps:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\platform-artifacts
+     [exec]      [move] Moving 34 files to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\platform-artifacts
+     [exec]      [move] Moved 23 empty directories to 9 empty directories under C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\platform-artifacts
+     [exec] 
+     [exec] -extract-app-xsd:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-dojo-lib:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\www
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-platform:
+     [exec] 
+     [exec] -extract-platform-js:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common
+     [exec]      [move] Moving 744 files to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common
+     [exec]      [move] Moved 112 empty directories to 1 empty directory under C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common
+     [exec] 
+     [exec] -copy-app-icons:
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\images\mdpi\header_app_IssuesReturns_back_ON.png to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\ui\control\images\mdpi\header_back_ON.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\images\mdpi\header_app_IssuesReturns_back_OFF.png to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\ui\control\images\mdpi\header_back_OFF.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\images\mdpi\header_app_IssuesReturns_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\images\mdpi\header_app_IssuesReturns_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec] 
+     [exec] -extract-platform-js-and-configure-message-bundle:
+     [exec] 
+     [exec] -enable-real-bundle:
+     [exec] 
+     [exec] -extract-platform-miniapps:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\platform-artifacts
+     [exec]      [move] Moving 34 files to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\platform-artifacts
+     [exec]      [move] Moved 23 empty directories to 9 empty directories under C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\platform-artifacts
+     [exec] 
+     [exec] -extract-app-xsd:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-dojo-lib:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\www
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-platform:
+     [exec] 
+     [exec] -extract-platform-js:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common
+     [exec]      [move] Moving 744 files to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common
+     [exec]      [move] Moved 112 empty directories to 1 empty directory under C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common
+     [exec] 
+     [exec] -copy-app-icons:
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\images\mdpi\header_app_PhysicalCount_back_ON.png to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\ui\control\images\mdpi\header_back_ON.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\images\mdpi\header_app_PhysicalCount_back_OFF.png to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\ui\control\images\mdpi\header_back_OFF.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\images\mdpi\header_app_PhysicalCount_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\images\mdpi\header_app_PhysicalCount_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec] 
+     [exec] -extract-platform-js-and-configure-message-bundle:
+     [exec] 
+     [exec] -enable-real-bundle:
+     [exec] 
+     [exec] -extract-platform-miniapps:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\platform-artifacts
+     [exec]      [move] Moving 34 files to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\platform-artifacts
+     [exec]      [move] Moved 23 empty directories to 9 empty directories under C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\platform-artifacts
+     [exec] 
+     [exec] -extract-app-xsd:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-dojo-lib:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\www
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-platform:
+     [exec] 
+     [exec] -extract-platform-js:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common
+     [exec]      [move] Moving 744 files to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common
+     [exec]      [move] Moved 112 empty directories to 1 empty directory under C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common
+     [exec] 
+     [exec] -copy-app-icons:
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\images\mdpi\header_app_ServiceRequest_back_ON.png to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\ui\control\images\mdpi\header_back_ON.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\images\mdpi\header_app_ServiceRequest_back_OFF.png to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\ui\control\images\mdpi\header_back_OFF.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\images\mdpi\header_app_ServiceRequest_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\images\mdpi\header_app_ServiceRequest_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec] 
+     [exec] -extract-platform-js-and-configure-message-bundle:
+     [exec] 
+     [exec] -enable-real-bundle:
+     [exec] 
+     [exec] -extract-platform-miniapps:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\platform-artifacts
+     [exec]      [move] Moving 34 files to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\platform-artifacts
+     [exec]      [move] Moved 23 empty directories to 9 empty directories under C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\platform-artifacts
+     [exec] 
+     [exec] -extract-app-xsd:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-dojo-lib:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\www
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-platform:
+     [exec] 
+     [exec] -extract-platform-js:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common
+     [exec]      [move] Moving 744 files to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common
+     [exec]      [move] Moved 112 empty directories to 1 empty directory under C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common
+     [exec] 
+     [exec] -copy-app-icons:
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\images\mdpi\header_app_Transfers_back_ON.png to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\ui\control\images\mdpi\header_back_ON.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\images\mdpi\header_app_Transfers_back_OFF.png to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\ui\control\images\mdpi\header_back_OFF.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\images\mdpi\header_app_Transfers_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\images\mdpi\header_app_Transfers_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec] 
+     [exec] -extract-platform-js-and-configure-message-bundle:
+     [exec] 
+     [exec] -enable-real-bundle:
+     [exec] 
+     [exec] -extract-platform-miniapps:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\platform-artifacts
+     [exec]      [move] Moving 34 files to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\platform-artifacts
+     [exec]      [move] Moved 23 empty directories to 9 empty directories under C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\platform-artifacts
+     [exec] 
+     [exec] -extract-app-xsd:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-dojo-lib:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\www
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-platform:
+     [exec] 
+     [exec] -extract-platform-js:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common
+     [exec]      [move] Moving 744 files to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common
+     [exec]      [move] Moved 112 empty directories to 1 empty directory under C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common
+     [exec] 
+     [exec] -copy-app-icons:
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\images\mdpi\header_app_WorkApproval_back_ON.png to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\ui\control\images\mdpi\header_back_ON.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\images\mdpi\header_app_WorkApproval_back_OFF.png to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\ui\control\images\mdpi\header_back_OFF.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\images\mdpi\header_app_WorkApproval_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\images\mdpi\header_app_WorkApproval_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec] 
+     [exec] -extract-platform-js-and-configure-message-bundle:
+     [exec] 
+     [exec] -enable-real-bundle:
+     [exec] 
+     [exec] -extract-platform-miniapps:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\platform-artifacts
+     [exec]      [move] Moving 34 files to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\platform-artifacts
+     [exec]      [move] Moved 23 empty directories to 9 empty directories under C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\platform-artifacts
+     [exec] 
+     [exec] -extract-app-xsd:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-dojo-lib:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\www
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-platform:
+     [exec] 
+     [exec] -extract-platform-js:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common
+     [exec]      [move] Moving 744 files to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common
+     [exec]      [move] Moved 112 empty directories to 1 empty directory under C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common
+     [exec] 
+     [exec] -copy-app-icons:
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\images\mdpi\header_app_WorkExecution_back_ON.png to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\ui\control\images\mdpi\header_back_ON.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\images\mdpi\header_app_WorkExecution_back_OFF.png to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\ui\control\images\mdpi\header_back_OFF.png
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\images\mdpi\header_app_WorkExecution_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\ui\control\images\mdpi
+     [exec]      [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\images\mdpi\header_app_WorkExecution_noBack_OFF.svg to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\ui\control\images\mdpi\header_app_noBack.svg
+     [exec] 
+     [exec] -extract-platform-js-and-configure-message-bundle:
+     [exec] 
+     [exec] -enable-real-bundle:
+     [exec] 
+     [exec] -extract-platform-miniapps:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\platform-artifacts
+     [exec]      [move] Moving 34 files to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\platform-artifacts
+     [exec]      [move] Moved 23 empty directories to 9 empty directories under C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\platform-artifacts
+     [exec] 
+     [exec] -extract-app-xsd:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-dojo-lib:
+     [exec]    [delete] Deleting directory C:\IBM\Anywhere\MaximoAnywhere\www
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere
+     [exec] 
+     [exec] -extract-platform:
+     [exec] 
+     [exec] configure-app-feature:
+     [exec]      [echo] 2021-06-01 07:34:38> Configure Application Feature [ C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit ]
+     [exec] 
+     [exec] configure-features:
+     [exec]   [foreach] The nested fileset element is deprectated, use a nested path instead
+     [exec] 
+     [exec] configure-dataEncryption:
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:38> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:38> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:39> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:39> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:39> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:39> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:39> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:39> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:39> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:39> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:40> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:40> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:40> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:40> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:40> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:40> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:40> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:40> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\store
+     [exec] 
+     [exec] configure-app-feature:
+     [exec]      [echo] 2021-06-01 07:34:41> Configure Application Feature [ C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager ]
+     [exec] 
+     [exec] configure-features:
+     [exec]   [foreach] The nested fileset element is deprectated, use a nested path instead
+     [exec] 
+     [exec] configure-dataEncryption:
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:41> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:41> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:42> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:42> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:42> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:42> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:42> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:42> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:42> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:42> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:42> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:42> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:43> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:43> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:43> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:43> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:43> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:43> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\store
+     [exec] 
+     [exec] configure-app-feature:
+     [exec]      [echo] 2021-06-01 07:34:43> Configure Application Feature [ C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection ]
+     [exec] 
+     [exec] configure-features:
+     [exec]   [foreach] The nested fileset element is deprectated, use a nested path instead
+     [exec] 
+     [exec] configure-dataEncryption:
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:44> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:44> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:44> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:44> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:44> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:44> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:45> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:45> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:45> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:45> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:45> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:45> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:45> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:45> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:45> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:45> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:46> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:46> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\store
+     [exec] 
+     [exec] configure-app-feature:
+     [exec]      [echo] 2021-06-01 07:34:46> Configure Application Feature [ C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns ]
+     [exec] 
+     [exec] configure-features:
+     [exec]   [foreach] The nested fileset element is deprectated, use a nested path instead
+     [exec] 
+     [exec] configure-dataEncryption:
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:47> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:47> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:47> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:47> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:47> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:47> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:47> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:47> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:48> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:48> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:48> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:48> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:48> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:48> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:48> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:48> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:49> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:49> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\store
+     [exec] 
+     [exec] configure-app-feature:
+     [exec]      [echo] 2021-06-01 07:34:49> Configure Application Feature [ C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount ]
+     [exec] 
+     [exec] configure-features:
+     [exec]   [foreach] The nested fileset element is deprectated, use a nested path instead
+     [exec] 
+     [exec] configure-dataEncryption:
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:50> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:50> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:50> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:50> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:50> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:50> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:50> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:50> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:50> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:50> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:51> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:51> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:51> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:51> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:51> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:51> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:51> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:51> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\store
+     [exec] 
+     [exec] configure-app-feature:
+     [exec]      [echo] 2021-06-01 07:34:52> Configure Application Feature [ C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest ]
+     [exec] 
+     [exec] configure-features:
+     [exec]   [foreach] The nested fileset element is deprectated, use a nested path instead
+     [exec] 
+     [exec] configure-dataEncryption:
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:52> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:52> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:53> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:53> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:53> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:53> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:53> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:53> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:53> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:53> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:53> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:53> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:54> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:54> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:54> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:54> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:54> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:54> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\store
+     [exec] 
+     [exec] configure-app-feature:
+     [exec]      [echo] 2021-06-01 07:34:54> Configure Application Feature [ C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers ]
+     [exec] 
+     [exec] configure-features:
+     [exec]   [foreach] The nested fileset element is deprectated, use a nested path instead
+     [exec] 
+     [exec] configure-dataEncryption:
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:55> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:55> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:55> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:55> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:55> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:55> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:55> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:55> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:56> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:56> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:56> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:56> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:56> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:56> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:56> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:56> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:56> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:56> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\store
+     [exec] 
+     [exec] configure-app-feature:
+     [exec]      [echo] 2021-06-01 07:34:57> Configure Application Feature [ C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval ]
+     [exec] 
+     [exec] configure-features:
+     [exec]   [foreach] The nested fileset element is deprectated, use a nested path instead
+     [exec] 
+     [exec] configure-dataEncryption:
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:57> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:57> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:58> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:58> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:58> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:58> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:58> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:58> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:58> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:58> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:58> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:58> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:59> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:59> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:59> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:59> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:34:59> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:34:59> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\store
+     [exec] 
+     [exec] configure-app-feature:
+     [exec]      [echo] 2021-06-01 07:34:59> Configure Application Feature [ C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution ]
+     [exec] 
+     [exec] configure-features:
+     [exec]   [foreach] The nested fileset element is deprectated, use a nested path instead
+     [exec] 
+     [exec] configure-dataEncryption:
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:00> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:00> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:00> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:00> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:00> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:00> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:01> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:01> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:01> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:01> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:01> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:01> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:01> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:01> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:02> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:02> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:02> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:02> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\store
+     [exec] 
+     [exec] -configure-environment:
+     [exec] 
+     [exec] clean:
+     [exec] 
+     [exec] init:
+     [exec]      [echo] 2021-06-01 07:35:02> buildconfigchecksum = ${buildconfigchecksum}
+     [exec]      [echo] 2021-06-01 07:35:03> newbuildconfigchecksum = a6cb2a04c12eb618f57721aaa58d034d
+     [exec]      [echo] 2021-06-01 07:35:03> previous buildconfig checksum = ${buildconfigchecksum}, new buildconfig checksum = a6cb2a04c12eb618f57721aaa58d034d
+     [exec]      [echo] 2021-06-01 07:35:03> checksums match? = false
+     [exec] [propertyfile] Creating new property file: C:\IBM\Anywhere\MaximoAnywhere\.changetrack\.buildconfig\.buildconfigchecksum
+     [exec] 
+     [exec] configure-androidmanifest:
+     [exec] 
+     [exec] --configure-androidmanifest:
+     [exec]      [echo] 2021-06-01 07:35:03> configuring androidmanifest...
+     [exec] 
+     [exec] --configure-androidmanifest:
+     [exec]      [echo] 2021-06-01 07:35:03> configuring androidmanifest...
+     [exec] 
+     [exec] --configure-androidmanifest:
+     [exec]      [echo] 2021-06-01 07:35:03> configuring androidmanifest...
+     [exec] 
+     [exec] --configure-androidmanifest:
+     [exec]      [echo] 2021-06-01 07:35:04> configuring androidmanifest...
+     [exec] 
+     [exec] --configure-androidmanifest:
+     [exec]      [echo] 2021-06-01 07:35:04> configuring androidmanifest...
+     [exec] 
+     [exec] --configure-androidmanifest:
+     [exec]      [echo] 2021-06-01 07:35:04> configuring androidmanifest...
+     [exec] 
+     [exec] --configure-androidmanifest:
+     [exec]      [echo] 2021-06-01 07:35:04> configuring androidmanifest...
+     [exec] 
+     [exec] --configure-androidmanifest:
+     [exec]      [echo] 2021-06-01 07:35:04> configuring androidmanifest...
+     [exec] [replaceregexp] The following file is missing: 'C:\IBM\Anywhere\MaximoAnywhere\adapters\OSLCGenericAdapter\OSLCGenericAdapter.xml'
+     [exec] [replaceregexp] The following file is missing: 'C:\IBM\Anywhere\MaximoAnywhere\adapters\OSLCGenericAdapter\OSLCGenericAdapte
+     [exec] --configure-androidmanifest:
+     [exec]      [echo] 2021-06-01 07:35:05> configuring androidmanifest...
+     [exec] 
+     [exec] configure-adapter:
+     [exec]      [echr.xml'
+     [exec] [replaceregexp] The following file is missing: 'C:\IBM\Anywhere\MaximoAnywhere\adapters\OSLCGenericAdapter\OSLCGenericAdo] 2021-06-01 07:35:05> configure adapter xml
+     [exec] 
+     [exec] configure-authenticationconfig:
+     [exec]      [echo] 2021-06-01 07:35:05> configure autapter.xml'
+     [exec] henticationconfig
+     [exec] 
+     [exec] configure-worklightproperties:
+     [exec]      [echo] 2021-06-01 07:35:05> configure worklight properties
+     [exec] [propertyfile] Updating property file: C:\IBM\Anywhere\MaximoAnywhere\server\conf\worklight.properties
+     [exec]      [echo] 2021-06-01 07:35:05> Updated worklight.properties...
+     [exec] 
+     [exec] configure-dataEncryption:
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:05> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:05> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:05> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:05> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:05> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:05> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:05> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:05> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:06> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:06> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:06> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:06> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:06> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:06> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:06> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:06> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval\common\js\platform\store
+     [exec] 
+     [exec] --configure-dataEncryption:
+     [exec]      [echo] 2021-06-01 07:35:07> Check Enable JsonStore DataEncryption? true
+     [exec]      [echo] 2021-06-01 07:35:07> Overwriting file _StoreProviderSecurityEncrypted.js to _StoreProviderSecurity.js
+     [exec]      [echo] 				
+     [exec]      [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution\common\js\platform\store
+     [exec] 
+     [exec] configure-androidprojectproperties:
+     [exec] 
+     [exec] --configure-androidprojectproperties-impl:
+     [exec]      [echo] 2021-06-01 07:35:07> [config] checking android project properties C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit
+     [exec] 
+     [exec] --configure-androidprojectproperties-impl:
+     [exec]      [echo] 2021-06-01 07:35:07> [config] checking android project properties C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager
+     [exec] 
+     [exec] --configure-androidprojectproperties-impl:
+     [exec]      [echo] 2021-06-01 07:35:07> [config] checking android project properties C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection
+     [exec] 
+     [exec] --configure-androidprojectproperties-impl:
+     [exec]      [echo] 2021-06-01 07:35:07> [config] checking android project properties C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns
+     [exec] 
+     [exec] --configure-androidprojectproperties-impl:
+     [exec]      [echo] 2021-06-01 07:35:07> [config] checking android project properties C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount
+     [exec] 
+     [exec] --configure-androidprojectproperties-impl:
+     [exec]      [echo] 2021-06-01 07:35:08> [config] checking android project properties C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest
+     [exec] 
+     [exec] --configure-androidprojectproperties-impl:
+     [exec]      [echo] 2021-06-01 07:35:08> [config] checking android project properties C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers
+     [exec] 
+     [exec] --configure-androidprojectproperties-impl:
+     [exec]      [echo] 2021-06-01 07:35:08> [config] checking android project properties C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval
+     [exec] 
+     [exec] --configure-androidprojectproperties-impl:
+     [exec]      [echo] 2021-06-01 07:35:08> [config] checking android project properties C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution
+     [exec] 
+     [exec] configure:
+     [exec] 
+     [exec] export:
+     [exec] 
+     [exec] all:
+     [exec]      [echo] 2021-06-01 07:35:08> All build targets completed!
+     [exec] 
+     [exec] -install-artifactprocessor:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\libs\codegen\artifact-processor.zip into C:\IBM\Anywhere\MaximoAnywhere\libs\codegen
+     [exec]    [delete] Deleting: C:\IBM\Anywhere\MaximoAnywhere\libs\codegen\artifact-processor.zip
+     [exec] 
+     [exec] -process-artifact-all-apps:
+     [exec] 
+     [exec] apply-mxs-artifacts:
+     [exec] 
+     [exec] -apply-mxs-artifact:
+     [exec] 
+     [exec] -applymxs:
+     [exec]      [echo] 2021-06-01 07:35:09> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit/artifact/app.xml]
+     [exec]      [echo] 2021-06-01 07:35:09>  C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit/artifact/AssetAudit.mxs doesn't exist, skipping mxs apply 
+     [exec] 
+     [exec] -apply-mxs-artifact:
+     [exec] 
+     [exec] -applymxs:
+     [exec]      [echo] 2021-06-01 07:35:10> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager/artifact/app.xml]
+     [exec]      [echo] 2021-06-01 07:35:10>  C:\IBM\Anywhere\MaximoAnywhere\apps\AssetDataManager/artifact/AssetDataManager.mxs doesn't exist, skipping mxs apply 
+     [exec] 
+     [exec] -apply-mxs-artifact:
+     [exec] 
+     [exec] -applymxs:
+     [exec]      [echo] 2021-06-01 07:35:10> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection/artifact/app.xml]
+     [exec]      [echo] 2021-06-01 07:35:10>  C:\IBM\Anywhere\MaximoAnywhere\apps\Inspection/artifact/Inspection.mxs doesn't exist, skipping mxs apply 
+     [exec] 
+     [exec] -apply-mxs-artifact:
+     [exec] 
+     [exec] -applymxs:
+     [exec]      [echo] 2021-06-01 07:35:10> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns/artifact/app.xml]
+     [exec]      [echo] 2021-06-01 07:35:10>  C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns/artifact/IssuesReturns.mxs doesn't exist, skipping mxs apply 
+     [exec] 
+     [exec] -apply-mxs-artifact:
+     [exec] 
+     [exec] -applymxs:
+     [exec]      [echo] 2021-06-01 07:35:10> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount/artifact/app.xml]
+     [exec]      [echo] 2021-06-01 07:35:10>  C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount/artifact/PhysicalCount.mxs doesn't exist, skipping mxs apply 
+     [exec] 
+     [exec] -apply-mxs-artifact:
+     [exec] 
+     [exec] -applymxs:
+     [exec]      [echo] 2021-06-01 07:35:10> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest/artifact/app.xml]
+     [exec]      [echo] 2021-06-01 07:35:10>  C:\IBM\Anywhere\MaximoAnywhere\apps\ServiceRequest/artifact/ServiceRequest.mxs doesn't exist, skipping mxs apply 
+     [exec] 
+     [exec] -apply-mxs-artifact:
+     [exec] 
+     [exec] -applymxs:
+     [exec]      [echo] 2021-06-01 07:35:10> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers/artifact/app.xml]
+     [exec]      [echo] 2021-06-01 07:35:10>  C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers/artifact/Transfers.mxs doesn't exist, skipping mxs apply 
+     [exec] 
+     [exec] -apply-mxs-artifact:
+     [exec] 
+     [exec] -applymxs:
+     [exec]      [echo] 2021-06-01 07:35:10> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval/artifact/app.xml]
+     [exec]      [echo] 2021-06-01 07:35:10>  C:\IBM\Anywhere\MaximoAnywhere\apps\WorkApproval/artifact/WorkApproval.mxs doesn't exist, skipping mxs apply 
+     [exec] 
+     [exec] -apply-mxs-artifact:
+     [exec] 
+     [exec] -applymxs:
+     [exec]      [echo] 2021-06-01 07:35:10> Applying mxs diff file to artifact [C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution/artifact/app.xml]
+     [exec]      [echo] 2021-06-01 07:35:10>  C:\IBM\Anywhere\MaximoAnywhere\apps\WorkExecution/artifact/WorkExecution.mxs doesn't exist, skipping mxs apply 
+     [exec] 
+     [exec] -extract-platform-js:
+     [exec]     [unzip] Expanding: C:\IBM\Anywhere\MaximoAnywhere\build\managed\maximo-anywhere-platform.zip into C:\IBM\Anywhere\MaximoAnywhere\${app.dir}\common
+     [exec]      [move] Moving 744 files to C:\IBM\Anywhere\MaximoAnywhere\${app.dir}\common
+     [exec] 
+     [exec] -copy-app-icons:
+     [exec] 
+     [exec] -extract-platform-js-and-configure-message-bundle:
+     [exec] 
+     [exec] -enable-real-bundle:
+     [exec] 
+     [exec] install-anywhere-platform-only:
+     [exec]      [echo] 2021-06-01 07:35:14> Anywhere Platform installed successfully into all hybrid applications
+     [exec] 
+     [exec] BUILD SUCCESSFUL
+     [exec] Total time: 1 minute 30 seconds
+     [echo] Run Bat with C:\IBM\Anywhere and bldfile: build.xml completed with RC: 0
+
+runSh:
+
+runAntCall:
+     [echo] runAntCall completed

@@ -1,0 +1,1056 @@
+<project name="Anywhere-App-Platform-Installer" default="install-anywhere-platform-only" xmlns:ivy="antlib:org.apache.ivy.ant" basedir=".">
+	
+	<import file="util.xml" />
+	<loadproperties srcfile="${basedir}/build.properties" />
+	
+	<property name="ivy.install.version" value="2.3.0"/>
+	
+	<!-- definition of additional tasks needed to install platform -->
+	<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant">
+		<classpath>
+			<pathelement location="${basedir}/libs/build/ivy-${ivy.install.version}.jar" />
+		</classpath>
+	</taskdef>
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${basedir}/libs/build/ant-contrib-1.0b3.jar" />			
+		</classpath>
+	</taskdef>
+	<!-- 
+	<taskdef resource="com/worklight/ant/defaults.properties">
+	  <classpath>
+	    <pathelement location="${basedir}/libs/build/worklight-ant-builder.jar"/>
+	  </classpath>
+	</taskdef>
+	<taskdef resource="com/worklight/ant/defaults.properties">
+	  <classpath>
+	    <pathelement location="${basedir}/libs/build/worklight-ant-deployer.jar" />
+	  </classpath>
+	</taskdef>
+  	<taskdef name="native-deployer" classname="com.ibm.appcenter.ant.UploadApps">
+		<classpath>
+			<pathelement location="${basedir}/libs/build/applicationcenterdeploytool.jar" />
+			<pathelement location="${basedir}/libs/codegen/json4j.jar" />
+		</classpath>
+  	</taskdef>
+  	-->
+  	<!-- XMLTASK used for application-descriptor xml modifications for internal & external -->	
+  	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
+          <classpath>
+            <pathelement location="${basedir}/libs/build/xmltask-1.16.1.jar" />
+          </classpath>
+    </taskdef>
+  	
+	<condition property="platformzip.usage" value="url" else="file">
+       <matches pattern="^http.*" string="${platformzip.location}"/>
+    </condition>	
+	<condition property="platformzip.location.file" value="${platformzip.location}/[artifact]_${version.name}[revision].[ext]" else="${ivy.settings.dir}/[artifact]_${version.name}[revision].[ext]">
+	    <equals arg1="${platformzip.usage}" arg2="file"/>
+	</condition>
+	<condition property="platformzip.location.url" value="${platformzip.location}/[artifact]_${version.name}[revision].[ext]" else="">
+	    <equals arg1="${platformzip.usage}" arg2="url"/>
+	</condition>
+
+	<condition property="isMac"><!-- Mostly, Your building iOS only, customers can enable Android build as wll -->
+		<os family="mac" />
+	</condition>
+	<condition property="isUnix"><!-- Mostly, Your building Android only -->
+		<and>
+			<os family="unix" />
+			<not>
+				<os family="mac" />
+			</not>
+		</and>
+	</condition>
+	<condition property="isWindows"><!-- Mostly, Your building Android only -->
+		<os family="windows" />
+	</condition>		
+
+	<!-- targets -->
+	<record name="${basedir}/build.log" loglevel="debug"/>
+	<hostinfo/>
+
+	<!-- MFP Removal Changes -->
+	<!-- Try to set the url based on the current ipaddress, otherwise
+	     use what was given directly -->	
+    <!-- <propertyregex property="resolved.worklight.server.url" 
+        			input="${worklight.server.url}"
+        			regexp="\$\{local\.IPAddress\}"
+        			replace="${ADDR4}"/>
+	<if>
+		<not><isset property="resolved.worklight.server.url"/></not>
+		<then>
+			<property name="resolved.worklight.server.url" 
+					  value="${worklight.server.url}"/>
+		</then>
+	</if>
+	
+    <condition property="worklight.server.isrunning">
+        <http url="${resolved.worklight.server.url}" />
+    </condition>
+
+	<if>
+		<isset property="appCenter.server.url" />
+		<then>
+			<property name="resolved.appCenter.server.url" value="${appCenter.server.url}" />
+			<echotimestamp>Testing appCenter URL [${resolved.appCenter.server.url}]</echotimestamp>
+			<condition property="appCenter.server.isrunning">
+				<http url="${resolved.appCenter.server.url}/appcenterconsole" />
+			</condition>
+			<if>
+				<isset property="appCenter.server.isrunning"></isset>
+				<then>
+					<echotimestamp>Verified appCenter [${resolved.appCenter.server.url}] is running</echotimestamp>
+				</then>
+			</if>
+		</then>
+	</if>-->
+	
+	<target name="retrieve">
+		<!-- default to NOT install fixpack -->
+		<property name="install.fixpack.dependencies" value="false" />
+		
+		<echotimestamp>install.fixpack.dependencies: ${install.fixpack.dependencies} </echotimestamp>
+		
+		<echotimestamp>removing old cached platform zip to support new structure</echotimestamp>
+		<delete file="${basedir}/build/managed/maximo-anywhere-platform.zip" failonerror="false"/>
+		
+		<echotimestamp>removing old cached platform fixpack zip to support new structure</echotimestamp>
+		<delete file="${basedir}/build/managed/maximo-anywhere-platform-fixpack.zip" failonerror="false"/>
+		
+        <if>
+            <equals arg1="${install.fixpack.dependencies}" arg2="true"/>
+            <then>
+                <echotimestamp>Resolving fixpack install dependencies </echotimestamp>
+            	<antcall target="-retrieve-fixpack-install-files" />
+            </then>
+            <else>
+                <echotimestamp>Resolving full install dependencies </echotimestamp>
+            	<antcall target="-retrieve-full-install-files" />
+            </else>
+        </if>
+
+		<property name="managed.platform.zip" value="${basedir}/build/managed/maximo-anywhere-platform.zip"/>
+		<property name="fixpack.platform.zip" value="${basedir}/build/managed/maximo-anywhere-platform-fixpack.zip"/>
+		<property name="fixpack.working.dir"  value="${basedir}/build/managed/fixpack"/>
+	    
+	</target>
+	
+    <target name="-retrieve-fixpack-install-files" depends="-resolve-fixpack-install-files">
+       <ivy:retrieve pattern="build/managed/[artifact](_[classifier]).[ext]" conf="javascript" />      
+       <ivy:retrieve pattern="build/managed/[artifact](_[classifier]).[ext]" conf="javascript-fixpack" />      
+       <ivy:retrieve pattern="libs/codegen/[artifact](_[classifier]).[ext]" conf="artifact-processor" />
+    </target>
+	
+    <target name="-retrieve-full-install-files" depends="-resolve-full-install-files">
+       <ivy:retrieve pattern="build/managed/[artifact](_[classifier]).[ext]" conf="javascript" />         
+       <ivy:retrieve pattern="libs/codegen/[artifact](_[classifier]).[ext]" conf="artifact-processor" />
+    </target>
+           	
+	<target name="-resolve-fixpack-install-files" >
+        <ivy:resolve conf="javascript"/>
+        <ivy:resolve conf="javascript-fixpack"/>
+        <ivy:resolve conf="artifact-processor"/>
+	</target>
+	
+   <target name="-resolve-full-install-files" >
+        <ivy:resolve conf="javascript"/>
+        <ivy:resolve conf="artifact-processor"/>
+    </target>
+	
+	<target name="-extract-platform-js">
+	    <unzip src="${basedir}/build/managed/maximo-anywhere-platform.zip" 
+	        dest="${app.dir}/common">
+		    <patternset>
+		        <include name="platform/**"/>
+		    </patternset>
+	    </unzip>
+	    <if>
+	        <available file="${fixpack.platform.zip}"/>
+	        <then>
+	            <echotimestamp>unzipping the platform-fixpack overtop of the platform javascript</echotimestamp>
+	            <unzip src="${fixpack.platform.zip}" 
+	        		dest="${app.dir}/common">
+				    <patternset>
+				        <include name="platform/**"/>
+				    </patternset>
+			    </unzip>	
+	        </then>
+	    </if>
+	    <move todir="${app.dir}/common">
+	        <fileset dir="${app.dir}/common/platform"/>
+	    </move>
+	    
+		<antcall target="-copy-app-icons"/>
+		
+	</target>
+
+	<target name="-copy-app-icons">
+	    <!-- Dynamically Set the Header App Icon -->
+		<!-- Application Specific Icons Should be housed in common/images/mdpi/*.svg -->
+		<basename property="local.app.name" file="${app.dir}"/>
+		<if>
+		    <available file="${app.dir}/common/images/mdpi/header_app_${local.app.name}_back_ON.png"/>
+		    <then>
+		    	<copy verbose="true" overwrite="true"
+				file="${app.dir}/common/images/mdpi/header_app_${local.app.name}_back_ON.png"
+				tofile="${app.dir}/common/js/platform/ui/control/images/mdpi/header_back_ON.png" />    
+		    </then>
+		</if>
+		<if>
+		    <available file="${app.dir}/common/images/mdpi/header_app_${local.app.name}_back_OFF.png"/>
+		    <then>
+		    	<copy verbose="true" overwrite="true"
+				file="${app.dir}/common/images/mdpi/header_app_${local.app.name}_back_OFF.png"
+				tofile="${app.dir}/common/js/platform/ui/control/images/mdpi/header_back_OFF.png" />    
+		    </then>
+		</if>
+		<if>
+		    <available file="${app.dir}/common/images/mdpi/header_app_${local.app.name}_noBack_OFF.svg"/>
+		    <then>
+		    	<copy verbose="true" overwrite="true"
+				file="${app.dir}/common/images/mdpi/header_app_${local.app.name}_noBack_OFF.svg"
+				tofile="${app.dir}/common/js/platform/ui/control/images/mdpi/header_app_noBack.svg" />    
+		    </then>
+		</if>
+		<if>
+		    <available file="${app.dir}/common/images/mdpi/header_app_${local.app.name}_noBack_OFF.svg"/>
+		    <then>
+		    	<copy verbose="true" overwrite="true"
+				file="${app.dir}/common/images/mdpi/header_app_${local.app.name}_noBack_OFF.svg"
+				tofile="${app.dir}/common/js/platform/ui/control/images/mdpi/header_app_noBack.svg" />    
+		    </then>
+		</if>
+	</target>
+	
+	<target name="-enable-mock-bundle">
+	    <echotimestamp>${app.dir}/common/js/initOptions.js</echotimestamp>
+	    <replaceregexp file="${app.dir}/common/js/Startup.js"
+               match="(//)?has\.add\('anywhere-use-mock-bundles', true\);"
+               replace="has.add('anywhere-use-mock-bundles', true);"/>
+	    
+	    <replaceregexp file="${app.dir}/common/js/Startup.js"
+               match="(//)?has\.add\('anywhere-use-mock-bundles', false\);"
+               replace="//has.add('anywhere-use-mock-bundles', false);"/>
+
+	</target>
+
+	<target name="-enable-real-bundle">
+	    <replaceregexp file="${app.dir}/common/js/Startup.js"
+               match="(//)?has\.add\('anywhere-use-mock-bundles', false\);"
+               replace="has.add('anywhere-use-mock-bundles', false);"/>
+	    
+	    <replaceregexp file="${app.dir}/common/js/Startup.js"
+               match="(//)?has\.add\('anywhere-use-mock-bundles', true\);"
+               replace="//has.add('anywhere-use-mock-bundles', true);"/>
+
+	</target>
+	
+	<target name="-extract-platform-js-and-configure-message-bundle" depends="-extract-platform-js">
+	    <if>
+	        <equals arg1="${globalization.use.mock}" arg2="true"/>
+	        <then>
+			    <antcall target="-enable-mock-bundle"/>
+	        </then>
+	        <else>
+	            <antcall target="-enable-real-bundle"/>
+	        </else>
+	    </if>
+	</target>
+	
+	<target name="-extract-platform-miniapps">
+	    <unzip src="${basedir}/build/managed/maximo-anywhere-platform.zip" 
+	        dest="${app.dir}/platform-artifacts">
+		    <patternset>
+		        <include name="miniapps/*/**"/>
+		    </patternset>
+	    </unzip>
+	     <if>
+	        <available file="${fixpack.platform.zip}"/>
+	        <then>
+	            <echotimestamp>unzipping the platform-fixpack miniapps overtop of the platform miniapps</echotimestamp>
+	            <unzip src="${fixpack.platform.zip}" 
+	        		dest="${app.dir}/platform-artifacts">
+				    <patternset>
+				        <include name="miniapps/*/**"/>
+				    </patternset>
+			    </unzip>	
+	        </then>
+	    </if>
+	    
+	    <move todir="${app.dir}/platform-artifacts">
+	        <fileset dir="${app.dir}/platform-artifacts/miniapps"/>
+	    </move>
+	</target>
+	
+	<target name="-extract-app-xsd">
+	    <unzip src="${managed.platform.zip}" 
+	        dest="${basedir}">
+		    <patternset>
+		        <include name="build/app.xsd"/>
+		        <include name="build/version.txt"/>
+		        <include name="build/iddef.xml"/>
+		    	<!-- MFP Removal Changes -->
+		        <!-- <include name="build/tools/ArcGIS.zip"/>-->
+		    </patternset>
+	    </unzip>
+		<if>
+			<available file="${fixpack.platform.zip}"/>
+			<then>
+			    <unzip src="${fixpack.platform.zip}" 
+			        dest="${basedir}">
+				    <patternset>
+				        <include name="build/app.xsd"/>
+				        <include name="build/version.txt"/>
+				        <include name="build/iddef.xml"/>
+				    	<!-- MFP Removal Changes -->
+				        <!-- <include name="build/tools/ArcGIS.zip"/>-->
+				    </patternset>
+			    </unzip>	
+			</then>
+		</if>		
+	</target>
+	
+	<target name="-extract-dojo-lib">
+	    <delete dir="${basedir}/www"/>
+	    <unzip src="${managed.platform.zip}" 
+	        dest="${basedir}">
+		    <patternset>
+		        <include name="www/**"/>
+		    </patternset>
+	    </unzip>
+	    <if>
+			<available file="${fixpack.platform.zip}"/>
+			<then>
+		 	    <unzip src="${fixpack.platform.zip}" 
+			        dest="${basedir}">
+				    <patternset>
+				        <include name="www/**"/>
+				    </patternset>
+			    </unzip>
+			</then>
+		</if>
+	</target>
+
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-extract-platform-server-conf" depends="-extract-platform-server-all">
+	    <unzip src="${basedir}/build/managed/anywhere-server-all.zip" 
+	        dest="${basedir}/server"
+	        overwrite="false">
+		    <patternset>
+		        <include name="conf/**"/>
+		    </patternset>
+	    </unzip>
+	     <if>
+	        <available file="${fixpack.working.dir}/anywhere-server-all.zip"/>
+	        <then>
+	            <echotimestamp>platform fixpack zip exists</echotimestamp>
+			    <unzip src="${fixpack.working.dir}/anywhere-server-all.zip" 
+			        dest="${basedir}/server"
+			        overwrite="false">
+				    <patternset>
+				        <include name="conf/**"/>
+				    </patternset>
+			    </unzip>-->
+			     <!-- Need to overwrite the authenticationConfig.xml to add new notification support -->
+			     <!-- <unzip src="${fixpack.working.dir}/anywhere-server-all.zip" 
+			        dest="${basedir}/server"
+			        overwrite="true">
+				    <patternset>
+				        <include name="conf/authenticationConfig.xml"/>
+				    </patternset>
+			    </unzip>
+			</then>
+		</if>
+	    
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-extract-platform-server-adapter" depends="-extract-platform-server-all">
+	    <unzip src="${basedir}/build/managed/anywhere-server-all.zip" 
+	        dest="${basedir}/adapters/OSLCGenericAdapter">
+		    <patternset>
+		        <include name="adapter/**"/>
+		    </patternset>
+	    </unzip>
+	     <if>
+	        <available file="${fixpack.working.dir}/anywhere-server-all.zip"/>
+	        <then>
+	            <echotimestamp>platform fixpack zip exists</echotimestamp>
+			    <unzip src="${fixpack.working.dir}/anywhere-server-all.zip" 
+			        dest="${basedir}/adapters/OSLCGenericAdapter">
+				    <patternset>
+				        <include name="adapter/**"/>
+				    </patternset>
+			    </unzip>
+			</then>
+		</if>
+		<if>-->
+			<!-- Supports a delta platform zip where no adapter code is packaged! -->
+			<!-- <available file="${basedir}/adapters/OSLCGenericAdapter/adapter" type="dir" />
+			<then>
+				<move todir="${basedir}/adapters/OSLCGenericAdapter">
+					<fileset dir="${basedir}/adapters/OSLCGenericAdapter/adapter" />
+				</move>
+			</then>
+		</if>
+	 </target>-->
+				
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-extract-platform-server-lib" depends="-extract-platform-server-all">
+	    <unzip src="${basedir}/build/managed/anywhere-server-all.zip" 
+	        dest="${basedir}/server/lib">
+		    <patternset>
+		        <include name="anywhere-server.jar"/>
+		    </patternset>
+	    </unzip>
+	     <if>
+	        <available file="${fixpack.working.dir}/anywhere-server-all.zip"/>
+	        <then>
+	            <echotimestamp>platform fixpack zip exists</echotimestamp>
+			    <unzip src="${fixpack.working.dir}/anywhere-server-all.zip" 
+			        dest="${basedir}/server/lib">
+				    <patternset>
+				        <include name="anywhere-server.jar"/>
+				    </patternset>
+			    </unzip>
+			</then>
+		</if>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<target name="-extract-platform-build-lib"> <!--  depends="-extract-platform-server-all">-->
+	    <unzip src="${basedir}/build/managed/anywhere-build-libs.zip" 
+	        dest="${basedir}">
+		    <patternset>
+		        <include name="**/libs/build/*.jar"/>
+		        <!-- Have to skip the worklight jars since they cause ant java problems, they are checked directly into the app side -->
+		        <exclude name="**/libs/build/applicationcenterdeploytool.jar"/>
+		    	<!-- MFP Removal Changes -->
+		    	<!-- <exclude name="**/libs/build/worklight-ant-builder.jar"/>
+		        <exclude name="**/libs/build/worklight-ant-deployer.jar"/>-->
+		    </patternset>
+	    </unzip>
+	      <if>
+	        <available file="${fixpack.working.dir}/anywhere-build-libs.zip"/>
+	        <then>
+	            <echotimestamp>platform fixpack zip exists</echotimestamp>
+			    <unzip src="${fixpack.working.dir}/anywhere-build-libs.zip" 
+			        dest="${basedir}">
+				    <patternset>
+				        <include name="**/libs/build/*.jar"/>
+				        <!-- Have to skip the worklight jars since they cause ant java problems, they are checked directly into the app side -->
+				        <exclude name="**/libs/build/applicationcenterdeploytool.jar"/>
+				    	<!-- MFP Removal Changes -->
+				        <!-- <exclude name="**/libs/build/worklight-ant-builder.jar"/>
+				        <exclude name="**/libs/build/worklight-ant-deployer.jar"/>-->
+				    </patternset>
+			    </unzip>
+			</then>
+		</if>
+	</target>
+	
+	<target name="-extract-platform-server-all">
+	     <unzip src="${basedir}/build/managed/maximo-anywhere-platform.zip" 
+	        dest="${basedir}/build/managed">
+		    <patternset>
+		    	<!-- MFP Removal Changes -->
+		        <!-- <include name="anywhere-server-all.zip"/>-->
+		        <include name="anywhere-build-libs.zip"/>
+		    </patternset>
+	    </unzip>
+		<if>
+			<available file="${fixpack.platform.zip}"/>
+			<then>
+		 	    <unzip src="${fixpack.platform.zip}" 
+			        dest="${fixpack.working.dir}">
+				    <patternset>
+				    	<!-- MFP Removal Changes -->
+				        <!-- <include name="anywhere-server-all.zip"/>-->
+				        <include name="anywhere-build-libs.zip"/>
+				    </patternset>
+			    </unzip>
+			</then>
+		</if>
+	</target>
+	
+	<target name="-extract-plugins-zip">
+	     <unzip src="${managed.platform.zip}" 
+	         dest="${basedir}/build/managed">
+		    <patternset>
+		        <include name="plugins/**"/>
+		    </patternset>
+	    </unzip>
+		<if>
+			<available file="${fixpack.platform.zip}"/>
+			<then>
+			    <unzip src="${fixpack.platform.zip}" 
+			         dest="${basedir}/build/managed">
+				    <patternset>
+				        <include name="plugins/**"/>
+				    </patternset>
+			    </unzip>
+			</then>
+		</if>
+	</target>
+
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-extract-plugins-android" depends="-extract-plugins-zip">
+		<echotimestamp>Updating the android/native/res files!</echotimestamp>-->
+
+		<!-- Need to force the android libraries to be cleaned because the unzip with overwrite doesn't work -->
+	    <!-- <delete dir="${app.dir}/android/native/libs" failonerror="false"/>
+	    <echotimestamp>Replacing the ${app.dir}/android/native/libs directory with the latest from the platform</echotimestamp>
+	    <unzip src="${basedir}/build/managed/plugins/android/anywhere-plugins-android.zip" 
+	        dest="${app.dir}/android/native" overwrite="true">
+			<patternset>
+				<exclude name="**/values-*/**.*"/>    
+			</patternset>
+		</unzip>-->
+		<!-- pii files should always be overwritten! -->
+	    <!-- <unzip src="${basedir}/build/managed/plugins/android/anywhere-plugins-android.zip" 
+	        dest="${app.dir}/android/native" overwrite="true">
+			<patternset>
+				<include name="**/values-*/**.*"/>    
+			</patternset>
+		</unzip>-->
+		
+	    <!-- set app.name from app's application-descriptor.xml  -->
+        <!-- <xmltask source="${app.dir}/application-descriptor.xml" 
+              failWithoutMatch="true" 
+              preserveType="true" 
+              report="${xmltask.report}">
+        	  <copy path="/:application/:displayName/text()" property="app.name"/>
+          </xmltask>-->
+          
+         <!-- set app.id from app's application-descriptor.xml  -->
+        <!-- <xmltask source="${app.dir}/application-descriptor.xml" 
+              failWithoutMatch="false" 
+              preserveType="true" 
+              report="${xmltask.report}">
+        	  <copy path="/:application/@id" property="app.id"/>
+          </xmltask>-->
+          
+         <!-- Need to update the config.xml files appID from the shared location -->
+	    <!-- <replace token="PluginDevelopmentID" value="${app.id}" encoding="UTF-8">
+			<fileset dir="${app.dir}/android/native" includes="**/*">
+			    <include name="config.xml" />
+			    <containsregexp expression="PluginDevelopmentID"/>
+			</fileset>
+	    </replace>-->
+	    
+	     <!-- set app.package.id from app's application-descriptor.xml  -->
+        <!-- <xmltask source="${app.dir}/application-descriptor.xml" 
+             failWithoutMatch="false" 
+             preserveType="true" 
+             report="${xmltask.report}">
+		  	<copy path="/:application/:android/:security/:packageName/text()" property="app.package.id"/>
+         </xmltask>-->
+         
+        <!-- remove any blank spaces, break lines and tabs -->
+        <!-- <propertyregex property="app.package.id.trimmed" input="${app.package.id}" regexp="(\t)*(\n)*( )*" replace="" global="true" />-->
+        
+	    <!-- Need to update applicationId from config.xml with correct package name -->
+	    <!-- <replace token="PluginDevelopmentPackageID" value="${app.package.id.trimmed}" encoding="UTF-8">
+			<fileset dir="${app.dir}/android/native" includes="**/*">
+			    <include name="config.xml" />
+			    <containsregexp expression="PluginDevelopmentPackageID"/>
+			</fileset>
+	    </replace>-->
+	    
+	    <!-- manipulation of pii utf-8 encoded files needs the encoding designation
+	         otherwise, the text file will have some corrupted characters -->
+	    <!-- <replace token="PluginDevelopment" value="${app.name}" encoding="UTF-8">
+			<fileset dir="${app.dir}/android/native" includes="**/*">
+			    <containsregexp expression="PluginDevelopment"/>
+			</fileset>
+	    </replace>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-extract-plugins-ios" if="isMac">
+		<echotimestamp message="Extracting ios plugin code"/>
+		<basename property="app.name" file="${app.dir}"/>
+		<loadproperties srcFile="${app.dir}/app-feature.properties" prefix="local"/>
+		
+		<if>
+			<or>
+				<equals arg1="${map.enabled}" arg2="true" />
+				<equals arg1="${local.map.enabled}" arg2="true"/>
+			</or>
+			<then>
+				<echotimestamp>Map enabled</echotimestamp>
+				<property name="extractmaplibrary" value="true"/>
+			</then>
+			<else>
+				<property name="extractmaplibrary" value="false"/>
+			</else>
+		</if>
+		
+		<if>
+			<and>
+				<equals arg1="${extractmaplibrary}" arg2="true"/>
+				<not>
+					<equals arg1="${app.name}" arg2="PhysicalCount"/>
+				</not>
+				<not>
+					<equals arg1="${app.name}" arg2="WorkApproval"/>
+				</not>
+			</and>
+			<then>
+				<echotimestamp>Map feture enabled. Extracting iOS plugin zip!</echotimestamp>
+			    <unzip src="${basedir}/build/managed/plugins/iphone/anywhere-plugins-ios.zip" 
+			        dest="${app.dir}/iphone" overwrite="true">
+				</unzip>
+		
+				<available file="${user.home}/Downloads/Manhattan.tpk" 
+					type="file"
+		           	property="local.user.home.manhattan.present"/>
+				<if>
+				    <and>
+				    	<isset property="local.user.home.manhattan.present" />
+					    <isset property="anywhere.override.tpk" />
+				    </and>
+					<then>
+						<echotimestamp>Using Manhattan.tpk from ${user.home}/Downloads/Manhattan.tpk</echotimestamp>
+						<copy verbose="true" overwrite="true" file="${user.home}/Downloads/Manhattan.tpk"
+							tofile="${app.dir}/iphone/native/ISIImage.bundle/Manhattan.tpk" />
+					</then>
+				</if>
+				<antcall target="-extract-esri-ios-sdk"/>
+			</then>
+		</if>
+		<echotimestamp>Removing old WorklightSDK ${app.dir}/iphone/native/WorklightSDK</echotimestamp>
+		<delete dir="${app.dir}/iphone/native/WorklightSDK" failonerror="false"/>
+		<echotimestamp>Extract Core Library</echotimestamp>
+		
+		<unzip
+			src="${basedir}/build/managed/plugins/iphone/anywhere-plugins-ios.zip"
+			dest="${app.dir}/iphone" overwrite="true">
+			<patternset>
+				<include name="**/*ISIStaticLib*/*"/>
+				<include name="**/libISIStatic*.*"/>
+				<include name="**/Resources/*"/>
+				<include name="**/config.xml"/>
+                <include name="**/main.css"/>
+                <include name="native/CordovaLib/**/*"/>
+                <include name="native/FipsHttp/**/*"/>
+				<include name="native/Frameworks/**/*"/>
+				<include name="native/Settings.bundle/**/*"/>
+				<include name="native/Tealeaf/**/*"/>
+			</patternset>
+		</unzip>
+			
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-extract-plugins-windows8" depends="-extract-plugins-zip">
+		<echotimestamp>Updating the windows/native files!</echotimestamp>
+
+		<available file="${app.dir}/windows8/native" type="dir" property="windows8.native.exists"/>
+        <if>
+        	<isset property="windows8.native.exists"/>
+        	<then>
+        	    <basename property="local.app.name" file="${app.dir}"/>-->
+        		<!-- First import into the root directory -->
+        		<!-- have to manually delete certain files because unzip overwrite doesn't work -->
+        		<!-- <delete dir="${app.dir}/windows8/native/buildtarget" failonerror="false"/>        		
+        	    <unzip src="${basedir}/build/managed/plugins/windows8/anywhere-plugins-windows8.zip" 
+        	        dest="${app.dir}/windows8/native" overwrite="true" >
+        			<patternset>
+        			    <include name="config.xml"/>
+        			    <include name="MaximoAnywhere_TemporaryKey.pfx"/>
+        			     <include name="buildtarget/**"/>
+        			</patternset>
+        		</unzip>-->
+        		
+        		<!-- Then import into new Shared location -->
+        		<!-- have to manually delete certain files because unzip overwrite doesn't work -->
+        		<!-- <delete file="${app.dir}/windows8/native/${local.app.name}.Shared/AuthWinRT.targets" failonerror="false"/>
+        		<delete file="${app.dir}/windows8/native/${local.app.name}.Shared/JSONStoreWin8.winmd" failonerror="false"/>
+        		<delete file="${app.dir}/windows8/native/${local.app.name}.Shared/JSONStoreWin8Lib.dll" failonerror="false"/>
+        		<delete file="${app.dir}/windows8/native/${local.app.name}.Shared/Newtonsoft.Json.dll" failonerror="false"/>
+        		<delete file="${app.dir}/windows8/native/${local.app.name}.Shared/SharpCompress.dll" failonerror="false"/>
+        		<delete file="${app.dir}/windows8/native/${local.app.name}.Shared/worklight-windows8.dll" failonerror="false"/>
+        		<delete file="${app.dir}/windows8/native/${local.app.name}.Shared/ZipHelperWinRT.winmd" failonerror="false"/>
+        	    <unzip src="${basedir}/build/managed/plugins/windows8/anywhere-plugins-windows8.zip" 
+        	        dest="${app.dir}/windows8/native/${local.app.name}.Shared" overwrite="true" >
+        			<patternset>
+        			    <exclude name="config.xml"/>
+        			    <exclude name="MaximoAnywhere_TemporaryKey.pfx"/>
+        			    <exclude name="buildtarget/**"/>
+        			</patternset>
+        		</unzip>-->
+        		
+        		<!-- doing some cleanup with files we no longer use -->
+        		<!-- <if>
+        			<available file="${app.dir}/windows8/native/packages" type="dir" />
+        			<then>
+        				<delete dir="${app.dir}/windows8/native/packages" failonerror="false" />
+        				<delete file="${app.dir}/windows8/native/WinRTBarcodeReader.winmd" failonerror="false"/>
+        				<delete file="${app.dir}/windows8/native/ZXing.winmd" failonerror="false"/>
+        			</then>
+        		</if>
+        	</then>
+        </if>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-extract-esri-ios-sdk">-->
+		<!-- Extract the ESRI iOS SDK .zip if it exists -->
+		<!-- <property name="esriiossdk" value="${basedir}/build/tools/ArcGIS.zip"/>
+		<available file="${esriiossdk}" type="file"
+          	property="local.esriiossdk.present"/>
+        <if>
+        	<isset property="local.esriiossdk.present"/>
+        	<then>
+        		<unzip src="${esriiossdk}" dest="${basedir}/build/tools"/>
+        		<delete file="${esriiossdk}"/>
+        	</then>
+        </if>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-extract-plugins" depends="-extract-plugins-android, -extract-plugins-ios, -extract-plugins-windows8"/> -->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-extract-platform-server" depends="-extract-platform-server-lib,-extract-platform-server-conf" /> -->
+	<!-- Update for MFP Removal-->
+	<target name="-extract-platform" depends="-extract-platform-js-and-configure-message-bundle,-extract-platform-miniapps,-extract-app-xsd,-extract-dojo-lib" />
+
+
+	<!-- MFP Removal Changes -->
+    <!-- <target name="-extract-map-plugins-for-ios" if="isMac">-->
+        <!-- extract the map plugins -->
+        <!-- <foreach target="-extract-plugins-ios" param="app.dir"
+            inheritAll="true">
+            <path>
+                <dirset dir="${basedir}/apps">
+                    <include name="*" />
+                </dirset>
+            </path>
+        </foreach>-->
+
+        <!-- configure the apps updating the pbxproj -->
+        <!--<foreach target="configure-app-feature" param="application.home"
+            inheritAll="true">
+            <path>
+                <dirset dir="${basedir}/apps">
+                    <include name="*" />
+                </dirset>
+            </path>
+        </foreach>
+    </target>-->
+
+	<target name="-install-platform" depends="retrieve">
+		<foreach target="-extract-platform" param="app.dir"
+			inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps">
+					<include name="*" />
+				</dirset>
+			</path>
+		</foreach>
+		<if>
+			<isset property="anywhere.debug"/>
+			<then>
+				<delete file="${basedir}/build/managed/maximo-anywhere-platform.zip"/>
+			</then>
+		</if>
+		<foreach target="configure-app-feature" param="application.home"
+			inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps">
+					<include name="*" />
+				</dirset>
+			</path>
+		</foreach>
+		<antcall target="-configure-environment" />
+	</target>
+		
+	<target name="-install-artifactprocessor" depends="retrieve">
+	    <unzip src="${basedir}/libs/codegen/artifact-processor.zip" dest="${basedir}/libs/codegen"/>
+	    <delete file="${basedir}/libs/codegen/artifact-processor.zip"/>
+	</target>
+	
+	<target name="install-anywhere-platform" depends="-clean-platform-folders-from-all-apps,-install-platform,-process-artifact-all-apps,build-and-deploy-all">
+		<echotimestamp>Anywhere Platform installed successfully into all hybrid applications</echotimestamp>
+	</target>
+
+	<target name="install-anywhere-platform-only" 
+		depends="-clean-platform-folders-from-all-apps,
+		-install-platform,
+		-process-artifact-all-apps,
+		-extract-platform-js-and-configure-message-bundle">
+		<echotimestamp>Anywhere Platform installed successfully into all hybrid applications</echotimestamp>
+	</target>
+
+	<target name="configure-app-feature">
+		<echotimestamp>Configure Application Feature [ ${application.home} ]</echotimestamp>
+		<ant antfile="${basedir}/build-configuration.xml" target="configure-features">
+    		<property name="local.application.home" value="${application.home}"/>
+    	</ant>
+		<ant antfile="${basedir}/build-configuration.xml" target="configure-dataEncryption">
+    		<property name="local.application.home" value="${application.home}"/>
+    	</ant>
+	</target>	
+
+	<target name="-configure-environment">
+		<ant antfile="build-configuration.xml" target="all"/>
+	</target>
+
+	<!-- MFP Removal Changes -->
+	<!-- <target name="build-war">
+		<ant antfile="anywhere-apps-builder.xml" target="build-war"/>
+	</target>-->
+	
+	<target name="build-and-deploy-all">
+		<ant antfile="anywhere-artifact-processor.xml" />
+		<ant antfile="anywhere-apps-builder.xml"/>
+	</target>
+
+	<!-- MFP Removal Changes -->
+	<!-- <target name="build-and-deploy-all-native">
+		<ant antfile="anywhere-apps-builder.xml" target="build-and-deploy-all-native"/>
+	</target>-->
+	
+		
+	<target name="force-reinstall-anywhere-platform" depends="clean-global-cache, install-anywhere-platform"/>
+	
+	<target name="clean-local-build-dir">
+		<echotimestamp>Cleaning ${basedir}/build/managed</echotimestamp>
+		<delete dir="${basedir}/build/managed"/>
+	</target>
+    <target name="clean-global-cache" depends="clean-local-build-dir">
+        <ivy:cleancache/>
+    </target>
+    
+    <target name="-clean-platform-folders">
+        <delete dir="${application.home}/platform-artifacts" />
+        <delete dir="${application.home}/common/js/platform" />
+        <delete dir="${application.home}/common/js/generated" failonerror="false"/>
+        <delete file="${application.home}/common/js/initOptions.js" />
+        <delete file="${application.home}/common/js/Startup.js" />
+    </target>
+    
+    <target name="-clean-platform-folders-from-all-apps">
+	    <foreach target="-clean-platform-folders" param="application.home" inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps">
+					<include name="*"/>
+				</dirset>
+			</path>
+	    </foreach>
+	    
+	    <delete includeemptydirs="true" quiet="true">
+    		<fileset dir="${basedir}/.changetrack" includes="**/*"/>
+  		</delete>
+    </target>    
+
+    <target name="-process-artifact-all-apps" depends="-install-artifactprocessor">
+    	<property name="update.artifact.timestamps" value="true" />
+    	<!-- merge the mxs file for each app from any fixpack or release -->
+    	<ant antfile="app-sparse-xml-processor.xml" target="apply-mxs-artifacts">
+    		<property name="working.app.basedir" value="${basedir}/apps"/>
+    	</ant>
+    	
+    	<if>
+    		<equals arg1="${update.artifact.timestamps}" arg2="true"/>
+    		<then>
+    			<!--  update the version in the top level artifact element (app or layout) -->
+    	    	<ant antfile="app-artifact-version-updater.xml"/>
+    		</then>
+    	</if>
+
+    </target>	
+	
+	<target name="get-oslcdocs"
+		description="Connect to the back end server and download OSLC shape documents">
+		<ant antfile="anywhere-rdfs-puller.xml"/>
+	</target>
+	
+	
+	<!-- START UNIT TEST INSTALL -->
+	
+	<target name="-setup-app-test-init">
+	    <pathconvert property="app.dir.system.agnostic" dirsep="/">
+    		<path location="${app.dir}"/>
+		</pathconvert>
+	    <propertyregex property="app.name"
+        	input="${app.dir.system.agnostic}"
+        	regexp=".*/(.*)$"
+        	select="\1"/>	    	    
+	</target>
+	
+	<target name="-unzip-unittest-utils">
+	    <unzip src="${basedir}/build/managed/anywhere-unittest.zip" 
+	        dest="${basedir}/client-runtime-test/${app.name}">
+		    <patternset>
+		        <include name="runner/web-unit/**/*"/>
+		    </patternset>
+	    </unzip>
+	    
+	    <move todir="${basedir}/client-runtime-test/${app.name}">
+	        <fileset dir="${basedir}/client-runtime-test/${app.name}/runner" includes="web-unit/**"/>
+	    </move>
+	    <delete dir="${basedir}/client-runtime-test/${app.name}/runner" />
+	</target>
+		
+	<target name="-add-paths-to-runner-config">
+	    <replaceregexp file="${basedir}/client-runtime-test/JsJUnitTestRunner/runner/runner-config.js"
+	        		   match="/\* PLATFORM: START \*/.*/\* PLATFORM: END \*/"
+	        		   replace=""
+	        		   flags="s" />
+	
+	    <property name="app.name.firstLower" value="${app.name}" />
+	    
+	    <script language="javascript">
+	        <![CDATA[
+	        var appName = project.getProperty('app.name');
+	        var appNameFirstLower = appName.substr(0,1).toLowerCase() + appName.substr(1);
+	        project.setProperty('app.name.firstLower', appNameFirstLower);
+	        ]]>
+	    </script>
+	    	    
+	    <mkdir dir="${basedir}/client-runtime-test/${app.name}/web-unit/js/${app.name.firstLower}Test/" />
+	    	    
+	    <replace file="${basedir}/client-runtime-test/JsJUnitTestRunner/runner/runner-config.js"
+	        	 token="/* APPLICATIONS: START */">
+	        <replacevalue expandProperties="true">
+<![CDATA[/* APPLICATIONS: START */
+exports.dojoPaths.${app.name} = {
+	"platformTest"    : "../../client-runtime-test/${app.name}/web-unit/js/platformTest/",
+	"${app.name.firstLower}Test" : "../../client-runtime-test/${app.name}/web-unit/js/${app.name.firstLower}Test/",
+	"platform"        : "../../apps/${app.name}/common/js/platform",
+	"application"     : "../../apps/${app.name}/common/js/application",
+	"generated"       : "../../apps/${app.name}/common/js/generated",
+};]]>
+	        </replacevalue>
+	    </replace>
+	</target>
+	
+	<target name="-check-classpath-has-source-folders">
+	    <condition property="classpath.has.source.folder">
+	        <resourcecontains resource="${basedir}/.classpath" substring="client-runtime-test/${app.name}/web-unit/js" />
+	    </condition>
+	</target>
+	
+	<target name="-add-test-source-folder-to-classpath" depends="-check-classpath-has-source-folders" unless="classpath.has.source.folder">
+		<xmltask source="${basedir}/.classpath" 
+            dest="${basedir}/.classpath" 
+            failWithoutMatch="true" 
+            preserveType="true" 
+            report="true">
+			<insert path="/classpath/classpathentry[last()]" position="after">
+                <![CDATA[
+<classpathentry kind="src" path="client-runtime-test/${app.name}/web-unit/js"/>
+				 ]]>
+			 </insert>
+		</xmltask>
+	</target>
+	
+	<target name="-setup-app-test" 
+	    	depends="-setup-app-test-init,
+	    			 -unzip-unittest-utils,
+	    			 -add-paths-to-runner-config,
+	    			 -add-test-source-folder-to-classpath">
+	</target>
+	
+	<target name="-unzip-unittest-runner">
+	    <unzip src="${basedir}/build/managed/anywhere-unittest.zip" 
+	        dest="${basedir}/client-runtime-test">
+		    <patternset>
+		        <include name="runner/JsJUnitTestRunner/**/*"/>
+		    </patternset>
+	    </unzip>
+	    
+	    <unzip src="${basedir}/build/managed/anywhere-unittest.zip" 
+	        dest="${basedir}/libs/test">
+		    <patternset>
+		        <include name="libs/*"/>
+		    </patternset>
+	    </unzip>
+	   	 	    
+	    <move todir="${basedir}/client-runtime-test">
+	        <fileset dir="${basedir}/client-runtime-test/runner" includes="JsJUnitTestRunner/**"/>
+	    </move>
+	   	 	    
+	    <move todir="${basedir}/libs/test">
+	        <fileset dir="${basedir}/libs/test/libs" includes="*"/>
+	    </move>
+	    	    
+	    <delete dir="${basedir}/client-runtime-test/runner" />
+	    <delete dir="${basedir}/libs/test/libs" />
+	   	
+	    <chmod file="${basedir}/client-runtime-test/JsJUnitTestRunner/bin/phantomjs32" perm="+x" />
+	    <chmod file="${basedir}/client-runtime-test/JsJUnitTestRunner/bin/phantomjs64" perm="+x" />
+	    <chmod file="${basedir}/client-runtime-test/JsJUnitTestRunner/bin/phantomjs" perm="+x" />
+	    	    
+	</target>
+	
+	<target name="-check-classpath-has-jars">
+	    <condition property="classpath.has.jars">
+	        <resourcecontains resource="${basedir}/.classpath" substring="libs/test/anywhere-unittest.jar" />
+	    </condition>
+	</target>
+	
+	<target name="-add-unittest-deps-to-classpath" depends="-check-classpath-has-jars" unless="classpath.has.jars">
+		<!-- jars must be placed on top of classpath list due to
+		some inconsistencies with worklight jar -->
+		<xmltask source="${basedir}/.classpath" 
+            dest="${basedir}/.classpath" 
+            failWithoutMatch="true" 
+            preserveType="true" 
+            report="true">
+			<insert path="/classpath/classpathentry[1]" position="before">
+                <![CDATA[
+<classpathentry kind="lib" path="libs/test/anywhere-unittest.jar"/>
+<classpathentry kind="lib" path="libs/test/commons-logging-1.1.3.jar"/>
+<classpathentry kind="lib" path="libs/test/fluent-hc-4.3.1.jar"/>
+<classpathentry kind="lib" path="libs/test/hamcrest-core-1.3.jar"/>
+<classpathentry kind="lib" path="libs/test/httpcore-4.3.jar"/>
+<classpathentry kind="lib" path="libs/test/JSON4J_Apache.jar"/>
+<classpathentry kind="lib" path="libs/test/junit-4.11.jar"/>
+<classpathentry kind="lib" path="libs/test/httpclient-4.3.1.jar"/>
+				 ]]>
+			 </insert>
+		</xmltask>
+	    	    
+	</target>
+	
+	<target name="-setup-app-test-all">
+	    <foreach target="-setup-app-test" param="app.dir" inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps">
+					<include name="*"/>
+				</dirset>
+			</path>
+	    </foreach>
+	</target>
+	
+	<target name="-remove-platform-paths-from-runner-config">
+	    <replaceregexp file="${basedir}/client-runtime-test/JsJUnitTestRunner/runner/runner-config.js"
+	        		   match="/\* PLATFORM: START \*/.*/\* PLATFORM: END \*/"
+	        		   replace=""
+	        		   flags="s" />
+	</target>
+
+	<target name="-retrieve-unittest" depends="-resolve-unittest-files">
+		<ivy:retrieve pattern="build/managed/[artifact](_[classifier]).[ext]" conf="unittest" />
+	</target>	
+	
+   <target name="-resolve-unittest-files" >
+        <ivy:resolve conf="unittest"/>
+    </target>
+		
+	<target name="install-unittest-runner"
+	    	depends="-retrieve-unittest,
+	    			 -unzip-unittest-runner,
+	    			 -add-unittest-deps-to-classpath,
+	    			 -remove-platform-paths-from-runner-config,
+	    			 -setup-app-test-all" 
+	    	description="Install the Javascript Unit Test runner engine" />
+	
+	<!-- END UNIT TEST INSTALL -->
+		
+</project>

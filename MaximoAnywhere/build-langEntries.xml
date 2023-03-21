@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM 5725-M39 (C) COPYRIGHT IBM CORP. 
+	2013 All Rights Reserved US Government Users Restricted Rights - Use supported="duplication 
+	or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. -->
+
+<langEntries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.ibm.com/maximo/anywhere" version="1.0">
+
+	<langEntry id="zh" supported="true" mocktag="" />
+	<langEntry id="zh-tw" supported="true" mocktag="" />
+	<langEntry id="ru" supported="true" mocktag="" />
+	<langEntry id="pt" supported="true" mocktag="" />
+	<langEntry id="ko" supported="true" mocktag="" />
+	<langEntry id="ja" supported="true" mocktag="" />
+	<langEntry id="it" supported="true" mocktag="" />
+	<langEntry id="fr" supported="true" mocktag="" />
+	<langEntry id="es" supported="true" mocktag="" />
+	<langEntry id="de" supported="true" mocktag="" />
+	<langEntry id="da" supported="true" mocktag="" />
+	<langEntry id="cs" supported="true" mocktag="" />
+	<langEntry id="nl" supported="true" mocktag="" />
+	<langEntry id="fi" supported="true" mocktag="" />
+	<langEntry id="pl" supported="true" mocktag="" />
+	<langEntry id="nb" supported="true" mocktag="" />
+	<langEntry id="sv" supported="true" mocktag="" />
+	<langEntry id="sl" supported="true" mocktag="" />
+	<langEntry id="sk" supported="true" mocktag="" />
+	<langEntry id="hr" supported="true" mocktag="" />
+	<langEntry id="hu" supported="true" mocktag="" />
+	<langEntry id="en-gb" supported="true" mocktag="" />
+	
+	<langEntry id="tr" supported="false" mocktag="" />
+	<langEntry id="th" supported="false" mocktag="" />
+	<langEntry id="ro" supported="false" mocktag="" />
+	<langEntry id="pt-br" supported="false" mocktag="" />
+	<langEntry id="kk" supported="false" mocktag="" />
+	<langEntry id="he" supported="false" mocktag="" />
+	<langEntry id="el" supported="false" mocktag="" />
+	<langEntry id="ca" supported="false" mocktag="" />
+	<langEntry id="ar" supported="false" mocktag="" />
+
+</langEntries>

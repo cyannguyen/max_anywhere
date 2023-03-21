@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Platform iFix Package" default="all" basedir=".">
+
+	<description>
+		Package Platform iFix into one file and publish it online
+	</description>
+
+	<!-- :: Begin Common Setup Steps -->
+	<basename property="ant.file.basename" file="${ant.file}"
+		suffix=".xml" />
+	<record name="${basedir}/${ant.file.basename}.log" logLevel="verbose" />
+	<include file="${basedir}/build-taskdef.xml" />
+	<!-- :: End Common Setup Steps -->
+
+	<macrodef name="genVersion">
+		<attribute name="versionFile" />
+		<attribute name="buildTime" />
+		<sequential>
+			<echo file="@{versionFile}" append="false">
+				build.datetime=@{buildTime}${line.separator}
+				build.label=${buildLabel}${line.separator}
+				build.resultUUID=${buildResultUUID}
+			</echo>
+		</sequential>
+	</macrodef>
+
+	<!-- :: Begin Property Definitions -->
+
+	<property name="publish-dir" value="" />
+	<property name="adminpmp.zip.name" value="anywhereadmin_pmp_deploy_latest.zip" />
+	<property name="oslcpmp.zip.name" value="oslcos_pmp_deploy_latest.zip" />
+	<property name="platform.delta.zip.name" value="platform-Latest.delta.zip" />
+	<property name="maximo.anywhere.delta.zip.name" value="MaximoAnywhere_7.6.1.0.latest.delta.zip" />
+	<property name="temp-dir" value="${basedir}/bin/iFix" />
+	<property name="final.zipname.release" value="761iFix.zip" />
+	<property name="current.gsa.release.location" value="7.6.1HF" />
+	<property name="current.artifact.platform.gsa.location"
+		value="http://pokgsa.ibm.com/projects/m/maximoanywhereplatform/${current.gsa.release.location}/releases/released_to_qa/platform" />
+			
+
+	<!-- ::End Property Definitions -->
+
+	<target name="init"
+		description="Create all necessary folders, files, and properties needed for this build">
+		<mkdir dir="${temp-dir}" />
+	</target>
+	
+	<target name="get-adminpmp-zip">
+	  <if>
+	  	 <equals arg1="${current.gsa.release.location}" arg2="3Q2016/purple"/>
+			<then>
+					<get src="${current.artifact.platform.gsa.location}/oslc76/${adminpmp.zip.name}"
+						dest="${temp-dir}" usetimestamp="false"	verbose="on" />
+			</then>
+	  		<else>
+				<get src="${current.artifact.platform.gsa.location}/${adminpmp.zip.name}"
+						dest="${temp-dir}" usetimestamp="false"	verbose="on" />
+			</else>
+		</if>    
+	</target>
+	
+	<target name="get-oslcpmp-zip">
+	  <if>
+	  	<equals arg1="${current.gsa.release.location}" arg2="3Q2016/purple"/>
+			<then>
+					<get src="${current.artifact.platform.gsa.location}/oslc76/${oslcpmp.zip.name}"
+						dest="${temp-dir}" usetimestamp="false"	verbose="on" />
+			</then>
+	        <else>
+				<get src="${current.artifact.platform.gsa.location}/${oslcpmp.zip.name}"
+						dest="${temp-dir}" usetimestamp="false"	verbose="on" />
+	         	</else>
+	         </if>
+	</target>	
+				
+	<target name="get-platform-delta-zip">
+        <get src="http://pokgsa.ibm.com/projects/m/maximoanywhereplatform/${current.gsa.release.location}/releases/released_to_qa/platform/${platform.delta.zip.name}"
+			dest="${temp-dir}" usetimestamp="false"	verbose="on" />
+	</target>
+	
+	<target name="get-maximo-anywhere-delta-zip">
+        <get src="http://pokgsa.ibm.com/projects/m/maximoanywhereplatform/${current.gsa.release.location}/releases/released_to_qa/apps/${maximo.anywhere.delta.zip.name}"
+			dest="${temp-dir}" usetimestamp="false"	verbose="on" />
+	</target>
+	<target name="get-container-latest-zip">
+	        <get src="http://pokgsa.ibm.com/projects/m/maximoanywhereplatform/${current.gsa.release.location}/releases/released_to_qa/containers/container_latest.zip"
+				dest="${temp-dir}" 
+	        	usetimestamp="false"	
+	        	verbose="on" 
+	        />
+			<echo message="Creating container_latest_ifix folder"/>
+			<mkdir dir="${temp-dir}/container_latest_ifix"/>
+			<unzip src="${temp-dir}/container_latest.zip" dest="${temp-dir}/container_latest_ifix"/>
+			<delete failonerror="false" file="${temp-dir}/container_latest_ifix/Container.properties" verbose="true" />
+			<delete failonerror="false" file="${temp-dir}/container_latest.zip" verbose="true" />
+			<zip destfile="${temp-dir}/container_latest_ifix.zip" basedir="${temp-dir}/container_latest_ifix"/>
+			<delete includeEmptyDirs="true">
+				<fileset dir="${temp-dir}/container_latest_ifix">
+					<include name="**" />
+				</fileset>
+			</delete>
+	</target>
+	
+	
+	
+	<target name="package-ifix-zip" depends="get-adminpmp-zip, get-oslcpmp-zip, get-platform-delta-zip, get-maximo-anywhere-delta-zip, get-container-latest-zip">
+		<zip destfile="${basedir}/bin/${final.zipname.release}"
+			basedir="${temp-dir}" includes="*.zip,*.README" update="true" excludes="**/*.log">
+		</zip>
+		<delete dir="${temp-dir}"/>
+	</target>
+
+	<target name="publish"
+		description="publishes generated MaximoAnywhere Current Release.zip to some location">
+		<echo>Publish to GSA if build process was successful</echo>
+
+		<copy file="${basedir}/bin/${final.zipname.release}"
+			todir="${publish-dir}" verbose="true" overwrite="true" />
+	</target>
+
+	<target name="clean"
+		description="removes all folders created by the build, resetting the build environment">
+		<delete failonerror="false" file="${basedir}/bin/${final.zipname.release}" verbose="true" />
+		<delete failonerror="false" dir="${temp-dir}" verbose="true" />
+	</target>
+
+	<target name="all"
+		depends="clean,
+		init,
+		package-ifix-zip,
+		publish">
+	</target>
+
+</project>

@@ -1,0 +1,28 @@
+<ivy-module xmlns:e="http://ant.apache.org/ivy/extra" version="2.0">
+	<info organisation="com.ibm.csi.si.maximo.anywhere" module="anywhere" />
+	<configurations>
+		<conf name="javascript" description="JS dependencies" />
+		<conf name="javascript-fixpack" description="Fixpack dependencies" />
+		<conf name="artifact-processor" description="Artifact Processor dependencies" />
+		<conf name="unittest" description="Javascript UnitTest runner dependencies" />
+	</configurations>
+	
+	<dependencies>
+		<dependency org="com.ibm.csi.si" name="maximo-anywhere-platform" rev="latest.integration" conf="javascript->default">
+			<artifact name="maximo-anywhere-platform" type="zip" />
+		</dependency>
+
+		<dependency org="com.ibm.csi.si" name="maximo-anywhere-platform-fixpack" rev="latest.integration" conf="javascript-fixpack->default">
+			<artifact name="maximo-anywhere-platform-fixpack" type="zip" />
+		</dependency>
+		
+		<dependency org="com.ibm.csi.si" name="artifact-processor" rev="latest.integration" conf="artifact-processor->default">
+			<artifact name="artifact-processor" type="zip" />
+		</dependency>
+		
+		<dependency org="com.ibm.csi.si" name="anywhere-unittest" rev="latest.integration" conf="unittest->default">
+			<artifact name="anywhere-unittest" type="zip" />
+		</dependency>
+        
+	</dependencies>
+</ivy-module>

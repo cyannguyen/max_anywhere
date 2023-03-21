@@ -1,0 +1,233 @@
+<project name="Anywhere App Clone" default="clone-app" basedir=".">
+    
+    <import file="util.xml" />
+    <include file="${basedir}/build-taskdef.xml"/>
+	<loadproperties srcfile="${basedir}/build.properties" />
+
+	<!-- core.apps is a list of apps which cannot be chosen to write to, to prevent breaking existing core apps-->
+	<property name="core.apps" value="AssetAudit,AssetDataManager,Inspection,IssuesReturns,PhysicalCount,ServiceRequest,Transfers,WorkApproval,WorkExecution"/>
+
+	<target name="clone-app" description="clones a newly created App from our ${app.src.name} app as a template">
+		<!-- Application Name that will appear on login page need be changed manually -->
+		<!--  <message defaultMessage="IBM Maximo Work Execution" id="applicationName"/> -->
+		
+		<dirset id="existent.apps" dir="${basedir}/apps" includes="*"/> 
+		<property name="prop.existent.apps" refid="existent.apps"/>
+	    
+		<echotimestamp>***Waiting for input from user the Source application they want as a clone from</echotimestamp>
+		<input message="Enter the name of the SOURCE app for cloning." addproperty="app.src.name"/>
+        
+		<fail message="You must enter a SOURCE application to continue">
+            <condition>
+            	<equals arg1="${app.src.name}" arg2="" />
+            </condition>
+        </fail>
+        
+		<script language="javascript"><![CDATA[
+		    var existentApps = project.getProperty('prop.existent.apps');
+		    var appName = project.getProperty('app.src.name');
+		    
+		    //prevent name be equal names, even when uppercase or lowercase
+		    existentApps = existentApps.toLowerCase(); 
+		    appName = appName.toLowerCase();
+		    
+		    var existentAppsArray = existentApps.split(";");
+		    var appAlreadyExists = "false";
+		    
+		    for(var i=0; i<existentAppsArray.length; i++){ 
+		    	if(existentAppsArray[i] == appName){
+		    		appAlreadyExists = "true";
+		    	} 
+		    }
+		    
+		    project.setProperty('app.source.name.exists', appAlreadyExists);
+		]]></script>
+		
+		<if>
+		    <equals arg1="${app.source.name.exists}" arg2="false" />
+		    <then>
+		        <fail message="You must enter a SOURCE application that exists to continue"/>
+		    </then>
+		</if>
+		
+		
+		<echotimestamp>***Waiting for input from user the Destination application they want as a clone to</echotimestamp>
+		<input message="Enter the name of the DESTINATION app for cloning." addproperty="clone.appname"/>
+		
+		<fail message="You must enter a DESTINATION application to continue">
+            <condition>
+            	<equals arg1="${clone.appname}" arg2="" />
+            </condition>
+        </fail>
+        
+		<script language="javascript"><![CDATA[
+		    var existentApps = project.getProperty('prop.existent.apps');
+		    var appName = project.getProperty('clone.appname');
+		    
+		    //prevent name be equal names, even when uppercase or lowercase
+		    existentApps = existentApps.toLowerCase(); 
+		    appName = appName.toLowerCase();
+		    
+		    var existentAppsArray = existentApps.split(";");
+		    var appAlreadyExists = "false";
+		    
+		    for(var i=0; i<existentAppsArray.length; i++){ 
+		    	if(existentAppsArray[i] == appName){
+		    		appAlreadyExists = "true";
+		    	} 
+		    }
+		    
+		    project.setProperty('app.dest.name.exists', appAlreadyExists);
+		]]></script>
+		
+		<if>
+		    <equals arg1="${app.dest.name.exists}" arg2="true" />
+		    <then>
+		        <fail message="The specified clone app name already exists. This process is cancelled to prevent overwriting the app."/>
+		    </then>
+		</if>
+
+		
+		<echotimestamp>***Waiting for input from user the Title for clone app</echotimestamp>
+		<input message="Please enter the title of the app for cloning" addproperty="clone.titlename"/>
+		
+		<fail message="You must enter an application TITLE for your app.">
+            <condition>
+            	<equals arg1="${clone.titlename}" arg2="" />
+            </condition>
+        </fail>
+		
+		<!-- Verify if the clone is been made using Core app as source-->
+		<script language="javascript"><![CDATA[
+ 		    var coreApps = project.getProperty('core.apps');
+ 		    var appName = project.getProperty('app.src.name');
+		    
+ 		    //prevent name be equal names, even when uppercase or lowercase
+ 		    coreApps = coreApps.toLowerCase();
+ 		    appName = appName.toLowerCase();
+		    
+ 		    var appsCoreArray = coreApps.split(",");
+ 		    var isSourceCoreApp = "false";
+		    
+ 		    for(var i=0; i<appsCoreArray.length; i++){
+ 		    	if(appsCoreArray[i] == appName){
+ 		    		isSourceCoreApp = "true";
+ 		    	}
+ 		    }
+		    
+ 		    project.setProperty('app.source.name.is.core', isSourceCoreApp);
+ 		]]></script>
+ 		
+	    <if>
+	        <equals arg1="${app.source.name.is.core}" arg2="true" />
+		    <then>
+		        <echotimestamp>Starting the cloning from the supported Maximo app.</echotimestamp>
+		    </then>
+		    <else>
+		        <input message="You are cloning an unsupported app. Would you like to proceed? [y / n]" addproperty="is-clone-proceed"/>
+		        <fail message="The cloning process is cancelled.">
+		            <condition>
+		                <or>
+		            		<equals arg1="${is-clone-proceed}" arg2="n" />
+		            		<equals arg1="${is-clone-proceed}" arg2="N" />
+		            		<equals arg1="${is-clone-proceed}" arg2="no" />
+		            		<equals arg1="${is-clone-proceed}" arg2="NO" />
+		            	</or>
+		            </condition>
+		        </fail>
+		        <echotimestamp>Starting the cloning from an unsupported Maximo app.</echotimestamp>
+		    </else>   
+		</if>
+	    
+	    <echotimestamp>Copying all files from ${app.src.name} to ${clone.appname} </echotimestamp>
+		<copy todir="${basedir}/apps/${clone.appname}" verbose="false" overwrite="true">
+		    <fileset dir="${basedir}/apps/${app.src.name}">
+				<include name="**/*"/>
+			</fileset>
+		</copy>	
+
+		<!--************************************************************************************
+			Now, need update bundleid, packagename, application-descriptor, androidmanifest, etc 
+		    ************************************************************************************ -->
+		<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask">
+		  <classpath>
+		    <pathelement location="${basedir}/libs/build/xmltask-1.16.1.jar"/>
+		  </classpath>
+		</taskdef>
+		
+	    <property name="xmltask.report" value="false"/>
+
+		<!-- It is not all apps that has definition to android, ios, or package name, 
+	    so failure here should not break app -->
+		<xmltask
+		    source="${basedir}/apps/${clone.appname}/application-descriptor.xml" 
+            dest="${basedir}/apps/${clone.appname}/application-descriptor.xml" 
+            failWithoutMatch="false" 
+            preserveType="true" 
+            report="${xmltask.report}">
+		    <replace path="/:application/:displayName/text()" withText="${clone.titlename}"/>
+		    <replace path="/:application/:description/text()" withText="${clone.titlename}"/>
+		  	<attr path="/:application/:iphone" attr="applicationId" value="${clone.titlename}"/>
+		</xmltask>
+		 
+		 <script language="javascript"><![CDATA[
+		    var appSrcName = project.getProperty('app.src.name');
+		    var appName = project.getProperty('clone.appname');
+		    
+		    //normally package name is lower case
+		    appSrcName = appSrcName.toLowerCase(); 
+		    appName = appName.toLowerCase();
+		    
+		    project.setProperty('clone.appname.lowercase', appName);
+		    project.setProperty('app.src.name.lowercase', appSrcName);
+		]]></script>
+		
+		<echotimestamp>Find and replace all references copied from the ${app.src.name} folder to the ${clone.appname} folder, except for the artifact and commons folders. </echotimestamp>
+        <replaceregexp match="${app.src.name}" replace="${clone.appname}" flags="g" byline="true">
+		    <fileset dir="${basedir}/apps/${clone.appname}">
+                 <include name="**" />
+                 <exclude name="artifact/**"/>
+                 <exclude name="common/**"/>
+            </fileset>
+		</replaceregexp>
+       
+        <!-- Replace all lowercase references -->
+		<replaceregexp match="${app.src.name.lowercase}" replace="${clone.appname.lowercase}" flags="g" byline="true">
+		    <fileset dir="${basedir}/apps/${clone.appname}">
+                 <include name="**" />
+                 <exclude name="artifact/**"/>
+                 <exclude name="common/**"/>
+            </fileset>
+		</replaceregexp>
+		
+		<!-- Change app id into app.xml -->
+		<xmltask
+		    source="${basedir}/apps/${clone.appname}/artifact/app.xml" 
+            dest="${basedir}/apps/${clone.appname}/artifact/app.xml" 
+            failWithoutMatch="true" 
+            preserveType="true" 
+            report="${xmltask.report}">
+		  	<attr path="/app" attr="id" value="${clone.appname}"/>
+		</xmltask>
+		
+		<!-- Common copy or move approach in ant does not work well when replacing path and file names, even  -->
+		<!-- using fileset with regex. Solution was do call a java class recursively to change file structure.  -->
+		<java classname="com.ibm.tivoli.si.util.ReplaceFilesRecursively" classpath="${basedir}/libs/codegen/artifact-processor_7.6.4.jar">
+			<arg value="${basedir}/apps/${clone.appname}"/>
+			<arg value="${app.src.name}"/>
+			<arg value="${clone.appname}"/>
+		</java>
+		
+		<!-- For lowercase app name, do same as done above -->
+		<java classname="com.ibm.tivoli.si.util.ReplaceFilesRecursively" classpath="${basedir}/libs/codegen/artifact-processor_7.6.4.jar">
+			<arg value="${basedir}/apps/${clone.appname}"/>
+			<arg value="${app.src.name.lowercase}"/>
+			<arg value="${clone.appname.lowercase}"/>
+		</java>
+		
+		<!-- Remove anywhere-descriptor.xml, in case it exists -->
+		<delete file="${basedir}/apps/${clone.appname}/anywhere-descriptor.xml" failonerror="false"/>
+		
+		<echotimestamp>The cloning process completed successfully. If you want an entry for the cloned app in the Anywhere Administration application in Maximo Asset Management, run the admin-config-loader script.</echotimestamp>
+	</target>
+</project>

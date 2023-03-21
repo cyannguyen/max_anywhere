@@ -1,0 +1,49 @@
+
+init:
+     [echo] RunBuild - init target
+
+runAdmLdr:
+     [echo] running adminloader
+
+init:
+     [echo] RunBuild - init target
+
+checkos:
+     [echo] RunBuild - checkos target
+
+runBat:
+     [echo] Run Bat with C:\IBM\Anywhere
+     [exec] C:\IBM\Anywhere\MaximoAnywhere\build\tools\curl\win64
+     [exec] 
+     [exec] SUCCESS: Specified value was saved.
+     [exec] Buildfile: C:\IBM\Anywhere\MaximoAnywhere\admin-config-loader.xml
+     [exec] 
+     [exec] allApps:
+     [exec] 
+     [exec] -process-app-artifact:
+     [exec]      [echo] processing app C:\IBM\Anywhere\MaximoAnywhere\apps\AssetAudit
+     [exec] 
+     [exec] admin-loader:
+     [exec]      [java] authenticate() send request to get HttpSession cookie. 
+     [exec]      [java] Get http://maximo02.lan:80/maximo/oslc/os/oslcanywhereapp/?_lid=maximo&_lpwd=********&oslc.where=spi%3Aappid%3D%22AssetAudit%22
+     [exec]      [java] Exception in thread "main" java.lang.NullPointerException
+     [exec]      [java] 	at com.ibm.tivoli.si.build.admin.AdminConfigLoader.appExists(AdminConfigLoader.java:206)
+     [exec]      [java] 	at com.ibm.tivoli.si.build.admin.AdminConfigLoader.parse(AdminConfigLoader.java:233)
+     [exec]      [java] 	at com.ibm.tivoli.si.build.admin.AdminConfigLoader.main(AdminConfigLoader.java:120)
+     [exec]      [java] GET failed.  Response code = 401
+     [exec]      [java] GET ERROR:  {"Error":{"extendedError":{"moreInfo":{"href":"http:\/\/maximo02.lan:80\/maximo\/oslc\/error\/messages\/BMXAA7901E"}},"reasonCode":"BMXAA7901E","message":"BMXAA7901E - You cannot log in at this time. Contact the system administrator.","statusCode":"401"}}
+     [exec] 
+     [exec] BUILD FAILED
+     [exec] C:\IBM\Anywhere\MaximoAnywhere\admin-config-loader.xml:41: The following error occurred while executing this line:
+     [exec] C:\IBM\Anywhere\MaximoAnywhere\admin-config-loader.xml:54: The following error occurred while executing this line:
+     [exec] C:\IBM\Anywhere\MaximoAnywhere\admin-config-loader.xml:90: Java returned: 1
+     [exec] 
+     [exec] Total time: 3 seconds
+     [exec] Result: 1
+     [echo] Run Bat with C:\IBM\Anywhere and bldfile: admin-config-loader.xml completed with RC: 1
+
+runSh:
+
+runAntCall:
+     [echo] runAntCall completed
+     [echo] running adminloader finished with: ${admLdrFailed}

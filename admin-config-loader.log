@@ -1,0 +1,10 @@
+
+-process-app-artifact:
+     [echo] processing app C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers
+
+admin-loader:
+     [java] authenticate() send request to get HttpSession cookie. 
+     [java] Get http://116.118.113.24:9082/maximo/oslc/os/oslcanywhereapp/?oslc.where=spi%3Aappid%3D%22transfers%22
+     [java] authenticate() send request to get HttpSession cookie. 
+     [java] Get http://116.118.113.24:9082/maximo/oslc/os/oslcanywhereapp/?oslc.where=spi%3Aappid%3D%22transfers%22
+     [java] App entry already exists on maximo.

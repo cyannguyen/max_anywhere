@@ -1,0 +1,2396 @@
+<project name="Anywhere-Apps-Builder-and-Deployer" default="build-and-deploy-all" xmlns:if="ant:if" xmlns:unless="ant:unless" xmlns:ivy="antlib:org.apache.ivy.ant" basedir=".">
+
+    <import file="util.xml" />
+    
+	<!-- :: Begin Common Setup Steps -->
+	<basename property="ant.file.basename" file="${ant.file}" suffix=".xml"/>
+	<record name="${basedir}/${ant.file.basename}.log" logLevel="verbose"/>
+	<loadproperties srcfile="${basedir}/build.properties" />
+	<include file="${basedir}/build-taskdef.xml"/>
+	<!-- :: Done Common Setup Steps -->
+    
+   	<condition property="appsToBuild" else="*">
+    	<isset property="appsToBuild" />
+	</condition>
+   	
+	<condition property="isMac">
+		<os family="mac" />
+	</condition>
+	<condition property="isUnix">
+		<and>
+			<os family="unix" />
+			<not>
+				<os family="mac" />
+			</not>
+		</and>
+	</condition>
+	<condition property="isWindows">
+		<os family="windows" />
+	</condition>
+	
+	<!-- MFP Removal Changes -->
+	<!--<condition property="iphonebuild" else="false">
+	    <matches pattern="iphone" string="${worklight.envsToDeploy}"/>
+	</condition>
+	
+	<condition property="androidbuild" else="false">
+	    <matches pattern="android" string="${worklight.envsToDeploy}"/>
+	</condition>
+
+	<condition property="windowsphone8build" else="false">
+		<matches pattern="windowsphone8" string="${worklight.envsToDeploy}"/>
+	</condition>
+	
+	<condition property="windows8build" else="false">
+		<matches pattern="windows8" string="${worklight.envsToDeploy}"/>
+	</condition>	
+	
+    <condition property="envsToDeploy.windows.targets.exists" else="false">
+       <or>
+       	  <equals arg1="${windows8build}" arg2="true"/>
+       	  <equals arg1="${windowsphone8}" arg2="true"/>
+       </or>
+    </condition>
+
+	<condition property="noprovision">
+		<not>
+			<available file="${user.home}/Library/MobileDevice/Provisioning Profiles" type="dir"/>			
+		</not>
+	</condition>-->
+  	
+  	<!-- if these are defined in the build.properties -->
+  	<condition property="useAttachmentProxyServer">
+  		<and>
+  			<isset property="attachmentProxy.connection.protocol"/>
+  			<isset property="attachmentProxy.connection.domain"/>
+  			<!-- these can actually be null
+  			<isset property="attachmentProxy.connection.port"/>
+  			<isset property="attachmentProxy.connection.context"/>
+  			-->
+  		</and>
+  	</condition>
+  	
+	<!-- targets -->
+	<hostinfo/>
+	
+	<property name="xmltask.report" value="false"/>
+	
+	<!-- MFP Removal Changes -->
+	<!-- <property name="windows.tablet.output.folder" value="${basedir}/bin/windows_tablet_zips" />-->
+    
+	<!-- MFP Removal Changes -->
+    <!-- <propertyregex property="resolved.worklight.server.url" 
+        			input="${worklight.server.url}"
+        			regexp="\$\{local\.IPAddress\}"
+        			replace="${ADDR4}"/> -->
+
+    <target name="init">
+    	<property name="posturl" value=""/>
+    	<property name="user_pwd" value="${adapter.connection.user}:${adapter.connection.password}"/>
+    			
+    	<script language="javascript">
+			<![CDATA[
+						
+				// Create Base64 Object
+				var Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/\r\n/g,"\n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}
+
+				// Encode the String
+				user_pwd = Base64.encode(user_pwd);
+					
+				// Setting user_pwd property with user and password encrypted by Base64 algorithm
+				project.setProperty('user_pwd', user_pwd);
+					
+			]]>
+		</script>
+    	
+    	<!-- Check maximo url to verify connection -->
+		<trycatch>
+	        <try>
+	        	<echotimestamp message="Trying to connect to Maximo: ${adapter.connection.protocol}://${adapter.connection.domain}:${adapter.connection.port}/${adapter.connection.context}"/>
+	        	<loadproperties srcFile="${basedir}/server/conf/worklight.properties"/>
+	        	
+	        	<if>
+	        		<equals arg1="${si.auth.type}" arg2="basic" casesensitive="false"/>
+					<then>
+						<!--get src="" dest=".maximo-url-test">
+	    					<header name="Authorization" value="Basic ${user_pwd}"/>
+	    				</get-->
+						<exec executable="curl" failonerror="true">
+							<arg value="-X"/>
+							<arg value="GET"/>
+							<arg value="-H"/>
+							<arg value="Authorization: Basic ${user_pwd}"/>						
+							<arg value="-i"/>
+							<arg value="${adapter.connection.protocol}://${adapter.connection.domain}:${adapter.connection.port}/${adapter.connection.context}/"/>
+						</exec>
+					</then>
+					<else>
+						<!--get src="${adapter.connection.protocol}://${adapter.connection.domain}:${adapter.connection.port}/${adapter.connection.context}" dest=".maximo-url-test"/-->
+						<exec executable="curl" failonerror="true">
+							<arg value="-X"/>
+							<arg value="GET"/>				
+							<arg value="-i"/>
+							<arg value="${adapter.connection.protocol}://${adapter.connection.domain}:${adapter.connection.port}/${adapter.connection.context}/"/>
+						</exec>
+					</else>
+	        	</if>
+	    	</try>
+	    	<catch>
+	    		<if>
+		    		<equals arg1="${build.process}" arg2="offline"/>
+		    		<then>
+		    			<echotimestamp message="WARNING: The specified Maximo address is not reacheable." level="warning"/>
+		    			<echotimestamp message="Currently, the build is offline because the build.process=offline property has been set in the build.properties file." level="warning"/>
+		    		</then>
+	    			<else>
+	    				<echotimestamp message="Currently, it is an online build because the build.process=online property has been set in the build.properties file. If you prefer an offline build, change this property to be build.process=offline." level="warning"/>
+	    				<fail message="The specified Maximo address is not reacheable."/>
+	    			</else>
+	    		</if>
+	    	</catch>
+	    </trycatch>
+    	
+    	<!-- MFP Removal Changes -->
+    	<!-- Check mobilefirst console to verify connection -->
+		<!-- <if>
+			<isset property="resolved.worklight.server.url" />
+			<then>
+				<trycatch>
+					<try>
+						<wladm url="${resolved.worklight.server.url}/${worklight.admin.server.context}" secure="false" user="${worklight.server.user}" password="${worklight.server.password}">
+							<show-info outputProperty="worklight.server.isrunning"/>
+					    </wladm>
+				    </try>
+				    <catch>
+				    </catch>
+				</trycatch>
+			</then>
+			<else>
+				<property name="resolved.worklight.server.url" value="${worklight.server.url}"/>
+				<trycatch>
+				    <try>
+						<wladm url="${resolved.worklight.server.url}/${worklight.admin.server.context}" secure="false" user="${worklight.server.user}" password="${worklight.server.password}">
+							<show-info outputProperty="worklight.server.isrunning"/>
+					    </wladm>	
+				    </try>
+				    <catch>
+				    </catch>
+				</trycatch>
+			</else>
+		</if>
+    	
+	    <if>
+	        <isset property="worklight.server.isrunning"></isset>
+	        <then>
+	            <echotimestamp>MobileFirst Server [${resolved.worklight.server.url}/${worklight.admin.server.context}] is running.</echotimestamp>
+	        </then>
+	        <else>
+	        	<if>
+			        <equals arg1="${build.process}" arg2="offline"/>
+			        <then>
+			        	<echotimestamp level="warning">WARNING: MobileFirst Server [${resolved.worklight.server.url}/${worklight.admin.server.context}] is not running.</echotimestamp>
+			        	<echotimestamp message="Currently, the build is offline because the build.process=offline property is set in the build.properties file." level="warning"/>
+			        </then>
+	        		<else>
+	        			<echotimestamp message="Currently, it is an online build because the build.process=online property has been set in the build.properties file. If you prefer an offline build, change this property to be build.process=offline." level="warning"/>
+	        			<fail message="MobileFirst Server [${resolved.worklight.server.url}/${worklight.admin.server.context}] is not running."/>
+	        		</else>
+			    </if>	        	
+	        </else>
+	    </if>
+	
+		<if>
+			<isset property="appCenter.server.url" />
+			<then>
+				<property name="resolved.appCenter.server.url" value="${appCenter.server.url}" />
+				<condition property="appCenter.server.isrunning">
+					<httptest url="${resolved.appCenter.server.url}/${appCenter.server.context}" />
+				</condition>
+				<if>
+					<isset property="appCenter.server.isrunning"></isset>
+					<then>
+						<echotimestamp>Application Center Server [${resolved.appCenter.server.url}/${appCenter.server.context}] is running.</echotimestamp>
+					</then>
+					<else>
+						<echotimestamp level="warning">WARNING: Application Center Server [${resolved.appCenter.server.url}/${appCenter.server.context}] is not running.</echotimestamp>
+					</else>
+				</if>
+			</then>
+		</if>-->
+    	
+        <!--echotimestamp>Android Build ${androidbuild}</echotimestamp>
+        <echotimestamp>IPhone Build ${iphonebuild}</echotimestamp>
+        <echotimestamp>Windows8 Build ${windows8build}</echotimestamp>
+        <echotimestamp>WindowsPhone8 Build ${windowsphone8build}</echotimestamp-->
+	</target>
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-validate-android-sdk" >
+       <echotimestamp>Validating Android SDK for property 'android.sdk.home'</echotimestamp>
+        <condition property="envsToDeploy.android.target.exists">
+        	<matches pattern="android" string="${worklight.envsToDeploy}"/>
+        </condition>
+		
+		<if>
+		    <isset property="envsToDeploy.android.target.exists" />
+			<then>
+		        <available file="${android.sdk.home}" type="dir" property="android.sdk.home.exists" />
+		        
+		        <fail unless="android.sdk.home.exists"
+		            message="Property 'android.sdk.home' is not referencing valid directory: ${android.sdk.home}" />
+		        
+		        <available file="${android.sdk.home}/platforms/${Android_TARGET_DEVICE_NAME}" type="dir"
+		            property="android.sdk.version.target.exists" />
+		        
+		        <fail unless="android.sdk.version.target.exists"
+		            message="Android API Target of [${Android_TARGET_DEVICE_NAME}] has not been installed to Android SDK at [${android.sdk.home}]" />
+			</then>
+		</if>
+		<echotimestamp>Success validating Android SDK </echotimestamp>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-validate-visualstudio-version-release" >
+		<echotimestamp>Validating property 'visualstudio.version.release' </echotimestamp>
+		
+        <condition property="visualstudio.version.release.exists">
+            <and>
+            	<isset property="visualstudio.version.release" />
+            	<not>
+            		<equals arg1="${visualstudio.version.release}" arg2=""/>
+            	</not>
+            </and>
+        </condition>
+		
+		<if>
+			<and>
+				<equals arg1="${envsToDeploy.windows.targets.exists}" arg2="true"/>
+				<not>
+					<isset property="visualstudio.version.release.exists" />	
+				</not>
+			</and>
+			<then>
+				<property name="missing.visualstudio.version" value="true"/>
+			</then>
+		</if>
+		
+		<fail if="missing.visualstudio.version" message="Property in build.properties 'visualstudio.version.release' is invalid for building windows applications" />
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-validate-visual-studio-tools-path" >
+		<echotimestamp>Validating property 'visualstudio.install.path' </echotimestamp>
+		
+        <condition property="visualstudio.install.path.exists">
+            <and>
+            	<isset property="visualstudio.install.path" />
+            	<not>
+            		<equals arg1="${visualstudio.install.path}" arg2=""/>
+            	</not>
+            </and>
+        </condition>
+		
+        <condition property="contains.invalid.file.seperators">
+            <matches pattern="\\" string="${visualstudio.install.path}"/>
+        </condition>
+		
+        <if>
+           <and>
+               <isset property="visualstudio.install.path.exists" /> 
+           	   <equals arg1="${envsToDeploy.windows.targets.exists}" arg2="true"/>
+               <isset property="contains.invalid.file.seperators" />           	  
+           </and>
+           <then>
+                <property name="invalid.visual.studio.path" value="true" />
+                <echotimestamp> Property 'visualstudio.install.path' in your build.properties is incorrect </echotimestamp>
+           	    <echotimestamp> Path contains '\' instead of '/' as file seperators </echotimestamp>
+           	    <echo>  </echo>
+           	    <echotimestamp> *** NOTE: Path must point to Visual Studio tools location containing VsDevCmd.bat ***</echotimestamp>
+           	    <echo>  </echo>
+           		<echotimestamp> Example of file location expected: </echotimestamp>
+           	    <echotimestamp>    C:/Program Files (x86)/Microsoft Visual Studio 12.0/Common7/Tools/VsDevCmd.bat </echotimestamp>
+           	    <echo>   </echo>
+           	    <echotimestamp> Valid build.properties property:  </echotimestamp>
+           	    <echotimestamp>    visualstudio.install.path=C:/Program Files (x86)/Microsoft Visual Studio 12.0/Common7/Tools </echotimestamp>
+           </then>
+        </if>-->
+		<!-- now check to make sure the path is valid if it is correctly set-->
+		<!-- <if>
+			<and>
+				<equals arg1="${invalid.visual.studio.path}" arg2="true"/>
+	            <not>
+	                <available file="${visualstudio.install.path}/VsDevCmd.bat" type="file" />
+	            </not>
+			</and>
+			<then>
+				<property name="invalid.visual.studio.path" value="true" />
+				<echotimestamp> Property 'visualstudio.install.path' is set, but the location is incorrect. </echotimestamp>
+                <echotimestamp> *** NOTE: Path must point to Visual Studio tools location containing VsDevCmd.bat ***</echotimestamp>
+                <echo>  </echo>
+                <echotimestamp> Example of file and location expected: </echotimestamp>
+                <echotimestamp>    C:/Program Files (x86)/Microsoft Visual Studio 12.0/Common7/Tools/VsDevCmd.bat </echotimestamp>
+                <echo>   </echo>
+                <echotimestamp> Valid build.properties property:  </echotimestamp>
+                <echotimestamp>    visualstudio.install.path=C:/Program Files (x86)/Microsoft Visual Studio 12.0/Common7/Tools </echotimestamp>
+			</then>
+		</if>
+		<fail if="invalid.visual.studio.path" message="Property in build.properties 'visualstudio.install.path' is invalid for building windows applications" />
+		<echotimestamp>Success validating Visual Studio Tools Install Path</echotimestamp>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-enable-mobilefirst-studio-attachments">
+		<antcall target="build-war"/>
+		
+		<echotimestamp> Updating war file with attachement support </echotimestamp>-->
+		<!-- BEGIN - automatic deploy war to Eclipse server -->
+		<!-- If this is a STUDIO environment, we'll take time 
+			 here to update the WAR that is already deployed in STUDIO, 
+			 or otherwise, we just deploy the WAR, in any situation. -->
+		<!-- <available file="${basedir}/../MobileFirstServerConfig" type="dir" 	property="eclipse.server.present"/>
+
+		<if>
+			<isset property="eclipse.server.present"/>
+			<then>
+				<echotimestamp>Detected Eclipse environment, deploying WAR into your eclipse MobileFirstServerConfig folder</echotimestamp>
+				
+				<basename property="local.project.name" file="${basedir}"/>
+				
+				<available file="${basedir}/../MobileFirstServerConfig" type="dir" 	property="eclipse.server.present"/>
+				
+				<copy file="${basedir}/bin/${local.project.name}.war"
+					todir="${basedir}/../MobileFirstServerConfig/servers/worklight/apps"
+					verbose="true" overwrite="true" />
+				<echo> ******************************** </echo>
+				<echotimestamp> Your MobileFirst Studio Development Server must be restarted for attachments to be available! </echotimestamp>
+				<echo> ******************************** </echo>
+			</then>
+			<else>
+				<echotimestamp> No MobileFirst Studio Development Server detected, War file updated for Production Server only</echotimestamp>
+			</else>
+		</if>-->
+		<!-- END - automatic deploy war to Eclipse server -->
+	<!-- </target> -->
+	
+	<!-- MFP Removal Changes -->
+	<!-- The default war supports Servlet 3.0 Application Servers like
+	     WAS 8.x. WAS 7.x supports Servlet 2.x -->
+	<!-- <target name="build-war" depends="init">
+	    
+		<basename property="local.project.name" file="${basedir}"/>
+		<echotimestamp>Creating Project WAR: ${local.project.name}</echotimestamp>
+			    
+		 <war-builder projectfolder="${basedir}"
+                 destinationfolder="${basedir}/server"
+                 warfile="${basedir}/bin/${local.project.name}Proxy.war"
+                 classesFolder="${basedir}/server/classes"/>
+		 
+		 <delete dir="${basedir}/bin/Proxy" failonerror="false"/>
+		 <unzip src="${basedir}/bin/${local.project.name}Proxy.war" 
+		     dest="${basedir}/bin/Proxy"/>
+		 
+		 <xmltask source="${basedir}/bin/Proxy/WEB-INF/web.xml" 
+            dest="${basedir}/bin/Proxy/WEB-INF/web.xml" 
+            failWithoutMatch="true" 
+            preserveType="true" 
+            report="${xmltask.report}">
+			<insert path="/:web-app/:display-name" position="after">
+                <![CDATA[
+   <servlet xmlns="http://java.sun.com/xml/ns/javaee">
+      <servlet-name>AnywhereProxyServlet</servlet-name>
+      <servlet-class>com.ibm.csi.mobile.anywhere.proxy.AnywhereAttachmentProxyServlet</servlet-class>
+      <init-param>
+          <param-name>protocol</param-name>
+          <param-value>http</param-value>
+      </init-param>
+      <init-param>
+          <param-name>domain</param-name>
+          <param-value>mobilenext2.tivlab.austin.ibm.com</param-value>
+      </init-param>
+      <init-param>
+          <param-name>port</param-name>
+          <param-value>7001</param-value>
+      </init-param>
+      <init-param>
+          <param-name>timeout</param-name>
+          <param-value>360</param-value>
+      </init-param>
+      <multipart-config>-->
+		  <!-- defaults to no location -->
+		  <!-- <location></location>-->
+		  <!-- defaults to 5MB -->
+		  <!-- <max-file-size>5242880</max-file-size>-->
+		  <!-- defaults to 6MB -->
+		  <!-- <max-request-size>6291456</max-request-size>-->
+		  <!-- default to 1MB -->
+		  <!-- <file-size-threshold>1048576</file-size-threshold>
+	  </multipart-config>
+  </servlet>
+  <servlet-mapping xmlns="http://java.sun.com/xml/ns/javaee">
+      <servlet-name>AnywhereProxyServlet</servlet-name>
+      <url-pattern>/anywhereAttachment</url-pattern>
+  </servlet-mapping>
+		 ]]>
+		 </insert>
+        </xmltask>-->
+        
+		 <!-- Address UTF-8 encoding issue replace  Java™ with Java -->
+   				 
+		 <!-- <replace file="${basedir}/bin/Proxy/WEB-INF/web.xml" token="Java™" value="Java"/>
+		 
+		 <xmltask source="${basedir}/bin/Proxy/WEB-INF/web.xml" 
+            dest="${basedir}/bin/Proxy/WEB-INF/web.xml" 
+            failWithoutMatch="true" 
+            preserveType="true" 
+            report="${xmltask.report}">
+            
+			<attr path="/:web-app" attr="version" value="3.0"/>
+			<attr path="/:web-app" attr="xsi:schemaLocation" value="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"/>
+			
+		</xmltask>
+		   
+       	<loadproperties srcFile="${basedir}/server/conf/worklight.properties"/>
+       	<echotimestamp>Updating web.xml based on worklight.properties values</echotimestamp>
+		<echotimestamp>${si.att.proxy.location}</echotimestamp>
+		<echotimestamp>${adapter.connection.domain}</echotimestamp>
+       	<property name="web.xml" value="${basedir}/bin/Proxy/WEB-INF/web.xml" />
+
+       	<replaceregexp file="${web.xml}"
+			match="xmlns=&#34;http://java.sun.com/xml/ns/j2ee&#34;"
+			replace="xmlns=&#34;http://java.sun.com/xml/ns/javaee&#34;" />
+		<replaceregexp file="${web.xml}" 
+			match="&lt;location&gt;.*&lt;/location&gt;"
+			replace="&lt;location&gt;${si.att.proxy.location}&lt;/location&gt;" />
+		<replaceregexp file="${web.xml}" 
+			match="&lt;max-file-size&gt;.*&lt;/max-file-size&gt;"
+			replace="&lt;max-file-size&gt;${si.att.proxy.maxfilesize}&lt;/max-file-size&gt;" />
+		<replaceregexp file="${web.xml}" 
+			match="&lt;max-request-size&gt;.*&lt;/max-request-size&gt;"
+			replace="&lt;max-request-size&gt;${si.att.proxy.maxreqsize}&lt;/max-request-size&gt;" />
+		<replaceregexp file="${web.xml}" 
+			match="&lt;file-size-threshold&gt;.*&lt;/file-size-threshold&gt;"
+			replace="&lt;file-size-threshold&gt;${si.att.proxy.thresholdsize}&lt;/file-size-threshold&gt;" />
+		
+		<if>
+			<isset property="useAttachmentProxyServer"/>
+			<then>-->
+		
+				<!-- Update backend server information -->
+				<!-- <replaceregexp file="${web.xml}" 
+					match="&lt;param-value&gt;http&lt;/param-value&gt;"
+					replace="&lt;param-value&gt;${attachmentProxy.connection.protocol}&lt;/param-value&gt;" />
+		
+				<replaceregexp file="${web.xml}" 
+					match="&lt;param-value&gt;mobilenext2.tivlab.austin.ibm.com&lt;/param-value&gt;"
+					replace="&lt;param-value&gt;${attachmentProxy.connection.domain}&lt;/param-value&gt;" />
+				<replaceregexp file="${web.xml}" 
+					match="&lt;param-value&gt;7001&lt;/param-value&gt;"
+					replace="&lt;param-value&gt;${attachmentProxy.connection.port}&lt;/param-value&gt;" />
+			</then>
+			<else>-->
+				<!-- Update backend server information -->
+				<!-- <replaceregexp file="${web.xml}" 
+					match="&lt;param-value&gt;http&lt;/param-value&gt;"
+					replace="&lt;param-value&gt;${adapter.connection.protocol}&lt;/param-value&gt;" />
+		
+				<replaceregexp file="${web.xml}" 
+					match="&lt;param-value&gt;mobilenext2.tivlab.austin.ibm.com&lt;/param-value&gt;"
+					replace="&lt;param-value&gt;${adapter.connection.domain}&lt;/param-value&gt;" />
+				<replaceregexp file="${web.xml}" 
+					match="&lt;param-value&gt;7001&lt;/param-value&gt;"
+					replace="&lt;param-value&gt;${adapter.connection.port}&lt;/param-value&gt;" />
+			
+			</else>
+		</if>-->
+       	<!-- Create the Updated WAR file -->
+		<!-- <zip destfile="${basedir}/bin/${local.project.name}ProxyServlet.war"
+			basedir="${basedir}/bin/Proxy"/>-->
+ 
+       	<!-- Overwrite the MaximoAnywhere.war with this new war -->
+       	<!-- <echotimestamp message="Replacing WAR with proxy servlet enabled WAR"/>
+       	<copy verbose="true" file="${basedir}/bin/${local.project.name}ProxyServlet.war" 
+       		tofile="${basedir}/bin/${local.project.name}.war"/>
+	
+		<antcall target="build-war-2.4"/>
+	</target>-->
+    
+	<!-- MFP Removal Changes -->
+    <!-- <target name="build-war-2.4" depends="init">
+		<basename property="local.project.name" file="${basedir}"/>
+		<echotimestamp>Creating Project WAR for Servlet 2.4 Application Servers: ${local.project.name}</echotimestamp>
+		
+		<war-builder projectfolder="${basedir}"
+                 destinationfolder="${basedir}/server"
+                 warfile="${basedir}/bin/${local.project.name}Proxy-2.4.war"
+                 classesFolder="${basedir}/server/classes"/>
+		
+			    
+		 <unzip src="${basedir}/bin/${local.project.name}Proxy-2.4.war" 
+		     dest="${basedir}/bin/Proxy-2.4"/>
+
+		 <xmltask source="${basedir}/bin/Proxy-2.4/WEB-INF/web.xml" 
+            dest="${basedir}/bin/Proxy-2.4/WEB-INF/web.xml" 
+            failWithoutMatch="true" 
+            preserveType="true" 
+            report="${xmltask.report}">
+			<insert path="/:web-app/:display-name" position="after">
+                <![CDATA[
+   <servlet xmlns="http://java.sun.com/xml/ns/j2ee">
+      <servlet-name>AnywhereProxyServlet</servlet-name>
+      <servlet-class>com.ibm.csi.mobile.anywhere.proxy.AnywhereAttachmentProxyServlet</servlet-class>
+      <init-param>
+          <param-name>protocol</param-name>
+          <param-value>http</param-value>
+      </init-param>
+      <init-param>
+          <param-name>domain</param-name>
+          <param-value>mobilenext2.tivlab.austin.ibm.com</param-value>
+      </init-param>
+      <init-param>
+          <param-name>port</param-name>
+          <param-value>7001</param-value>
+      </init-param>
+      <init-param>
+          <param-name>timeout</param-name>
+          <param-value>360</param-value>
+      </init-param>
+  </servlet>
+  <servlet-mapping xmlns="http://java.sun.com/xml/ns/j2ee">
+      <servlet-name>AnywhereProxyServlet</servlet-name>
+      <url-pattern>/anywhereAttachment</url-pattern>
+  </servlet-mapping>
+		 ]]>
+		 </insert>
+        </xmltask>-->
+        
+		<!-- Address UTF-8 encoding issue replace  Java™ with Java -->
+		 
+		<!-- <replace file="${basedir}/bin/Proxy-2.4/WEB-INF/web.xml" token="Java™" value="Java"/>
+
+ 		<xmltask source="${basedir}/bin/Proxy-2.4/WEB-INF/web.xml" 
+            dest="${basedir}/bin/Proxy-2.4/WEB-INF/web.xml" 
+            failWithoutMatch="true" 
+            preserveType="true" 
+            report="${xmltask.report}">
+            
+            <attr path="/:web-app" attr="version" value="2.4"/>
+			<attr path="/:web-app" attr="xsi:schemaLocation" value="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"/>
+			
+		</xmltask> 
+  
+       	<loadproperties srcFile="${basedir}/server/conf/worklight.properties"/>
+       	<echotimestamp>Updating web.xml based on worklight.properties values</echotimestamp>
+		<echotimestamp>${si.att.proxy.location}</echotimestamp>
+		<echotimestamp>${adapter.connection.domain}</echotimestamp>
+       	<property name="web.xml-2.4" value="${basedir}/bin/Proxy-2.4/WEB-INF/web.xml" />
+
+		<replaceregexp file="${web.xml-2.4}"
+			match="xmlns=&#34;http://java.sun.com/xml/ns/j2ee&#34;"
+			replace="xmlns=&#34;http://java.sun.com/xml/ns/javaee&#34;" />
+
+
+		<replaceregexp file="${web.xml-2.4}" 
+			match="&lt;location&gt;.*&lt;/location&gt;"
+			replace="&lt;location&gt;${si.att.proxy.location}&lt;/location&gt;" />
+		<replaceregexp file="${web.xml-2.4}" 
+			match="&lt;max-file-size&gt;.*&lt;/max-file-size&gt;"
+			replace="&lt;max-file-size&gt;${si.att.proxy.maxfilesize}&lt;/max-file-size&gt;" />
+		<replaceregexp file="${web.xml-2.4}" 
+			match="&lt;max-request-size&gt;.*&lt;/max-request-size&gt;"
+			replace="&lt;max-request-size&gt;${si.att.proxy.maxreqsize}&lt;/max-request-size&gt;" />
+		<replaceregexp file="${web.xml-2.4}" 
+			match="&lt;file-size-threshold&gt;.*&lt;/file-size-threshold&gt;"
+			replace="&lt;file-size-threshold&gt;${si.att.proxy.thresholdsize}&lt;/file-size-threshold&gt;" />
+		<if>
+			<isset property="useAttachmentProxyServer"/>
+			<then>
+				<echotimestamp>Using AttachmentProxyServer information from build.properties</echotimestamp>-->
+				<!-- Update backend server information -->
+				<!-- <replaceregexp file="${web.xml-2.4}" 
+					match="&lt;param-value&gt;http&lt;/param-value&gt;"
+					replace="&lt;param-value&gt;${attachmentProxy.connection.protocol}&lt;/param-value&gt;" />
+				
+				<replaceregexp file="${web.xml-2.4}" 
+					match="&lt;param-value&gt;mobilenext2.tivlab.austin.ibm.com&lt;/param-value&gt;"
+					replace="&lt;param-value&gt;${attachmentProxy.connection.domain}&lt;/param-value&gt;" />
+				<replaceregexp file="${web.xml-2.4}" 
+					match="&lt;param-value&gt;7001&lt;/param-value&gt;"
+					replace="&lt;param-value&gt;${attachmentProxy.connection.port}&lt;/param-value&gt;" />
+			</then>
+			<else>-->
+				<!-- Update backend server information -->
+				<!-- <replaceregexp file="${web.xml-2.4}" 
+					match="&lt;param-value&gt;http&lt;/param-value&gt;"
+					replace="&lt;param-value&gt;${adapter.connection.protocol}&lt;/param-value&gt;" />
+				
+				<replaceregexp file="${web.xml-2.4}" 
+					match="&lt;param-value&gt;mobilenext2.tivlab.austin.ibm.com&lt;/param-value&gt;"
+					replace="&lt;param-value&gt;${adapter.connection.domain}&lt;/param-value&gt;" />
+				<replaceregexp file="${web.xml-2.4}" 
+					match="&lt;param-value&gt;7001&lt;/param-value&gt;"
+					replace="&lt;param-value&gt;${adapter.connection.port}&lt;/param-value&gt;" />
+			</else>
+		</if>-->
+
+       	<!-- Create the Updated WAR file -->
+		<!-- <zip destfile="${basedir}/bin/${local.project.name}ProxyServlet-2.4.war"
+			basedir="${basedir}/bin/Proxy-2.4"/>-->
+ 
+       	<!-- Overwrite the AnywhereWorkManagement.war with this new war -->
+       	<!-- <echotimestamp message="Replacing WAR with proxy servlet enabled WAR"/>
+       	<copy verbose="true" file="${basedir}/bin/${local.project.name}ProxyServlet-2.4.war" 
+       		tofile="${basedir}/bin/${local.project.name}-2.4.war"/>
+
+		<if>
+			<not>
+				<isset property="anywhere.debug"/>
+			</not>
+			<then>
+				<echotimestamp>Removing temporary files...</echotimestamp>
+				<delete dir="${basedir}/bin/Proxy" failonerror="false"/>
+				<delete file="${basedir}/bin/${local.project.name}Proxy.war" failonerror="false"/>
+				<delete file="${basedir}/bin/${local.project.name}ProxyServlet.war" failonerror="false"/>
+				
+				<delete dir="${basedir}/bin/Proxy-2.4" failonerror="false"/>
+				<delete file="${basedir}/bin/${local.project.name}Proxy-2.4.war" failonerror="false"/>
+				<delete file="${basedir}/bin/${local.project.name}ProxyServlet-2.4.war" failonerror="false"/>
+			</then>
+		</if>
+
+    </target>-->
+    
+	<!-- MFP Removal Changes -->
+    <!-- <target name="-build-all-native-ios" if="${iphonebuild}" depends="init">
+    
+	    <foreach target="-build-native-ios" param="application.home" inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps" includes="${appsToBuild}">
+				</dirset>
+			</path>
+	    </foreach>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+    <!--<target name="-build-native-ios" if="isMac">
+    	<if>
+    		<available file="${application.home}/iphone/native/www" type="dir" />
+    		<then>
+    	        <propertyregex property="project.name"
+    		        			input="${application.home}"
+    		        			regexp="(?:/|\\)(.*?)(?:/|\\)apps(?:/|\\)[^/\\]*$"
+    		        			select="\1" />
+    		    <basename property="application.name" 		file="${application.home}"/>
+
+    			<ant antfile="anywhere-platform-installer.xml" target="-extract-esri-ios-sdk"/>
+    			
+    		    <property name="ios.execution.provisioning.profile" 	value=""/>
+    	  		<property name="ios.approval.provisioning.profile" 		value=""/>
+    	  		<property name="ios.certificate" 						value="iPhone Developer: Chris Doan (8725XV975W)"/>-->
+
+				<!-- Automatically gets the XCode and ios sdk version installed on current machine -->
+				<!-- <exec executable="xcodebuild" outputproperty="xcodeVersion">
+		        	<arg value="-version"/>
+		        </exec>
+		  		<exec executable="xcodebuild" outputproperty="xcodeShowSdks">
+		        	<arg value="-showsdks"/>
+		        </exec>
+		        <echo>*************************************************************************************************</echo>
+		        <propertyregex property="autoXcodeVersion"
+			        input="${xcodeVersion}"
+			        regexp="Xcode ([0-9]*[\.][0-9]*)"
+			        select="\1"
+			        casesensitive="false"
+			        global="true"
+			        defaultValue="none"/>
+		        <echotimestamp message="Xcode version installed found: ${autoXcodeVersion}" />
+		     	<property name="resolved.xcodeVersion" value="${autoXcodeVersion}" />
+		     	
+		        <propertyregex property="autoXcodeSDKVersion"
+			        input="${xcodeShowSdks}"
+			        regexp="iOS ([0-9]*[\.][0-9]*)"
+			        select="\1"
+			        casesensitive="false"
+			        global="true"
+			        defaultValue="none"/>
+		        <echotimestamp message="iOS sdk version installed found: ${autoXcodeSDKVersion}" />
+		     	<property name="resolved.xcodeSDKVersion" value="${autoXcodeSDKVersion}" />
+		        <echo>*************************************************************************************************</echo>-->
+
+    	    	<!-- WORKAROUND FOR BOM IN WORKLIGHT.JS -->
+    	    	<!-- <if>
+    	    		<available file="${application.home}/iphone/native/www/default/worklight/worklight.js"/>
+    	    		<then>
+    	    			<exec executable="/bin/sh" spawn="true">
+    	    			      <arg value="${basedir}/build/tools/stripBOM.sh"/>
+    	    				  <arg value="${application.home}/iphone/native/www/default/worklight/worklight.js"/>
+    	    				  <arg value="${application.home}/iphone/native/www/default/worklight/worklight.js.bak"/>
+    	    			</exec>
+    	    	    	
+    	    	    	<copy tofile="${application.home}/iphone/native/www/default/worklight/worklight.js.bak" 
+    	    	    		    file="${application.home}/iphone/native/www/default/worklight/worklight.js"/>
+    	    		</then>
+    	    		<else>
+    	    			<echotimestamp>File ${application.home}/iphone/native/www/default/worklight/worklight.js not found to process</echotimestamp>
+    	    		</else>
+    	    	</if>-->
+    	    	
+    			<!-- calculate the application version by looking at -->
+    			<!-- the application-descriptor.xml -->
+    	        <!-- <xmltask source="${application.home}/application-descriptor.xml" 
+    	            dest="${application.home}/application-descriptor.xml" 
+    	            failWithoutMatch="true" 
+    	            preserveType="true" 
+    	            report="${xmltask.report}">
+    	            <copy path="/:application/:iphone/@version" property="application.version"/>
+    			</xmltask>-->
+
+    		    <!-- None of these values below should ever need to change, unless for iphone changes for ipad -->
+    		    <!-- <property name="ios.mobileplatform" 					value="iphone" />
+    	  		<property name="ios.mobileplatform.ipad" 				value="ipad" />-->
+    	  		
+    	  		<!-- Same SDK used for both iphone and ipad -->    	
+    	  		<!-- <property name="ios.xcodeSDK" 							value="iphoneos" />
+    	  		<property name="ios.configuration" 						value="Release" />
+
+    	  		<property name="xcodebuildCMD" 		value="/usr/bin/xcodebuild" />
+    	  		<property name="iosPackageCMD" 		value="xcrun" />
+    	  		<property name="xcodebuildCMDlog" 	value="${basedir}/bin/xcodebuildCMD.log" />
+    	  		<property name="iosPackageCMDlog" 	value="${basedir}/bin/iosPackageCMD.log" />
+    	  		<property name="local.ipaPath" 		value="${basedir}/bin" />
+
+    			<if>
+    				<not>
+    					<available file="${user.home}/Library/MobileDevice/Provisioning Profiles" type="dir"/>
+    				</not>
+    				<then>
+    					<fail message="No provisioning profile folder [${user.home}/Library/MobileDevice/Provisioning Profiles] found for the current user."/> 
+    				</then>
+    			</if>
+    		
+    			<antcall target="search-mobileprofile-loop">
+    				<param name="local.application.home" value="${application.home}" />
+    				<param name="local.application.name" value="${application.name}" />
+    			</antcall>
+
+    			<for param="file">
+    				<path>
+    					<sort>
+    						<fileset dir="${basedir}/bin" includes="*.tmp" />
+    					</sort>
+    				</path>
+    				<sequential>
+    					<property name="target.provisionprofile" value="@{file}" />
+    				</sequential>
+    			</for>
+    			<echotimestamp>Target Mobile Profile : ${target.provisionprofile}</echotimestamp>
+    			<basename property="base.target.profile" file="${target.provisionprofile}"
+    				suffix=".mobileprovision.tmp" />
+    			<echotimestamp>Target Mobile Profile : ${base.target.profile}</echotimestamp>
+    			<delete>
+    				<fileset dir="${basedir}/bin" includes="**/*.tmp" />
+    			</delete>
+
+    			<property name="provisionprofile" value="${base.target.profile}"/>-->
+				
+				<!-- NEXT COMMANDS DEPENDS ON PROVISION PROFILE. IT IS A HASH NUMBER AND IS LOCATED IN THE ~/LIBRARY folder.
+    			     IF IT IS NOT THERE, THEN FAIL THE BUILD -->
+    			     
+				
+				<!-- <echotimestamp message="Generating archive and ipa files using xcodebuild" /> -->
+				<!-- xcodebuild command -->
+    	    	<!-- <trycatch>
+    				<try>
+						<exec
+    				        dir="${application.home}/${ios.mobileplatform}/native"
+    				        executable="${xcodebuildCMD}"
+    				        failonerror="true"
+    				        output="${xcodebuildCMDlog}"
+    				        resultproperty="xcodebuildCMDResult">
+    						<arg line=" -configuration '${ios.configuration}' -sdk ${ios.xcodeSDK}${resolved.xcodeSDKVersion} PROVISIONING_PROFILE='${provisionprofile}' -scheme MaximoAnywhere${application.name}Iphone -archivePath ${basedir}/bin/${application.name}-${application.version}.xcarchive archive" />
+    			    	 </exec>
+						
+						<exec
+    				        dir="${application.home}/${ios.mobileplatform}/native"
+    				        executable="${xcodebuildCMD}"
+    				        failonerror="true"
+    				        output="${xcodebuildCMDlog}"
+    				        resultproperty="xcodebuildCMDResult">						    
+    				      <arg line=" -exportArchive -archivePath ${basedir}/bin/${application.name}-${application.version}.xcarchive -exportOptionsPlist MaximoAnywhere${application.name}Iphone-Info.plist -exportPath ${basedir}/bin/" />
+    			    	 </exec>-->
+						
+						<!-- to keep app with name and version label (like old build way), we need to rename file generated -->
+						<!-- <rename src="${basedir}/bin/MaximoAnywhere${application.name}Iphone.ipa" dest="${basedir}/bin/${application.name}-${application.version}.ipa"/>
+    				</try>
+    				<catch>
+    					<echotimestamp> xcodebuild failed.  See log below</echotimestamp>
+    					<property name="xcodebuild.failed" value="true"/>
+    				</catch>
+    				<finally>-->
+    			    	<!-- output the build results -->
+    					<!-- <echo>************************************************ </echo>
+    					<echotimestamp>START iOS Build Log file [${xcodebuildCMDlog}] </echotimestamp>
+    					<concat>
+    						<fileset file="${xcodebuildCMDlog}" />
+    					</concat>
+    					<echotimestamp>END iOS Build Log file [${xcodebuildCMDlog}] </echotimestamp>
+    			    	<echo>************************************************ </echo>
+    					
+    					<fail if="xcodebuild.failed" message="iOS build failed, see log above for more information" />
+    				</finally>
+    			</trycatch>
+    		</then>
+    	</if>
+    </target>-->
+
+	<!-- MFP Removal Changes -->
+	<!-- <target name="search-mobileprofile-loop" unless="noprovision">
+		<foreach target="search-mobileprofile-impl" param="ppp">
+			<fileset dir="${user.home}/Library/MobileDevice/Provisioning Profiles/"
+				casesensitive="no">
+				<include name="*.mobileprovision" />
+			</fileset>
+		</foreach>
+	</target>-->
+
+	<!-- MFP Removal Changes -->
+	<!--
+		 Parse each mobileprofile and if the bundleId matches our application.name
+		 then we'll leave that *.tmp around for the caller to again invoke plistbuddy 
+	 -->
+	<!-- <target name="search-mobileprofile-impl">
+		<basename property="ppp.basename" file="${ppp}" />
+		<exec executable="security" output="${basedir}/bin/${ppp.basename}.tmp">
+			<arg value="cms" />
+			<arg value="-D" />
+			<arg value="-i" />
+			<arg value="${ppp}" />
+		</exec>
+
+		<exec executable="/usr/libexec/plistbuddy" outputproperty="ppp.application.identifier">
+			<arg
+				line="-c 'Print :Entitlements:application-identifier' ${basedir}/bin/${ppp.basename}.tmp" />
+		</exec>
+
+		<echotimestamp>Searching to see if app name ${local.application.name} matches provisioning profile string ${ppp.application.identifier}</echotimestamp>
+		<if>
+			<matches pattern="${local.application.name}" string="${ppp.application.identifier}" />
+			<then>
+				<echotimestamp>Profile BundleId ${ppp.application.identifier}</echotimestamp>
+			</then>
+			<else>
+				<delete file="${basedir}/bin/${ppp.basename}.tmp"
+					failonerror="false" />
+			</else>
+		</if>
+	</target> -->
+    
+	<condition property="java-home-set">
+	    <isset property="${env.JAVA_HOME}"/>
+	</condition>
+
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-build-all-native-apk" if="${androidbuild}" depends="init">
+	    <antcall target="getSDKToolVersion" />
+		<if>
+			<or>
+				<equals arg1="${android.sdk.home}" arg2="" />
+				<not>
+					<available file="${android.sdk.home}" type="dir" />
+				</not>
+			</or>
+			<then>
+				<echotimestamp
+					message="Path to Android SDK not defined or is invalid (${android.sdk.home}) in build.properties. Skipping native APK build" />
+			</then>
+			<else>
+				<foreach target="-build-native-apk" param="application.home"
+					inheritAll="true">
+					<path>
+						<dirset dir="${basedir}/apps" includes="${appsToBuild}">
+						</dirset>
+					</path>
+				</foreach>
+			</else>
+		</if>
+	</target>-->
+    
+	<!-- BEGIN Windows Phone 8 Native Build -->
+	<!--
+	
+	Source the build tools
+	
+	%comspec% /k ""C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\Tools\VsDevCmd.bat""
+	
+	msbuild /t:Clean /p:Configuration=Debug
+	msbuild /t:Clean /p:Configuration=Release
+	msbuild /t:Build /p:Configuration=Debug
+	msbuild /t:Build /p:Configuration=Release
+	
+	This will produce the native/WindowsPhone8/Bin/Debug/*.xap
+	This will produce the native/WindowsPhone8/Bin/Release/*.xap
+	
+	-->
+	<!-- MFP Removal Changes -->
+<!-- <target name="-build-all-native-xap" if="${windowsphone8build}">
+	<if>
+		<or>
+			<equals arg1="${visualstudio.install.path}" arg2="" />
+			<not>
+				<available file="${visualstudio.install.path}" type="dir" />
+			</not>
+		</or>
+		<then>
+			<echotimestamp message="Path to Windows Phone SDK not defined or is invalid (${visualstudio.install.path}) in build.properties. Skipping native windowsphone8 build!" />
+		</then>
+		<else>
+			<foreach target="-build-native-xap" param="application.home" inheritAll="true">
+				<path>
+					<dirset dir="${basedir}/apps" includes="${appsToBuild}"/>
+				</path>
+			</foreach>
+		</else>
+	</if>
+</target>-->
+
+<!-- MFP Removal Changes -->
+<!-- <target name="-build-native-xap" if="${windowsphone8build}" description="Build the Windows Phone 8 Native Binary">
+	<property name="visualstudio.install.path" value="C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\Common7\\Tools"/>
+	<echotimestamp>application.home=${application.home}</echotimestamp>
+
+	<available file="${application.home}/windowsphone8/native" type="dir" property="windowsphone8.native.exists"/>
+    <if>
+    	<isset property="windowsphone8.native.exists"/>
+    	<then>
+    		<exec executable="cmd" osfamily="windows" failonerror="true" dir="${application.home}/windowsphone8/native" >
+    			<arg value="/c" />
+    			<arg value="${basedir}/build/tools/wp8-build-debug.bat" />
+    			<arg value="${visualstudio.install.path}"/>
+    		</exec>
+    		<copy todir="${basedir}/bin" verbose="true" overwrite="true" flatten="true">
+    			<fileset dir="${application.home}/windowsphone8/native">
+    				<include name="**/*.xap"/>
+    			</fileset>
+    		</copy>
+    	</then>
+    </if>
+</target>-->
+<!-- END Windows Phone 8 Native Build -->
+
+<!-- MFP Removal Changes -->
+<!-- <target name="-build-all-native-appx" if="${windows8build}">
+	<if>
+		<or>
+			<equals arg1="${visualstudio.install.path}" arg2="" />
+			<not>
+				<available file="${visualstudio.install.path}" type="dir" />
+			</not>			
+		</or>		
+	<then>
+		<echotimestamp message="Path to Windows Phone SDK not defined or is invalid in build.properties. Skipping native windows8 build!" />
+	</then>
+	<else>-->
+		
+		<!-- timestamp used for the packaging folder we will use -->
+		<!-- <tstamp>
+			<format property="appxbuild.time" pattern="yyyyMMddHHmm" />
+		</tstamp>-->
+		
+		<!-- wipe out the old output folder and create a new one -->
+		<!-- <delete dir="${windows.tablet.output.folder}" failonerror="false"/>
+		<mkdir dir="${windows.tablet.output.folder}" />
+		
+		<foreach target="-build-native-appx" param="application.home" inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps" includes="${appsToBuild}" />
+			</path>
+		</foreach>
+	</else>
+	</if>
+</target>-->
+
+<!-- MFP Removal Changes -->
+<!-- <target name="-build-native-appx" if="${windows8build}" description="Build the Windows 8 Native Binary">
+	<property name="visualstudio.install.path" value="C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\Common7\\Tools"/>
+	
+	<basename property="application.name" file="${application.home}"/>	
+	<echotimestamp>Building appx application: ${application.name}</echotimestamp>
+	
+	<available file="${application.home}/windows8/native" type="dir" property="windows8.native.exists"/>-->
+    
+    <!-- create default properties if not present in build.properties -->
+	<!-- <property name="windows8.platform.target" value="x64" />
+	<property name="windows8.config.target" value="Release" />		
+		
+	<if>
+    	<isset property="windows8.native.exists"/>
+    	<then>-->
+    		<!-- clean up old builds -->
+    		<!-- <delete dir="${application.home}/windows8/native/AppPackages" failonerror="false" quiet="true"/>
+    		<delete dir="${application.home}/windows8/native/bin" failonerror="false" quiet="true"/>
+    		<delete dir="${application.home}/windows8/native/bld" failonerror="false" quiet="true"/>-->
+		      	
+    		<!-- verify properties are set to build -->
+    		<!-- <if>
+    			<or>
+    				<equals arg1="${visualstudio.install.path}" arg2="" />
+    				<equals arg1="${windows8.config.target}" arg2="" />
+    				<equals arg1="${windows8.platform.target}" arg2="" />
+    			</or>
+    			<then>
+    				<echotimestamp> Property values </echotimestamp>
+    				<echotimestamp>  visualstudio.install.path [${visualstudio.install.path}] </echotimestamp>
+    				<echotimestamp>  windows8.config.target [${windows8.config.target}] </echotimestamp>
+    				<echotimestamp>  windows8.platform.target [${windows8.platform.target}] </echotimestamp>
+    				<fail message="Parameters Missing. Cannot build Windows 8 app for '${application.name}" />
+    			</then>
+    			<else>
+            		<exec executable="cmd" osfamily="windows" failonerror="true" dir="${application.home}/windows8/native" >
+            			<arg value="/c" />
+            			<arg value="${basedir}/build/tools/w8-build-release.bat" />
+            			<arg value="${visualstudio.install.path}"/>
+            			<arg value="${application.name}"/>
+            			<arg value="${windows8.config.target}"/>
+            			<arg value="${windows8.platform.target}"/>
+            		</exec>   			
+    			</else>
+    		</if>-->
+    		
+    		<!-- copy to the location where we can find the appx -->
+    		<!-- <copy todir="${basedir}/bin" verbose="true" overwrite="true" flatten="true">
+    			<fileset dir="${application.home}/windows8/native">
+    				<include name="**/*.appx"/>
+    			</fileset>
+    		</copy>	
+    		
+			<echotimestamp> Zipping windows8.1 app for ${application.name} to ${windows.tablet.output.folder}</echotimestamp>
+    		<available file="${application.home}/windows8/native/${application.name}.Windows8/AppPackages" type="dir" property="windows.apppackage.exists" />
+    		<if>
+    			<isset property="windows.apppackage.exists" />
+    			<then>
+    				<zip destfile="${windows.tablet.output.folder}/latest/${application.name}_${version.name}.zip"
+    					basedir="${application.home}/windows8/native/${application.name}.Windows8/AppPackages"/>
+    				
+    				<mkdir dir="${windows.tablet.output.folder}/${appxbuild.time}" />
+    				
+    				<copy file="${windows.tablet.output.folder}/latest/${application.name}_${version.name}.zip"
+    					tofile="${windows.tablet.output.folder}/${appxbuild.time}/${application.name}_${version.name}_${appxbuild.time}.zip" overwrite="true"/>
+    			</then>
+    		</if>
+
+    	</then>
+    </if>
+</target>-->
+<!-- END Windows 8 tablet Native Build -->		
+
+<!-- MFP Removal Changes -->
+<!-- <target name="-build-native-apk" if="${androidbuild}">
+
+<propertyregex property="project.name"
+	        			input="${application.home}"
+	        			regexp="(?:/|\\)(.*?)(?:/|\\)apps(?:/|\\)[^/\\]*$"
+	        			select="\1" />
+	    <basename property="application.name" file="${application.home}"/>
+	    <property name="android.sdk.version.target" value="${Android_TARGET_DEVICE_NAME}"/>
+	    	    
+	    <echotimestamp level="debug">Creating native distributions for Application [${application.name}]</echotimestamp>
+		<echotimestamp level="info">JAVA_HOME set to ${env.JAVA_HOME}. Android build requires Oracle JDK</echotimestamp>
+		<echotimestamp level="info">Using android.sdk.home: [${android.sdk.home}]</echotimestamp>
+		<echotimestamp level="info">Using android.sdk.version.target: ${android.sdk.version.target}</echotimestamp>
+
+		<available file="${android.sdk.home}" property="android.sdk.home.exists" />
+		<fail unless="android.sdk.home.exists"
+			message="Property 'android.sdk.home' is not referencing valid directory: ${android.sdk.home}" />
+		<available
+			file="${android.sdk.home}/platforms/${android.sdk.version.target}"
+			property="android.sdk.version.target.exists" />
+		<fail unless="android.sdk.version.target.exists"
+			message="Android API Target of [${android.sdk.version.target}] has not been installed to Android SDK at [${android.sdk.home}]" />
+		<if>
+        <available file="${application.home}/android/native/gradlew"/>
+        	<then>
+        	    <echotimestamp>Found Gradle Build Script for ${application.name}</echotimestamp>
+        	    
+	        <if>
+    		    <isset property="android.sdk.toolsVersion"/>
+    			<then>
+    			    <echotimestamp message="android.target.buildToolsVersion set to ${android.sdk.toolsVersion}" />
+    			    
+					<loadfile srcfile="${application.home}/android/native/build.gradle" property="gradle.buildToolsVersion">
+     						<filterchain>
+       						<linecontains>
+         							<contains value="buildToolsVersion"/>
+       						</linecontains>
+     						</filterchain>
+   					</loadfile>
+
+					<replaceregexp file="${application.home}/android/native/build.gradle" 
+	        			match="${gradle.buildToolsVersion}"
+	        			replace="    buildToolsVersion '${android.sdk.toolsVersion}' ${line.separator}" />    			    			    
+    			    
+    			</then>
+    			<else>
+    			    <echotimestamp message="android.target.buildToolsVersion not set"></echotimestamp> 
+    			</else>
+    			</if>
+        	    
+        		<delete includeEmptyDirs="true" failonerror="false">
+					 <fileset dir="${application.home}/android/native/build" includes="**" />
+				</delete>
+        		
+        	    <delete includeEmptyDirs="true" failonerror="false">
+ 					 <fileset dir="${application.home}/android/native/lib" includes="**" />
+				</delete>
+       	    
+       		    <mkdir dir="${application.home}/android/native/lib"/>
+       	    
+       		    <copy todir="${application.home}/android/native/lib" >  
+   					<fileset dir="${application.home}/android/native/libs" includes="**" excludes="*.jar"/>  
+				</copy>
+			
+       	    	<delete includeEmptyDirs="true" failonerror="false">
+					<fileset dir="${application.home}/android/native/libs" includes="nativelibso.jar" />
+				</delete>
+			
+       	    	<jar destfile="${application.home}/android/native/libs/nativelibso.jar">
+       	    		<fileset dir="${application.home}/android/native" includes="lib/**"/>
+       	    	</jar>
+       	    
+       	    	<delete includeEmptyDirs="true" failonerror="false">
+					<fileset dir="${application.home}/android/native/lib" includes="**" />
+				</delete>
+				
+       	    	<loadproperties srcFile="${application.home}/app-feature.properties"/>
+       	    	<echotimestamp>APK Dex Type :: ${android.apk.dextype}</echotimestamp>
+        	    
+        	    <if>
+        	        <equals arg1="${android.apk.dextype}" arg2="MultiDex" />
+        	        <then>
+        	    		<antcall target="-enable-APKMultiDex">
+            				<param name="application.home" value="${application.home}"/>
+            				<param name="application.name" value="${application.name}"/>
+            			</antcall>
+        	    	</then>
+        	    	<else>
+        	    		<antcall target="-enable-APKJumboMode">
+            				<param name="application.home" value="${application.home}"/>
+            				<param name="application.name" value="${application.name}"/>
+            			</antcall>
+	            	</else>
+	            </if>  
+
+				<exec executable="${application.home}/android/native/gradlew.bat" dir="${application.home}/android/native" 
+				    osfamily="windows" failonerror="true">
+        	    	<env key="ANDROID_HOME" value="${android.sdk.home}"/>
+					<arg value="assembleDebug" />
+				</exec>
+				
+				<exec executable="/bin/sh" dir="${application.home}/android/native" 
+				    osfamily="unix" failonerror="true">
+					<env key="ANDROID_HOME" value="${android.sdk.home}"/>
+					<arg value="-c" />
+					<arg value="${application.home}/android/native/gradlew assembleDebug" />
+				</exec>
+				
+				<echo>Gradle Build Complete for ${application.name}</echo>
+			</then>
+			<else>
+			    
+				<exec executable="cmd" osfamily="windows" failonerror="true">
+					<arg value="/c" />
+					<arg value="${android.sdk.home}/tools/android.bat" />
+					<arg value="update" />
+					<arg value="project" />
+					<arg value="-path" />
+					<arg value="${application.home}/android/native" />
+					<arg value="-target" />
+					<arg value="${android.sdk.version.target}" />
+				</exec>
+		
+				<exec executable="/bin/sh" osfamily="unix" failonerror="true">
+					<arg value="-c" />
+					<arg
+						value="${android.sdk.home}/tools/android update project -path ${application.home}/android/native -target ${android.sdk.version.target}" />
+				</exec>			    
+			    
+				<property environment="env"/>
+				<property name="android.build.temp.app.dir" value="${java.io.tmpdir}/${application.name}"/>
+				
+				<echotimestamp level="debug">Java IO TEMP = ${java.io.tmpdir}</echotimestamp>
+				<echotimestamp level="debug">Android Build TEMP = ${android.build.temp.app.dir}</echotimestamp>
+						
+				<property name="android.build.temp.app.dir"
+					value="${android.build.temp.dir}/${application.name}" />
+				<echotimestamp level="info">Native Android temp directory: ${android.build.temp.app.dir}</echotimestamp>
+				
+			    <ant antfile="${application.home}/android/native/build.xml"
+					target="debug" useNativeBasedir="true">
+					<property name="out.dir" value="${android.build.temp.app.dir}" />
+					<property name="aapt.ignore.assets"
+						value="!.svn:!.git:.*:!CVS:!thumbs.db:!picasa.ini:!*.scc:*~" />
+				</ant>
+			</else>
+		 </if>-->
+		 
+		<!-- calculate the application version by looking at -->
+		<!-- the application-descriptor.xml -->
+        <!-- <xmltask source="${application.home}/application-descriptor.xml" 
+            dest="${application.home}/application-descriptor.xml" 
+            failWithoutMatch="true" 
+            preserveType="true" 
+            report="${xmltask.report}">
+            <copy path="/:application/:android/@version" property="application.version"/>
+		</xmltask>
+		
+		<if>
+        <available file="${application.home}/android/native/gradlew"/>
+        <then>
+			<copy tofile="${basedir}/bin/${application.name}-${application.version}.apk" file="${application.home}/android/native/build/outputs/apk/debug/native-debug.apk"/>
+		</then>
+		<else>
+		    <copy tofile="${basedir}/bin/${application.name}-${application.version}.apk" file="${android.build.temp.app.dir}/${application.name}-debug.apk"/>
+		</else>
+		</if>
+		
+   		<echotimestamp level="info">Successfully created [${basedir}/bin/${application.name}-${application.version}.apk]</echotimestamp>
+    </target>-->
+
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-build-app" depends="-update-application-descriptor">
+	    
+	    <propertyregex property="project.path"
+	        			input="${application.home}"
+	        			regexp="(?:/|\\)(.*?)(?:/|\\)apps(?:/|\\)[^/\\]*$"
+	        			select="\1" />
+		
+		<basename property="application.name" file="${application.home}"/>
+
+	    <echotimestamp>Building application ${application.name}</echotimestamp>-->
+	    	
+	    <!-- needed by iOS builds -->
+	    <!-- <basename property="project.name" file="${project.path}"/>
+	    <antcall target="-update-buildtimestamp">
+	    	<param name="app.home" value="${application.home}"/>
+	    </antcall>
+		
+		<if>
+			<equals arg1="${application.name}" arg2="Inspection" />
+			<then>-->
+				<!-- needed for Inspection to use WE's codebase -->
+				<!-- <antcall target="-update-inspection">
+					<param name="app.home" value="${application.home}"/>
+				</antcall>
+			</then>
+		</if>
+
+	    
+	    <echotimestamp level="info">
+    worklightserverhost="${resolved.worklight.server.url}/${worklight.server.context}"
+    applicationFolder="${application.home}"
+    environments="common,${worklight.envsToDeploy}"
+    nativeProjectPrefix="${project.name}"
+    skinBuildExtensions="build-dojo.xml"
+    outputFolder="${basedir}/bin"/>
+	    </echotimestamp>
+	    
+	    <app-builder
+	        worklightserverhost="${resolved.worklight.server.url}/${worklight.server.context}"
+	        applicationFolder="${application.home}"
+	        environments="common,${worklight.envsToDeploy}"
+	        nativeProjectPrefix="${project.name}"
+	        skinBuildExtensions="build-dojo.xml"
+	        outputFolder="${basedir}/bin"/>-->
+		
+		<!-- dojo language fix for common language-locale on windows 8.x -->
+		<!-- <antcall target="-update-common-messages" /> -->
+		
+		<!-- update the WinJS Libraries version for windows 8.1 -->
+		<!-- <antcall target="-retarget-windows8-dependencies" />-->
+		
+		<!-- update the jsproj to the specified version if Visual Studio -->
+		<!-- <antcall target="-retarget-windows8-visual-studio" />
+	</target>-->
+		
+	<target name="-build-all-apps" depends="init">
+		<echotimestamp>appsToBuild ${appsToBuild}</echotimestamp>
+	    <foreach target="-build-app" param="application.home" inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps" includes="${appsToBuild}">
+				</dirset>
+			</path>
+	    </foreach>
+	</target>
+	
+	<target name="-update-common-messages">
+		<copy todir="${application.home}/common/js/platform/translation/wl-system-messages/nls/en" file="${application.home}/common/js/platform/translation/wl-system-messages/nls/messages.js"/>
+		<copy todir="${application.home}/common/js/platform/translation/wl-system-messages/nls/en-us" file="${application.home}/common/js/platform/translation/wl-system-messages/nls/messages.js"/>
+		<copy todir="${application.home}/common/js/platform/translation/wl-system-messages/nls/en-gb" file="${application.home}/common/js/platform/translation/wl-system-messages/nls/messages.js"/>
+	</target>
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-retarget-windows8-dependencies" >
+		<property name="www.default.location"
+				 value="${application.home}/windows8/native/www/default" />
+		
+		<if>
+			<available file="${www.default.location}" type="dir" />
+			<then>
+				<echotimestamp> Updating WinJS.1.0 to 2.0 for /js/base.js </echotimestamp>
+				<replaceregexp byline="true" encoding="UTF-8"> 
+					<regexp pattern='&lt;script src="//Microsoft.WinJS.1.0/js/base.js"&gt;&lt;/script&gt;'/> 
+					<substitution expression='&lt;script src="//Microsoft.WinJS.2.0/js/base.js"&gt;&lt;/script&gt;' /> 
+					<fileset dir="${www.default.location}"> 
+						<include name="index.html" /> 
+					</fileset> 
+				</replaceregexp>
+				
+				<echotimestamp> Updating WinJS.1.0 to 2.0 for /js/ui.js </echotimestamp>
+				<replaceregexp byline="true" encoding="UTF-8"> 
+					<regexp pattern='&lt;script src="//Microsoft.WinJS.1.0/js/ui.js"&gt;&lt;/script&gt;'/> 
+					<substitution expression='&lt;script src="//Microsoft.WinJS.2.0/js/ui.js"&gt;&lt;/script&gt;' /> 
+					<fileset dir="${www.default.location}"> 
+						<include name="index.html" /> 
+					</fileset> 
+				</replaceregexp>
+							
+				<echotimestamp> Updating WinJS.1.0 to 2.0 for /css/ui-light.js  CURRENTLY SETTING TO COMMENTED OUT </echotimestamp>
+				<replaceregexp byline="true" encoding="UTF-8"> 
+					<regexp pattern='&lt;link href="//Microsoft.WinJS.1.0/css/ui-light.css" rel="stylesheet"&gt;'/> 
+					<substitution expression='&lt;!- &lt;link href="//Microsoft.WinJS.2.0/css/ui-light.css" rel="stylesheet"&gt; -&gt;' /> 
+					<fileset dir="${www.default.location}"> 
+						<include name="index.html" /> 
+					</fileset> 
+				</replaceregexp>
+			</then>
+		</if>
+	</target>-->
+		
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-retarget-windows8-visual-studio" depends="-validate-visualstudio-version-release">
+	    <xmltask source="${application.home}/windows8/native/${application.name}.Windows8/${application.name}.Windows8.jsproj" 
+	    	dest="${application.home}/windows8/native/${application.name}.Windows8/${application.name}.Windows8.jsproj">
+	      <replace path="//:Project/:PropertyGroup/:VisualStudioVersion/text()">${visualstudio.version.release}</replace>
+	    </xmltask>	
+	    <xmltask source="${application.home}/windows8/native/${application.name}.WindowsPhone8/${application.name}.WindowsPhone8.jsproj" 
+	    	dest="${application.home}/windows8/native/${application.name}.WindowsPhone8/${application.name}.WindowsPhone8.jsproj">
+	      <replace path="//:Project/:PropertyGroup/:VisualStudioVersion/text()">${visualstudio.version.release}</replace>
+	    </xmltask>	
+	</target>-->
+	
+	<target name="-zip-app-upload">
+		<property name="posturl" value=""/>
+		<property name="postlogin" value=""/>
+		<property name="postlogin" value=""/>
+		<property name="protocol" value="${adapter.connection.protocol}"/>
+		<property name="user" value="${adapter.connection.user}"/>
+		<property name="pwd" value="${adapter.connection.password}"/>
+		<property name="user_pwd" value="${adapter.connection.user}:${adapter.connection.password}"/>
+		<property name="domain" value="${adapter.connection.domain}"/>
+		<property name="context" value="${adapter.connection.context}"/>
+		<property name="port" value="${adapter.connection.port}"/>
+		<property name="versionname" value="${version.name}"/>
+		
+		<propertyregex property="appname"
+			input="${application.home}"
+			regexp="(?:/|\\)apps(?:/|\\)([^/\\]*)$"
+			select="\1" />
+		
+		<script language="javascript"><![CDATA[
+            // URL used to post zip file 
+			posturl = protocol + '://' + domain + ':' + port + '/' + context + '/oslc/os/OSLCMAXAPPDATA?action=wsmethod:uploadFile&appid=' + appname + '&appversion=' + versionname + ':';
+			
+			// Setting property with post login URL
+			project.setProperty('posturl', posturl);
+			
+			postlogin = protocol + '://' + domain + ':' + port + '/' + context + '/oslc/login/j_security_check?j_username=' + user + '&j_password=' + pwd;
+						
+			// Setting property with post login URL
+			project.setProperty('postlogin', postlogin);
+			
+			// Create Base64 Object
+			var Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/\r\n/g,"\n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}
+
+			// Encode the String
+			user_pwd = Base64.encode(user_pwd);
+			 
+			// Setting user_pwd property with user and password encrypted by Base64 algorithm
+			project.setProperty('user_pwd', user_pwd);
+	          
+        ]]></script>
+		
+		<loadproperties srcFile="${basedir}/server/conf/worklight.properties"/>
+		
+		<echo>Doing upload of ${appname}.zip file to ${posturl}</echo>
+		<echo>Authentication Type ${si.auth.type}</echo>
+		
+		<echo> ${posturl} </echo>
+		<trycatch>
+			<try>
+				<record name="${basedir}/bin/${appname}.response" action="start" append="false" />
+				<if>
+					<equals arg1="${si.auth.type}" arg2="form" casesensitive="false"/>
+					<then>
+						
+						<echo>FORM UPLOAD</echo>
+						<exec executable="curl" failonerror="true">
+							<arg value="-X"/>
+							<arg value="POST"/>
+							
+							<arg value="-b"/>
+							<arg value="${basedir}/uploadcookie.txt"/>
+							<arg value="-c"/>
+							<arg value="${basedir}/uploadcookie.txt"/>
+																														
+							<arg value="-T"/>
+							<arg value="${basedir}/bin/${appname}.zip"/>
+							<arg value="${posturl}"/>
+						</exec>
+					</then>
+					<else>
+						<if>
+							<equals arg1="${si.auth.type}" arg2="basic" casesensitive="false"/>
+							<then>
+								<echo>BASIC Maxauth </echo>
+								<exec executable="curl" failonerror="true">
+									<arg value="-H"/>
+									<arg value="Authorization: Basic ${user_pwd}"/>
+																		
+									<arg value="-T"/>
+									<arg value="${basedir}/bin/${appname}.zip"/>
+									<arg value="${posturl}"/>
+								</exec>
+													
+							</then>
+							<else>
+								<echo>Default Maxauth </echo>
+								<exec executable="curl" failonerror="true">
+									<arg value="-H"/>
+									<arg value="maxauth: ${user_pwd}"/>
+																		
+									<arg value="-T"/>
+									<arg value="${basedir}/bin/${appname}.zip"/>
+									<arg value="${posturl}"/>
+								</exec>
+							</else>
+						</if>
+					</else>
+				</if>
+				<record name="${basedir}/bin/${appname}.response" action="stop"/>
+				<loadfile property="curl.upload.result"
+					srcFile="${basedir}/bin/${appname}.response"/>
+				<propertyregex property="upload.checksum"
+					input="${curl.upload.result}"
+					regexp="(\{&quot;deployeddatetime&quot;:&quot;)(\d{0,4}-\d{0,2}-\d{0,2}\ \d{0,2}\:\d{0,2}\:\d{0,2}\.\d{0,3})"
+					select="\2"/>
+				<echo>Checksum acquired</echo>
+				<echo>${upload.checksum}</echo>
+				<echo file="${basedir}/bin/${appname}.checksum" append="false" message="deployeddatetime=${upload.checksum}">
+				</echo>
+				<zip destfile="${basedir}/bin/${appname}.zip" update="true"
+					basedir="${basedir}/bin"
+					includes="${appname}.checksum">
+				</zip>
+				<delete includeemptydirs="true">
+  					<fileset dir="${basedir}/bin" includes="${appname}.checksum, ${appname}.response"/>
+				</delete>
+
+				
+			</try>
+			<catch>
+				<echotimestamp>Problem found when trying to use cURL to upload zip to maximo. Please make sure it is installed before running deploy command,. You may also upload the zip manually.</echotimestamp>
+			</catch>
+		</trycatch>
+	</target>
+		
+	<target name="zip-upload-all-apps">
+		<!-- We must maximo connection to check admin load and upload zip -->
+		<!-- Check maximo url to verify connection -->
+		
+		
+		<property name="posturl" value=""/>
+				<property name="postlogin" value=""/>
+				<property name="postlogin" value=""/>
+				<property name="protocol" value="${adapter.connection.protocol}"/>
+				<property name="user" value="${adapter.connection.user}"/>
+				<property name="pwd" value="${adapter.connection.password}"/>
+				<property name="user_pwd" value="${adapter.connection.user}:${adapter.connection.password}"/>
+				<property name="domain" value="${adapter.connection.domain}"/>
+				<property name="context" value="${adapter.connection.context}"/>
+				<property name="port" value="${adapter.connection.port}"/>
+				<property name="versionname" value="${version.name}"/>
+				
+				
+				
+				<script language="javascript"><![CDATA[
+		            
+					postlogin = protocol + '://' + domain + ':' + port + '/' + context + '/oslc/login/j_security_check?j_username=' + user + '&j_password=' + pwd;
+											
+					// Setting property with post login URL
+					project.setProperty('postlogin', postlogin);
+					
+					// Create Base64 Object
+					//var Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/\r\n/g,"\n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}
+
+					// Encode the String
+					//user_pwd = Base64.encode(user_pwd);
+					 
+					// Setting user_pwd property with user and password encrypted by Base64 algorithm
+					project.setProperty('user_pwd', user_pwd);
+			          
+		        ]]></script>
+		<trycatch>
+	        <try>
+	        	<echotimestamp message="Trying to connect to Maximo: ${adapter.connection.protocol}://${adapter.connection.domain}:${adapter.connection.port}/${adapter.connection.context}"/>
+	        	<loadproperties srcFile="${basedir}/server/conf/worklight.properties"/>
+	        	
+	        	<if>
+	        		<equals arg1="${si.auth.type}" arg2="basic" casesensitive="false"/>
+	        		<then>
+			        	<!--get src="${adapter.connection.protocol}://${adapter.connection.domain}:${adapter.connection.port}/${adapter.connection.context}/" dest=".maximo-url-test">
+			        		<header name="Authorization" value="Basic ${user_pwd}"/>	        		  
+			        	</get-->
+	        			<exec executable="curl" failonerror="true">
+							<arg value="-X"/>
+							<arg value="GET"/>
+							<arg value="-H"/>
+							<arg value="Authorization: Basic ${user_pwd}"/>						
+							<arg value="-i"/>
+							<arg value="${adapter.connection.protocol}://${adapter.connection.domain}:${adapter.connection.port}/${adapter.connection.context}/"/>
+						</exec>
+	        		</then>
+	        		<else>
+	        			<!--get src="${adapter.connection.protocol}://${adapter.connection.domain}:${adapter.connection.port}/${adapter.connection.context}" dest=".maximo-url-test"/-->
+	        			<exec executable="curl" failonerror="true">
+							<arg value="-X"/>
+							<arg value="GET"/>				
+							<arg value="-i"/>
+							<arg value="${adapter.connection.protocol}://${adapter.connection.domain}:${adapter.connection.port}/${adapter.connection.context}/"/>
+						</exec>
+	        		</else>
+	        	</if>
+	        	<ant antfile="admin-config-loader.xml" target="allApps"/>
+	        	<if>
+	        		<equals arg1="${si.auth.type}" arg2="form" casesensitive="false"/>
+	        		<then>
+	        			<echo>FORM authentication</echo>
+	        				<exec executable="curl" failonerror="true">
+	        					<arg value="-kiv" />
+	        					<arg value="-X"/>
+	        					<arg value="POST"/>
+	        					<arg value="-d"/>
+	        					<arg value="j_username: ${user}"/>
+	        					<arg value="-d"/>
+	        					<arg value="j_password: ${pwd}"/>
+	        					<arg value="-H"/>
+	        					<arg value="Content-Type: multipart/form-data"/>
+	        					<arg value="-c"/>
+	        					<arg value="${basedir}/uploadcookie.txt"/>
+	        					<arg value="${postlogin}"/>
+	        				</exec>
+	        							
+	        		</then>
+	        	</if>
+	        	<foreach target="-zip-app-upload" param="application.home" inheritAll="true">
+    				<path>
+    					<dirset dir="${basedir}/apps" includes='${appsToBuild}'>
+    					</dirset>
+    				</path>
+    			</foreach>
+	    	</try>
+	    	<catch>
+	    		<if>
+		    		<equals arg1="${build.process}" arg2="offline"/>
+		    		<then>
+		    			<echotimestamp message="WARNING: The specified Maximo address is not reacheable." level="warning"/>
+		    			<echotimestamp message="Currently, the build is offline because the build.process=offline property has been set in the build.properties file." level="warning"/>
+		    		</then>
+	    			<else>
+	    				<echotimestamp message="Currently, it is an online build because the build.process=online property has been set in the build.properties file. If you prefer an offline build, change this property to be build.process=offline." level="warning"/>
+	    				<fail message="The specified Maximo address is not reacheable."/>
+	    			</else>
+	    		</if>
+	    	</catch>
+	    </trycatch>
+	</target>
+	
+	<target name="-zip-app">
+		<propertyregex property="app.name"
+			input="${application.home}"
+			regexp="(?:/|\\)apps(?:/|\\)([^/\\]*)$"
+			select="\1" />
+		
+	    <antcall target="-update-buildtimestamp">
+	    	<param name="app.home" value="${application.home}"/>
+	    </antcall>
+		
+		<if>
+			<equals arg1="${app.name}" arg2="Inspection" />
+				<then>
+					<!-- needed for Inspection to use WE's codebase -->
+					<antcall target="-update-inspection">
+						<param name="app.home" value="${application.home}"/>
+					</antcall>
+				</then>
+		</if>
+
+		<delete file="${basedir}/bin/${app.name}.zip" failonerror="false" />
+		
+		<zip destfile="${basedir}/bin/${app.name}.zip">
+	        <fileset dir="${application.home}/common" 
+					excludes="images/android/,
+								images/ios/,
+								images/windows/" />
+			<fileset dir="${basedir}/www" includes="*/**"/>
+	    </zip>
+	</target>
+	
+	<target name="zip-all-apps">
+		<foreach target="-zip-app" param="application.home" inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps" includes='${appsToBuild}'>
+				</dirset>
+			</path>
+		</foreach>
+	</target>
+	
+	<!-- MFP Removal Changes -->
+	<!-- configure the project for iphone builds -->
+	<!-- called from : build.xml -->	
+	<!--<target name="-configure-all-apps">
+	    <foreach target="-update-application-descriptor" param="application.home" inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps" includes="${appsToBuild}">
+				</dirset>
+			</path>
+	    </foreach>
+	</target>-->
+	
+	<target name="-update-inspection">
+		<echotimestamp>Copying common/js files to Inspection</echotimestamp>
+		
+		<copy todir="${basedir}/apps/Inspection/common/js/application/business" verbose="false" overwrite="true">
+		    <fileset dir="${basedir}/apps/WorkExecution/common/js/application/business">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+		<copy todir="${basedir}/apps/Inspection/common/js/application/handlers" verbose="false" overwrite="true">
+		    <fileset dir="${basedir}/apps/WorkExecution/common/js/application/handlers">
+				<include name="**/*"/>
+			</fileset>
+		</copy>	
+	</target>
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-deploy-app">
+	    <echotimestamp>Deploying application ${application.home} to</echotimestamp>
+	    <echotimestamp>Worklight Server [${resolved.worklight.server.url}]</echotimestamp>
+
+	    <propertyregex property="app.name"
+	        			input="${application.home}"
+	        			regexp="(?:/|\\)apps(?:/|\\)([^/\\]*)$"
+	        			select="\1" />
+	        				
+		<available file="${basedir}/bin/${app.name}-all.wlapp" type="file" property="wlapp.exists"/>
+	    <if>
+	    	<isset property="wlapp.exists"/>
+	    	<then>
+	    	    <wladm url="${resolved.worklight.server.url}/${worklight.admin.server.context}" secure="false" user="${worklight.server.user}" password="${worklight.server.password}">
+	          		<deploy-app runtime="${worklight.server.context}" file="${basedir}/bin/${app.name}-all.wlapp"/>
+	        	</wladm>-->
+	    		<!-- <app-deployer deployable="${basedir}/bin/${app.name}-all.wlapp"
+	                      	  worklightServerHost="${resolved.worklight.server.url}" 
+	                      	  userName="${worklight.server.user}" password="${worklight.server.password}" /> -->	
+	    	<!-- </then>
+	    </if>
+	</target>-->
+	
+	<target name="-deploy-all-apps" depends="init">
+	    <foreach target="-deploy-app" param="application.home" inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/apps" includes="${appsToBuild}">
+				</dirset>
+			</path>
+	    </foreach>
+	</target>
+
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-deploy-all-native-apk" depends="init">
+	  <propertyregex property="project.name" input="${application.home}"
+			regexp="(?:/|\\)(.*?)(?:/|\\)apps(?:/|\\)[^/\\]*$" select="\1" />
+		<basename property="application.name" file="${application.home}" />
+
+		<if>			
+			<isset property="appCenter.server.isrunning" />
+			<then>
+				<if>
+					<not>
+						<isset property="deploy-native-use-java-tool" />
+					</not>
+					<then>-->
+						<!-- Deploy Native Using Java Tool -->
+						<!-- <echotimestamp message="Deploy Native Java Tool" />
+						<fileset dir="${basedir}/bin" id="files.to.upload">
+							<include name="*.apk" />
+							<include name="*.ipa" />
+							<include name="*.xap" />
+							<include name="*.appx" />
+						</fileset>
+
+						<property name="nativelist" refid="files.to.upload" />
+
+						<for list="${nativelist}" param="file" delimiter=";">
+							<sequential>
+								<echotimestamp>file=${basedir}/bin/@{file}</echotimestamp>
+								<java classname="com.ibm.appcenter.Upload" fork="true"
+						            failonerror="false" maxmemory="256m">
+									<arg value="-s" />
+									<arg value="${appCenter.server.url}" />
+									<arg value="-c" />
+									<arg value="${appCenter.server.context}" />
+									<arg value="-u" />
+									<arg value="${appCenterAdminID}" />
+									<arg value="-p" />
+									<arg value="${appCenterAdminPass}" />
+									<arg value="-isInstaller"/>
+									<arg value="true"/>
+									<arg value="-f" />
+									<arg value="${basedir}/bin/@{file}" />
+									<arg value="-y" />
+									<classpath>
+										<pathelement location="${basedir}/bin" />
+										<pathelement
+											path="${basedir}/libs/build/applicationcenterdeploytool.jar" />
+										<pathelement path="${basedir}/libs/codegen/json4j.jar" />
+									</classpath>
+								</java>
+							</sequential>
+						</for>
+					</then>
+					<else>-->
+						<!-- Use Ant Task -->
+						<!-- <echotimestamp message="Deploy Native Using Ant" />
+						<native-deployer serverPath="${appCenter.server.url}"
+							loginUser="${appCenterAdminID}" loginPass="${appCenterAdminPass}"
+							forceOverwrite="true" context="/${appCenter.server.context}" disableSSLSecurity="true">
+							<fileset dir="${basedir}/bin" id="files.to.upload">
+								<include name="*.apk" />
+								<include name="*.ipa" />
+								<include name="*.xap" />
+								<include name="*.appx" />
+							</fileset>
+						</native-deployer>
+						<echotimestamp message="Files to native-deployer: ${toString:files.to.upload}" />
+					</else>
+				</if>
+			</then>
+			<else>
+				<echotimestamp>***Application Center is Not running. No Applications were deployed to Application Center </echotimestamp>
+			</else>
+		</if>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-build-all-adapter" depends="init">
+		<foreach target="-build-adapter" param="adapter.home" inheritAll="true">
+			<path>
+				<dirset dir="${basedir}/adapters">
+				    <include name="*"/>
+				</dirset>
+			</path>
+	    </foreach>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-build-adapter" depends="init,-update-config-adapter,-update-config-authconfig"> -->
+	   <!--  <echo >
+  		    adapter base build-adapter = "${basedir}"
+  		    adapter home build-adapter = "${adapter.home}"
+  		    </echo> -->
+		<!-- <adapter-builder
+	        folder="${adapter.home}"
+	        destinationfolder="${basedir}/bin"/>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-deploy-all-adapter" depends="init" >-->
+	    <!-- <echo >
+  		    adapter.base = "${basedir}"
+  		    </echo> -->
+		<!-- <foreach target="-deploy-adapter" param="adapter.bin" inheritAll="true">
+			
+				<fileset dir="${basedir}/bin" >
+				    <include name="*.adapter"/>
+				</fileset>
+			
+	    </foreach>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-deploy-adapter" if="worklight.server.isrunning">-->
+	    
+	    <!-- <taskdef resource="com/worklight/ant/deployers/antlib.xml">
+    		<classpath>
+      			<pathelement location="C:\workspace_luna\MaximoAnywhere\libs\build\worklight-ant-deployer.jar"/>
+    		</classpath>
+  		</taskdef> -->
+  		<!-- <echo >
+  		    adapterbimRRRRR = "${adapter.bin}"
+  		    </echo>  -->
+  		<!-- <wladm url="${resolved.worklight.server.url}/${worklight.admin.server.context}" secure="false" user="${worklight.server.user}" password="${worklight.server.password}">
+	      <show-info/>
+	    </wladm>
+	    
+	   <wladm url="${resolved.worklight.server.url}/${worklight.admin.server.context}" secure="false" user="${worklight.server.user}" password="${worklight.server.password}">
+	      <deploy-adapter runtime="${worklight.server.context}" file="${adapter.bin}"/>
+	    </wladm>-->
+	    <!-- <echo message="Deploy adpter qith CURl" />
+	   <exec executable="curl" failonerror="true">
+	        <arg value="-u"/>
+	        <arg value="${worklight.server.user}:${worklight.server.password}"/>
+	        <arg value="-F"/>
+	        <arg value="FILE=@C:/workspace_luna/MaximoAnywhere/bin/OSLCGenericAdapter.adapter"/>
+	        <arg value="http://m4.tivlab.austin.ibm.com:8080/wladmin/management-apis/1.0/runtimes/MaximoAnywhere/adapters?locale=en_US:"/>
+	    </exec>
+	    <echo message="End Deploy adpter qith CURl" />
+	     -->
+	    <!-- <adapter-deployer deployable="${basedir}/bin/OSLCGenericAdapter.adapter"
+            worklightserverhost="${resolved.worklight.server.url}"/> -->
+	<!-- </target> -->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-load-worklight-tools">
+		<taskdef resource="com/worklight/ant/defaults.properties">
+		  <classpath>
+		    <pathelement location="${basedir}/libs/build/worklight-ant-builder.jar"/>
+		  </classpath>
+		</taskdef>
+		<taskdef resource="com/worklight/ant/deployers/antlib.xml">
+		  <classpath>
+		    <pathelement location="${basedir}/libs/build/worklight-ant-deployer.jar" />
+		  </classpath>
+		</taskdef>
+	  	<taskdef name="native-deployer" classname="com.ibm.appcenter.ant.UploadApps">
+			<classpath>
+				<pathelement location="${basedir}/libs/build/applicationcenterdeploytool.jar" />
+				<pathelement location="${basedir}/libs/codegen/json4j.jar" />
+			</classpath>
+	  	</taskdef>
+	  	<typedef
+	      name="httptest"
+	      classname="com.ibm.tivoli.si.build.ant.HTTPTest">
+			<classpath>
+				<pathelement location="${basedir}/libs/codegen/artifact-processor_7.6.4.jar" />
+			</classpath>
+		</typedef>
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-build-and-deploy-adapter" depends="-build-all-adapter,-build-all-apps,-deploy-all-adapter" /> -->
+
+	<target name="build-and-deploy-all" depends="init,-deploy-all-apps" description="Build adapter and all apps and deploy them"/>
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="build-and-deploy-all-native" 
+	     depends="build-and-deploy-all,
+	     -build-all-native-apk,
+	     -build-all-native-ios,
+		 -build-all-native-appx,
+		 -build-all-native-xap,
+	     process_bvt_scripts_all,
+	     -deploy-all-native-apk">
+	</target>-->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-update-config-adapter">
+		<ant antfile="${basedir}/build-configuration.xml" target="configure-adapter"/>
+	</target>-->
+	
+    <target name="-update-config-authconfig">
+    	<ant antfile="${basedir}/build-configuration.xml" target="configure-authenticationconfig"/>
+    	<ant antfile="${basedir}/build-configuration.xml" target="configure-worklightproperties"/>
+    </target>
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-update-application-descriptor">
+	    <echotimestamp>App: ${application.home}</echotimestamp>
+	    <loadproperties srcFile="${application.home}/app-feature.properties"/>
+	    <echotimestamp>Flag for push notification: ${pushnotification.enabled}</echotimestamp>
+	    
+	    <xmltask source="${application.home}/application-descriptor.xml" 
+            dest="${application.home}/application-descriptor.xml" 
+            failWithoutMatch="false" 
+            preserveType="true" 
+            report="${xmltask.report}">
+            <remove path="/:application/:android/:pushSender" />
+		</xmltask>
+		
+		<xmltask source="${application.home}/application-descriptor.xml" 
+            dest="${application.home}/application-descriptor.xml" 
+            failWithoutMatch="false" 
+            preserveType="true" 
+            report="${xmltask.report}">
+		    <remove path="/:application/:iphone/:pushSender" />
+		</xmltask>
+	    
+		<if>
+			<or>
+				<equals arg1="${pushnotification.enabled}" arg2="true"/>
+			</or>
+			<then>
+				
+				<if>
+				    <and>
+				   	 <not>
+				   	 	<equals arg1="${android.pushSender.Key}" arg2=""/>
+				   	 </not>
+				   	 <isset property="android.pushSender.Key" />
+				    </and>
+				    <then>
+				        <echotimestamp>Enabling push notifications for Android</echotimestamp>
+		                <xmltask source="${application.home}/application-descriptor.xml" 
+				            dest="${application.home}/application-descriptor.xml" 
+				            failWithoutMatch="true" 
+				            preserveType="false" 
+				            report="${xmltask.report}"
+				            indent="true">
+				            <insert path="/:application/:android/:worklightSettings"  position="after">
+				                <![CDATA[		<pushSender xmlns="http://www.worklight.com/application-descriptor" key="${android.pushSender.Key}" senderId="${android.senderId}"/> ]]>
+				            </insert>
+						</xmltask>
+				 	</then>
+				 </if>
+
+				<if>
+				    <and>
+				   		<not>
+				   	 		<equals arg1="${ios.pushSender.password}" arg2=""/>
+				   	 	</not>
+				   	 <isset property="ios.pushSender.password" />
+				    </and>
+				    <then>
+				        <echotimestamp>Enabling push notifications for iOS</echotimestamp>
+		                <xmltask source="${application.home}/application-descriptor.xml" 
+				            dest="${application.home}/application-descriptor.xml" 
+				            failWithoutMatch="true" 
+				            preserveType="false" 
+				            report="${xmltask.report}"
+				            indent="true">
+				            <insert path="/:application/:iphone/:worklightSettings"  position="after">
+				                <![CDATA[		<pushSender xmlns="http://www.worklight.com/application-descriptor" password="${ios.pushSender.password}" /> ]]>
+				            </insert>
+						</xmltask>
+				 	</then>
+				 </if>-->
+				 
+				<!-- copy certificate p12 to application folder -->
+				<!-- <echotimestamp>Copying the apns-certificate-production.p12 file from certificates folder to application folder</echotimestamp>
+				<copy file="${application.home}/certificates/apns-certificate-production.p12" todir="${application.home}" verbose="true" overwrite="true" failonerror="false"/>
+			</then>
+		</if>
+	</target>-->
+		    	
+	<!-- used to set the build datetime for app and core, only updated at release time or manually -->
+	<!-- in the version.txt files 'core' for platform, 'base' for app -->
+	<target name="-update-buildtimestamp">
+		
+		<echotimestamp message="Updating ${app.home} About Build Time Panel"/>
+		
+		<loadproperties srcFile="${basedir}/build/version.txt" prefix="core"/>
+		<if>
+			<available property="app.version.txt.exists" file="${basedir}/version.txt" />
+			<then>
+				<loadproperties srcFile="${basedir}/version.txt" prefix="base"/>				
+			</then>
+		</if>
+		
+		<tstamp>
+			<format property="build.datetime" pattern="yyyyMMdd_HHmmssZ" />
+		</tstamp>
+				
+		<!-- in case the property is undefined -->
+		<property name="core.build.datetime" value=""/>
+		
+		<!-- if version.txt isn't present for base, then update current datetime -->
+		<!-- this should happen in dev, but never for a customer because we ship the version.txt -->
+		<property name="base.build.datetime" value="${build.datetime}"/>
+		
+		<echo>Build Number : ${base.build.datetime}</echo>
+		<echo>Core Build Time : ${core.build.datetime}</echo>
+
+		<!-- Update the Release Build Number -->
+		<replaceregexp byline="true" encoding="UTF-8"> 
+			<regexp pattern='@build@]",'/> <substitution expression='${base.build.datetime} [${core.build.datetime}]",' /> 
+			<fileset dir="${app.home}/common/js/application/translation/nls"> 
+				<include name="**/artifact.js" />
+				<include name="artifact.js" /> 
+			</fileset> 
+		</replaceregexp>
+		<replaceregexp byline="true" encoding="UTF-8"> 
+			<regexp pattern=' \d{8}_\d{6}(\+|\-)\d{4} '/> <substitution expression=' ${base.build.datetime} ' /> 
+			<fileset dir="${app.home}/common/js/application/translation/nls"> 
+				<include name="**/artifact.js" />
+				<include name="artifact.js" /> 
+			</fileset> 
+		</replaceregexp>
+		<replaceregexp byline="true" encoding="UTF-8"> 
+			<regexp pattern='\d{12}]",'/> <substitution expression='${core.build.datetime}]",' /> 
+			<fileset dir="${app.home}/common/js/application/translation/nls"> 
+				<include name="**/artifact.js" />	
+				<include name="artifact.js" /> 
+			</fileset> 
+		</replaceregexp>
+		<replaceregexp byline="true" encoding="UTF-8"> 
+			<regexp pattern='@build@",'/> <substitution expression='${base.build.datetime} [${core.build.datetime}]",' /> 
+			<fileset dir="${app.home}/common/js/application/translation/nls"> 
+				<include name="**/artifact.js" />
+				<include name="artifact.js" /> 
+			</fileset> 
+		</replaceregexp>
+		<!-- Update the MOCK version of the artifact.js file, generated by codegen --> 
+		<replaceregexp byline="true" encoding="UTF-8"> 
+			<regexp pattern='@build@]",'/> <substitution expression='${base.build.datetime} [${core.build.datetime}]",' /> 
+			<fileset dir="${app.home}/common/js/generated/application/translation/nls"> 
+				<include name="**/artifact.js" />
+				<include name="artifact.js" /> 
+			</fileset> 
+		</replaceregexp> 
+		<replaceregexp byline="true" encoding="UTF-8"> 
+			<regexp pattern=' \d{8}_\d{6}(\+|\-)\d{4} '/> <substitution expression=' ${base.build.datetime} ' /> 
+			<fileset dir="${app.home}/common/js/generated/application/translation/nls">  
+				<include name="**/artifact.js" />
+				<include name="artifact.js" /> 
+			</fileset> 
+		</replaceregexp>
+		<replaceregexp byline="true" encoding="UTF-8"> 
+			<regexp pattern='\d{12}]",'/> <substitution expression='${core.build.datetime}]",' /> 
+			<fileset dir="${app.home}/common/js/generated/application/translation/nls"> 
+				<include name="**/artifact.js" />
+				<include name="artifact.js" /> 
+			</fileset> 
+		</replaceregexp>
+		<replaceregexp byline="true" encoding="UTF-8"> 
+			<regexp pattern='@build@",'/> <substitution expression='${base.build.datetime} [${core.build.datetime}]",' /> 
+			<fileset dir="${app.home}/common/js/generated/application/translation/nls"> 
+				<include name="**/artifact.js" />
+				<include name="artifact.js" /> 
+			</fileset> 
+		</replaceregexp> 
+			
+		<!-- Update the Release Version Number -->
+		<if>
+			<isset property="internal.release.version" />
+			<then>
+				<echotimestamp>Updating the Release Version number to ${internal.release.version}</echotimestamp>
+				<replaceregexp byline="true" encoding="UTF-8">
+					<regexp pattern=' 7.6.4",' />
+					<substitution expression=' ${internal.release.version}",' />
+					<fileset dir="${app.home}/common/js/application/translation/nls">
+						<include name="**/artifact.js" />
+						<include name="artifact.js" />
+					</fileset>
+				</replaceregexp>
+				
+				<!-- Update the MOCK version of the artifact.js file, generated by codegen -->
+				<replaceregexp byline="true" encoding="UTF-8">
+					<regexp pattern=' 7.6.4",' />
+					<substitution expression=' ${internal.release.version}",' />
+					<fileset
+						dir="${app.home}/common/js/generated/application/translation/nls">
+						<include name="**/artifact.js" />
+						<include name="artifact.js" />
+					</fileset>
+				</replaceregexp>
+			</then>
+		</if>
+	</target>
+    
+    <!-- START BVT TESTING -->
+	<target name="-bvt-project-exists" if="${run.bvt.scripts}">
+		<echotimestamp>Checking for Selenium Project @ ${selenium.project.dir}</echotimestamp>
+		<available property="bvt.project.exists" file="${selenium.project.dir}" />
+	</target>	
+	<!-- if selenium project isn't available, we will fail testing --> 
+	<target name="process_bvt_scripts_all" depends="-bvt-project-exists" if="bvt.project.exists">
+
+        <ant antfile="${selenium.project.dir}/bvt_build.xml" useNativeBasedir="true">
+    		<property name="apk.path" 					value="${basedir}/bin" />
+        	<property name="internal.release.version" 	value="7.6" />
+        	<property name="application.home" 			value="${application.home}" />
+        	<property name="apps.basedir" 				value="${basedir}/apps" />
+        	<property name="appium.install.location" 	value="c:/Appium/Appium.exe"/>
+			<property name="appium.address.ip" 			value="127.0.0.1"/>
+			<property name="appium.address.port" 		value="4723"/>
+    	</ant>
+	</target>
+	<!-- END BVT TESTING -->
+
+	<target name="pull-rdfs-from-server">
+		<!-- Required Properties -->
+		<property name="adapter.connection.user" value="" />
+		<property name="adapter.connection.password" value="" />
+		<!-- Required Properties -->
+		<fail
+			message="To pull rdfs docs from backend server, it is required to provide &#10;the connecting credentials of both username and password, suggestion:&#10;
+		Use command line script, example:&#10;
+		&#09;ant -f anywhere-apps-builder.xml pull-rdfs-from-server -Dadapter.connection.user=wilson -Dadapter.connection.password=wilson&#10;">
+			<condition>
+				<or>
+					<equals arg1="${adapter.connection.user}" arg2="" />
+					<equals arg1="${adapter.connection.password}" arg2="" />
+				</or>
+			</condition>
+		</fail>
+		<ant antfile="${basedir}/anywhere-rdfs-puller.xml">
+		</ant>
+	</target>
+	<!-- Liberty Related Properties -->
+	<property name="appserver.was.installdir" 	value="C:\Program Files\IBM\WebSphere\Liberty"/>
+	<property name="appserver.was.profile" 	value="Liberty"/>
+	<property name="appserver.was85liberty.serverInstance" 	value="defaultServer"/>
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="replace-war" depends="build-war">
+	 	<echotimestamp>Replacing the war in Liberty</echotimestamp>
+	 	<updateapplicationserver useWorklightReports="false"
+					contextroot="/MaximoAnywhere">
+			<project warfile="${basedir}/bin/MaximoAnywhere.war" />
+			<applicationserver>
+				<websphereapplicationserver installdir="${appserver.was.installdir}"
+					profile="${appserver.was.profile}">
+					<server name="${appserver.was85liberty.serverInstance}" />
+				</websphereapplicationserver>
+			</applicationserver>
+		</updateapplicationserver>
+		<antcall target="restart-liberty"/>
+      </target>-->
+	
+      <target name="restart-liberty">
+      		<echotimestamp>Restarting the app server</echotimestamp>
+      		<exec executable="${appserver.was.installdir}\bin\server.bat">
+      			<arg value="stop"/>
+      		</exec>
+      		<exec executable="${appserver.was.installdir}\bin\server.bat">
+      			<arg value="start"/>
+		</exec>
+      </target>
+ 
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-enable-APKJumboMode" >
+	    <property name="gradle.build.file" value="${application.home}/android/native/build.gradle"/>-->
+	    
+	    <!-- Start - Get MultiDex Plugin Version -->
+	    
+		<!-- <loadfile srcfile="${gradle.build.file}" property="gradle.multidex.support">
+      		<filterchain>
+        		<linecontains>
+          			<contains value="com.android.support:multidex"/>
+        		</linecontains>
+      		</filterchain>
+   	 	</loadfile>
+    	<propertyregex property="gradle.multidex.support" input="${gradle.multidex.support}"
+			regexp="compile '([^']*)" select="\1" override="true" />
+   		<loadfile srcfile="${gradle.build.file}" property="gradle.appcompat.support">
+      		<filterchain>
+        		<linecontains>
+          			<contains value="com.android.support:appcompat"/>
+        		</linecontains>
+      		</filterchain>
+    	</loadfile>
+    	<propertyregex property="gradle.appcompat.support" input="${gradle.appcompat.support}"
+			regexp="compile '([^']*)" select="\1" override="true" />
+
+    	<echo>${gradle.multidex.support}</echo> 
+    	<echo>${gradle.appcompat.support}</echo> -->
+
+	    <!-- End - Get MultiDex Plugin Version -->
+	    
+	    <!-- Start build.gradle Configuration -->
+		<!-- <replaceregexp file="${gradle.build.file}"
+			match="compile '${gradle.multidex.support}'  //MultiDex Enabled"
+			replace="// compile '${gradle.multidex.support}'  //JumboMode Enabled" />
+		<replaceregexp file="${gradle.build.file}"
+			match="compile '${gradle.appcompat.support}'  //MultiDex Enabled"
+			replace="// compile '${gradle.appcompat.support}'  //JumboMode Enabled" />		  		
+	    <replaceregexp file="${gradle.build.file}"
+			match="multiDexEnabled true  //MultiDex Enabled"
+			replace="// multiDexEnabled true  //JumboMode Enabled" />		
+	    <replaceregexp file="${gradle.build.file}"
+			match="// jumboMode = true  //MultiDex Enabled"
+			replace="jumboMode = true  //JumboMode Enabled" />
+		<replaceregexp file="${gradle.build.file}" 
+	        match="compile fileTree\(dir: 'libs', include: \['\*.jar','\*.so'\] , exclude: 'android-support-v4.jar'\)  //MultiDex Enabled"
+	        replace="compile fileTree\(dir: 'libs', include: \['\*.jar','\*.so'\] \)  //JumboMode Enabled" />
+		<replaceregexp file="${gradle.build.file}" 
+	        match="javaMaxHeapSize '2g'  //MultiDex Enabled"
+	        replace="javaMaxHeapSize '1g'  //JumboMode Enabled" />	-->    	    	
+		<!-- End build.gradle Configuration -->
+		
+		<!-- Start Application Java Source Configuration-->
+			
+		<!-- <property name="app.application.class" value="${application.home}/android/native/src/com/ibm/iot/maximoanywhere/${application.name}/${application.name}.java"/> -->
+	    
+		<!-- <pathconvert property="javafilepath">
+        	<dirset dir="${application.home}/android/native/src/com/ibm/iot/maximoanywhere" includes="${application.name}" casesensitive="false" />
+    	</pathconvert>
+    
+    	<pathconvert property="app.application.class">
+        	<fileset dir="${javafilepath}" includes="${application.name}.java" casesensitive="false" />
+    	</pathconvert>
+			
+	    <replaceregexp file="${app.application.class}"
+			match="import android.support.multidex.MultiDex;  //MultiDex Enabled"
+			replace="// import android.support.multidex.MultiDex;  //JumboMode Enabled" />	
+	    <replaceregexp file="${app.application.class}"
+			match="import android.content.Context;  //MultiDex Enabled"
+			replace="// import android.content.Context;  //JumboMode Enabled" />	
+	    <replaceregexp file="${app.application.class}"
+			match="protected void attachBaseContext\(Context base\) \{  //MultiDex Enabled"
+			replace="\/\* protected void attachBaseContext\(Context base\) \{  //JumboMode Enabled" />					     				     
+	    <replaceregexp file="${app.application.class}"
+			match="\}  //MultiDexEnabled"
+			replace="\} */ //JumboMode Enabled" />	
+	    <replaceregexp file="${app.application.class}"
+			match="@Override  //MultiDex Enabled"
+			replace="// @Override  //JumboMode Enabled" />	-->
+				
+		<!-- End Application Java Source Configuration-->
+	<!-- </target> -->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-enable-APKMultiDex" >
+	    <property name="gradle.build.file" value="${application.home}/android/native/build.gradle"/>-->
+	    
+	    <!-- Start - Get MultiDex Plugin Version -->
+	    
+		<!-- <loadfile srcfile="${gradle.build.file}" property="gradle.multidex.support">
+      		<filterchain>
+        		<linecontains>
+          			<contains value="com.android.support:multidex"/>
+        		</linecontains>
+      		</filterchain>
+    	</loadfile>
+    	<propertyregex property="gradle.multidex.support" input="${gradle.multidex.support}"
+			regexp="compile '([^']*)" select="\1" override="true" />
+   		<loadfile srcfile="${gradle.build.file}" property="gradle.appcompat.support">
+      		<filterchain>
+        		<linecontains>
+          			<contains value="com.android.support:appcompat"/>
+        		</linecontains>
+      		</filterchain>
+    	</loadfile>
+    	<propertyregex property="gradle.appcompat.support" input="${gradle.appcompat.support}"
+			regexp="compile '([^']*)" select="\1" override="true" />
+    
+    	<echo>${gradle.multidex.support}</echo> 
+    	<echo>${gradle.appcompat.support}</echo> -->
+		<!-- End - Get MultiDex Plugin Version -->
+	    
+	    <!-- Start build.gradle Configuration -->    	
+	
+	    <!-- <replaceregexp file="${gradle.build.file}"
+			match="// compile '${gradle.multidex.support}'  //JumboMode Enabled"
+			replace="compile '${gradle.multidex.support}'  //MultiDex Enabled" />
+		<replaceregexp file="${gradle.build.file}"
+			match="// compile '${gradle.appcompat.support}'  //JumboMode Enabled"
+			replace="compile '${gradle.appcompat.support}'  //MultiDex Enabled" />
+	    <replaceregexp file="${gradle.build.file}"
+			match="// multiDexEnabled true  //JumboMode Enabled"
+			replace="multiDexEnabled true  //MultiDex Enabled" />
+	    <replaceregexp file="${gradle.build.file}"
+			match="jumboMode = true  //JumboMode Enabled"
+			replace="// jumboMode = true  //MultiDex Enabled" />
+		<replaceregexp file="${gradle.build.file}" 
+	        match="compile fileTree\(dir: 'libs', include: \['\*.jar','\*.so'\] \)  //JumboMode Enabled"
+	        replace="compile fileTree\(dir: 'libs', include: \['\*.jar','\*.so'\] , exclude: 'android-support-v4.jar'\)  //MultiDex Enabled" />
+		<replaceregexp file="${gradle.build.file}" 
+	        match="javaMaxHeapSize '1g'  //JumboMode Enabled"
+	        replace="javaMaxHeapSize '2g'  //MultiDex Enabled" />-->
+	    <!-- End build.gradle Configuration --> 
+	    
+	    <!-- Start Application Java Source Configuration-->
+	    
+		<!-- <property name="app.application.class" value="${application.home}/android/native/src/com/ibm/iot/maximoanywhere/${application.name}/${application.name}.java"/> -->
+	    
+		<!-- <pathconvert property="javafilepath">
+        	<dirset dir="${application.home}/android/native/src/com/ibm/iot/maximoanywhere" includes="${application.name}" casesensitive="false" />
+    	</pathconvert>
+    
+    	<pathconvert property="app.application.class">
+        	<fileset dir="${javafilepath}" includes="${application.name}.java" casesensitive="false" />
+    	</pathconvert>
+    		     	    
+	    <replaceregexp file="${app.application.class}"
+			match="// import android.support.multidex.MultiDex;  //JumboMode Enabled"
+			replace="import android.support.multidex.MultiDex;  //MultiDex Enabled" />	
+	    <replaceregexp file="${app.application.class}"
+			match="// import android.content.Context;  //JumboMode Enabled"
+			replace="import android.content.Context;  //MultiDex Enabled" />	
+	    <replaceregexp file="${app.application.class}"
+			match="\/\* protected void attachBaseContext\(Context base\) \{  //JumboMode Enabled"
+			replace="protected void attachBaseContext\(Context base\) \{  //MultiDex Enabled" />					     				     
+	    <replaceregexp file="${app.application.class}"
+			match="\} \*/ //JumboMode Enabled"
+			replace="\}  //MultiDexEnabled" />	
+	    <replaceregexp file="${app.application.class}"
+			match="// @Override  //JumboMode Enabled"
+			replace="@Override  //MultiDex Enabled" />-->
+	    		     				     
+	    <!-- End Application Java Source Configuration--> 
+	<!-- </target> -->
+	
+	<!-- MFP Removal Changes -->
+	<!-- <target name="getSDKToolVersion" if="${androidbuild}" description="Get Installed Android SDK Tool Versions">
+        <antcallback target="-getAndroidSDKToolsVersion" return="androidSDKToolVersions"/>
+         <script language="javascript"><![CDATA[
+             
+              var androidTargetSDK = project.getProperty('Android_TARGET_DEVICE_NAME'); 
+              var toolVersionsStr = project.getProperty('androidSDKToolVersions');
+
+              var MajorVersion = androidTargetSDK.substr( androidTargetSDK.indexOf('-') + 1 , androidTargetSDK.length());
+              var val = 'build-tools;' + MajorVersion + '(.*)';
+              var re = new RegExp(val,'g');
+              
+              var filterlist = toolVersionsStr.match(re);
+              
+              if(filterlist && Array.isArray(filterlist)){             
+	              filterlist.forEach(function(item) {
+	    	          project.setProperty('android.sdk.toolsVersion',(item.substr(item.indexOf(';')+1, item.indexOf(' '))).trim() );
+	              });
+              }
+              
+        ]]></script>
+        
+		<condition property="wasSdkManagerNOTFoundUnderBin">
+			<matches pattern="No such file" string="${androidSDKToolVersions}"/>
+	    </condition>
+		
+		<if>
+			<equals arg1="${wasSdkManagerNOTFoundUnderBin}" arg2="true"/>
+			<then>
+				<echotimestamp level="warning">WARNING: You are using an out of date SDK manager, which does not have sdkmanager under the SDK bin folder.</echotimestamp>
+			</then>
+			<else>
+				<fail unless="android.sdk.toolsVersion" message="Android SDK tools have not been installed for [${Android_TARGET_DEVICE_NAME}] API target" />
+			</else>
+		</if>
+		            	                        
+        <echotimestamp>Found Android SDK Tools Version ${android.sdk.toolsVersion}</echotimestamp>
+    </target>-->
+    
+	<!-- MFP Removal Changes -->
+	<!-- <target name="-getAndroidSDKToolsVersion">
+	    <echotimestamp>${android.sdk.home}</echotimestamp>
+	    <echotimestamp>${JAVA_HOME}</echotimestamp>
+        <exec executable="cmd" osfamily="windows" outputproperty="androidSDKToolVersions" failonerror="false" >
+            <env key="JAVA_HOME" value="${JAVA_HOME}"/>
+   			<arg value="/c" />
+   			<arg value="${android.sdk.home}/tools/bin/sdkmanager.bat" />
+   			<arg value="-list"/>
+   		</exec>
+   		<exec executable="sh" osfamily="unix" outputproperty="androidSDKToolVersions" failonerror="false" >
+   		    <env key="JAVA_HOME" value="${JAVA_HOME}"/>
+   			<arg value="${android.sdk.home}/tools/bin/sdkmanager" />
+   			<arg value="-list"/>
+   		</exec>  
+    </target>-->
+	
+</project>

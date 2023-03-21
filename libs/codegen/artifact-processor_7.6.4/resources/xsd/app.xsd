@@ -1,0 +1,4361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified">
+
+	<xs:complexType name="base">
+		<xs:attribute name="id" type="xs:ID" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">
+					A unique ID representing the element in the UI
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="action">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Action specifies some action to be used by a parent control, 
+						typically for navigation.
+						An action should be contained within Actions.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="eventHandlerBase">
+														<xs:attribute name="event" use="optional">
+															<xs:annotation>
+																<xs:documentation xml:lang="en">
+																	The name of the event to bind to. Events may be system events
+																	for objects or custom events defined by the application.
+																</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="click|datachange|render" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>		
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="conditions" type="conditions" />
+				</xs:choice>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define a label to be displayed with the action.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="queryBase" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define the querybase to use when the action is invoked.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="transitionTo" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define the view / dialog to which the action will transition.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="transition" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							String - Optional. Used to define the type of transition. Default is 'slide'.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern
+								value="slide|fade|flip|cover|coverv|dissolve|reveal|revealv|scaleIn|scaleOut|slidev|swirl|zoomIn|zoomOut|cube|swap" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="link" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							String - Optional. Used to define an external link to open via action.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="image" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define the image of an action to be displayed for particular scenarios.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="overflow" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Set to true so that the action will only appear on the view's overflow menu.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="actions">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Actions is the collection of all action properties for the parent control.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="action" type="action" minOccurs="1"
+						maxOccurs="unbounded" />
+				</xs:choice>
+				<xs:attribute name="layoutInsertAt" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="erroractions">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						ErrorActions is the collection
+						of all action properties for a longpress of a record in an error state.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="action" type="action" minOccurs="1"
+						maxOccurs="unbounded" />
+				</xs:choice>
+				<xs:attribute name="layoutInsertAt" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="query">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Query specifies a saved query. A query should be contained within queries.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="eventHandlerBase">
+														<xs:attribute name="event" use="optional">
+															<xs:annotation>
+																<xs:documentation xml:lang="en">
+																	The name of the event to bind to. Events may be system events
+																	for objects or custom events defined by the application.
+																</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="click|changestate|datachange|render" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:choice>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define a label to be displayed with the query.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="queryBase" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define the querybase to change to when the item is selected.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="system" type="xs:boolean" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							System defined Query
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				
+				<xs:attribute name="cssClass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define the css class on a querybase menu item.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="queries">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Queries is the collection of saved queries.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="query" type="query" minOccurs="1"
+						maxOccurs="unbounded" />
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="eventHandlerBase">
+														<xs:attribute name="event" use="optional">
+															<xs:annotation>
+																<xs:documentation xml:lang="en">
+																	The name of the event to bind to. Events may be system events
+																	for objects or custom events defined by the application.
+																</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="show|render" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:choice>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:element name="app" type="app" />
+
+	<xs:complexType name="app">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						App is a container for all the elements used to construct an app
+						including the UI and data bindings.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:all>
+					<xs:element name="ui" type="ui" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="data" type="data" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="messages" type="messages" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="eventHandlers" type="eventHandlers" minOccurs="0" maxOccurs="1"/>
+					<xs:element name="notifications" type="notifications"  minOccurs="0" maxOccurs="1"/>
+				</xs:all>
+				<xs:attribute name="combinedViews" type="xs:boolean" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether or not to show list on left 1/3 of screen and other views on other 2/3 when on >= large layout. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="ssoEnabled" type="xs:boolean" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Is the app running in SSO mode? 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="logLevel" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Numeric value to set the logLevel to
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="requiredRole" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Required role that a user must have in his profile to be able to access this application
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="logFilters" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Array of filters to use in logging.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="debug" type="xs:boolean" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Turn on debugging
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="version" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Build version of the artifact file
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="blindQuerySupport" type="xs:boolean" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Flag to indicate if application supports blind queries.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="useLongLists" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Use a long scrolling lists instead of paged.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="attribute">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Attribute specifies a named reference to an OSLC resource property.
+						For example the OSLC resource property described by
+						oslc_wm:location{oslc:shortTitle} can be referenced within the 
+						artifact as the friendlier name locationShortTitle through the
+						attribute. All OSLC resource properties used in the artifact must 
+						be specified as attributes.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:attribute name="name" type="string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to reference the resource property within the artifact.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="describedByProperty" type="xs:string"
+					use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Resource description property for OSLC.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="describedByResource" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Resource description for OSLC.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="referenceResource" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Resource description for OSLC.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="index" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Defines if the attribute should be indexed to become "searcheable"
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="isExactMatchIndex" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Defines if the search on this attribute should always be exact.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+		        <xs:attribute name="method" type="string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    The name of the function to call in the event class.
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+		        <xs:attribute name="autonum" use="optional" type="xs:string">
+			        <xs:annotation>
+			            <xs:documentation xml:lang="en">
+			                Indicator of field requiring a temporary auto-number
+			            </xs:documentation>
+			        </xs:annotation>
+		        </xs:attribute>        
+		        <xs:attribute name="onAddGetServer" use="optional" type="boolean">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    Indicates whether to get a value from server's onAdd for the given attribute
+		                </xs:documentation>
+		            </xs:annotation>  
+		        </xs:attribute>
+		        <xs:attribute name="key" use="optional" type="xs:string">
+			        <xs:annotation>
+			            <xs:documentation xml:lang="en">
+			                Indicator of fields making up unique key identifier. 
+			            </xs:documentation>
+			        </xs:annotation>
+		        </xs:attribute>
+		        <xs:attribute name="esig" type="boolean" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    Whether esig should be enabled for modification of this attribute.
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+            
+	<xs:complexType name="attributes">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Attributes is the collection of all attribute properties for the named resource.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="attribute" type="attribute" minOccurs="1"
+						maxOccurs="unbounded" />
+					<xs:element name="localAttribute" type="localAttribute" />
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+    <xs:simpleType name="boolean">
+        <xs:restriction base="xs:boolean">
+            <xs:pattern value="true|false" />
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="sortDirection">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="ascending|descending" />
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="string">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z][a-zA-Z0-9_]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+	<xs:complexType name="button">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A button is a common UI element. The button may be bound to a
+						specific resource to determine it's state.
+						The behavior of each state for the button is defined by
+						the children states defined for the button.
+						A button may also specify event handlers to bind specific actions to
+						button events and event listeners to react to incoming events.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="states" type="states" />
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="eventHandlerBase">
+														<xs:attribute name="event" use="required">
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="click|changestate|datachange|render" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="eventListeners" type="eventListeners" />
+					<xs:element name="conditions" type="conditions" />
+				</xs:choice>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define a label to be displayed on the button. Will be
+							overwritten by the current state if button is state bound
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resourceAttribute" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the attribute to display it's value as the text.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="primary" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to highlight button with a different style to draw attention to
+							it. Should only have one in any logical area.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="disabled" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Allows the button to be disabled.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="border" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Specifies whether or not the button will have a border.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="image" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							String - Optional. Used to turn the button into a clickable button image.
+							If an image is defined the button will look like an icon until clicked.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="transitionTo" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define the view / dialog to which the button click will transition.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="layoutInsertAt" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cssClass" type="xs:string" use="optional">
+					<xs:annotation>
+			            <xs:documentation xml:lang="en">
+			               A css class to apply to the container
+			            </xs:documentation>
+					</xs:annotation>
+		      	</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="radiobutton">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						The radiobutton is a UI element.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="eventHandlers" type="eventHandlers" />
+				</xs:choice>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resourceAttribute" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the attribute to which we bind the radiobutton. If radio buttons are grouped, make sure all of them are bound to the same resourec attribute.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="editable" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether or not the radiobutton can be edited by the user.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cssClass" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A css class to apply to the radiobutton
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							An identification label to show next to the radiobutton.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="labelCss" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A css class to apply to the label
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="checked" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Checked indicated the radiobutton is checked by default.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="layoutInsertAt" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="name" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							To group a set of radio buttons. If radiobuttons are grouped, make sure they are all bound to the same resource attribute.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional"
+					type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified
+							build.xml property to determine if the artifact
+							should be generated. The build property must exist
+							and be set to true for the artifact to be generated.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="checkbox">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						The checkbox is a UI element.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="eventHandlers" type="eventHandlers" />
+				</xs:choice>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resourceAttribute" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the attribute to which we bind the checkbox.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="editable" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether or not the checkbox can be edited by the user.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cssClass" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A css class to apply to the checkbox
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							An identification label to show next to the checkbox.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="labelCss" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A css class to apply to the label
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="layoutInsertAt" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional"
+					type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified
+							build.xml property to determine if the artifact
+							should be generated. The build property must exist
+							and be set to true for the artifact to be generated.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="domainValues">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Set of values to be used in 'combobox' control.
+						It is an alternative to use a resource as a domain.
+						You can define a set of values directly in the artifact
+						to feed the combobox options.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:sequence minOccurs="1" maxOccurs="unbounded">
+					<xs:element name="domainValue" type="domainValue" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="domainValue">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						The single instance of an option to be used inside 'domainValues'.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:attribute name="keyValue" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The internal value to be stored.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="displayValue" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The value to be presented in UI.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="defaultValue" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Case true, the value will be defaulted to combobox control.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="combobox">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Combobox has its possible values delimited by a domain.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="states" type="states" />
+					<xs:element name="domainValues" type="domainValues" />
+					<xs:element name="eventListeners" type="eventListeners" />
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="base">
+														<xs:attribute name="event" use="optional">
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="click|changestate|datachange|render|validate" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:choice>
+				<xs:attribute name="resourceAttribute" type="xs:string"	use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the attribute to display it's value as the text.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A label to show for the text. Translatable.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="labelCss" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A css class to apply to the label.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>		
+				<xs:attribute name="lookup" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Will be used only in case we overflow the maxOptions properties.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="lookupAttribute" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the attribute to use from the lookup result.
+							Will be used only in case we overflow the maxOptions properties.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="required" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether the text is required in the current view.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>		
+				<xs:attribute name="placeHolder" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Placeholder text to show in the field if it is editable 
+							and empty. Entering any data clears the placeholder.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="value" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A static value to use for the text if it is not bound to a 
+							resource attribute and the text is not editable.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cssClass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A css class to apply to	the text
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="layoutInsertAt" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The template element to be inserted at.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="domainResource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The resource to be applied as a domain.
+							The options list will be built based on this resource.
+							If domainResource is specified you must provide 
+							'domainIdAttr' and 'domainSearchAttr' values.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="domainIdAttr" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The domain resource attribute to be used as unique 
+							identifier.	It is necessary to build the combobox 
+							store. If domainResource is	specified you must provide 
+							'domainIdAttr' and 'domainSearchAttr' values.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="domainSearchAttr" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The domain resource attribute to be used as searchable 
+							field. If domainResource is specified you must provide 
+							'domainIdAttr' and 'domainSearchAttr' values.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="maxOptions" type="xs:integer" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							MaxOption attribute will allow you 
+							to show the combo box data with maxOption size, 
+							default size is set to 5 in code, 
+							it can be overriden passing maxOption = 'number', 
+							when resource data size is bigger then maxOption 
+							data size it will dynamically convert combo box to 
+							lookup control and for that, it is required to pass 
+							“lookup” and “lookup" attribute when it is constructed. 
+							If maxOption size is 0 ( zero) , then this control 
+							will stay as combox no matter how much resource data 
+							is associated with this control.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resolverClass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The class in which to find the resolverFunction.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resolverFunction" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The resolver function used to provide any 
+							dynamic parts of the text value. Specifying 
+							{0} in the value will be filled in by array element
+							0 in the array returned from the resolverFunction.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+
+	<xs:complexType name="conditions">
+		<xs:complexContent>
+			<xs:extension base="base">
+		        <xs:annotation>
+		            <xs:documentation xml:lang="en">
+						Conditions are used to define which user role is needed to execute actions in the context of the resource.
+		            </xs:documentation>
+		        </xs:annotation>
+		        <xs:choice minOccurs="1" maxOccurs="unbounded">
+					<xs:element name="executionOf" type="executionOf" >
+		            	<xs:annotation>
+		            		<xs:documentation>executionOf is an element used to map what role is needed to execute a given alias.</xs:documentation>
+		            	</xs:annotation>
+		            </xs:element>
+		        </xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+    </xs:complexType>
+
+	<xs:complexType name="container">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A container is a generic container for other elements.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+		         <xs:element name="container" type="container" />
+					<xs:element name="button" type="button" />
+					<xs:element name="text" type="text" />
+					<xs:element name="textarea" type="textarea" />
+					<xs:element name="errorIndicator" type="errorIndicator" />
+					<xs:element name="image" type="image" />
+					<xs:element name="mapMarker" type="mapMarker" />
+					<xs:element name="directionslink" type="directionslink" />
+					<xs:element name="link" type="link" />
+					<xs:element name="group" type="group" />
+					<xs:element name="checkbox" type="checkbox" />
+					<xs:element name="radiobutton" type="radiobutton" />
+					<xs:element name="datetimepicker" type="datetimepicker" />
+					<xs:element name="durationpicker" type="durationpicker" />
+					<xs:element name="combobox" type="combobox" />
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="eventHandlerBase">
+														<xs:attribute name="event" use="required">
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="render" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:choice>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource
+							to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+		        <xs:attribute name="attribute" type="xs:string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    Represents an attribute that belongs to a given resource
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>	
+				<xs:attribute name="queryBase" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define the querybase to use when the action is invoked.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cssClass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A css class to apply to the container
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="layout" type="xs:string" use="optional">
+		         <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		            </xs:documentation>
+		         </xs:annotation>
+		      </xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+		      <xs:attribute name="layoutInsertAt" type="xs:string" use="optional">
+		         <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		
+		            </xs:documentation>
+		         </xs:annotation>
+		      </xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="data">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Data defines references for all the resources used by the application.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="resource" type="resource" minOccurs="0" />
+					<xs:element name="eventHandlers" type="eventHandlers" />
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="datetimepicker">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A picker control to select a date and time.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:attribute name="date" type="xs:boolean" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to determine whether or not to show the date in the picker.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="time" type="xs:boolean" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to determine whether or not to show the time in the picker.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="durationpicker">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A picker control to select duration in hours:minutes
+					</xs:documentation>
+				</xs:annotation>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="dialog">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Dialog is a simple dialog that can overlay the current view.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="requiredResources" type="requiredResources" />
+					<xs:element name="container" type="container" />
+					<xs:element name="eventHandlers" type="eventHandlers" />
+					<xs:element name="footer" type="footer" />
+					<xs:element name="list" type="list" />
+				</xs:choice>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define a label to be displayed on the dialog.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="closeOnBackgroundClick" type="xs:boolean" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to determine if a press on background will close a modal dialog. Default is false.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="queryBase" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the query base to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="requiredResources" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A comma delimited list of resource names that will be needed when working within this view.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+		      <xs:attribute name="cssClass" type="xs:string" use="optional">
+		         <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		               A css class to apply to the container
+		            </xs:documentation>
+		         </xs:annotation>
+		      </xs:attribute>
+			  	<xs:attribute name="saveonhide" use="optional" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Save all resources when user leaves this dialog. 
+						</xs:documentation>
+					</xs:annotation>
+			 	</xs:attribute>
+			 	<xs:attribute name="saveonshow" use="optional" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Save all resources when user enters this dialog. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="directionslink">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						The link control element to be used on a Map view when clicked, it will
+						transition the user to the platform.DirectionsView
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="states" type="states" />
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="eventHandlerBase">
+														<xs:attribute name="event" use="required">
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="click|changestate|datachange|render" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="eventListeners" type="eventListeners" />
+				</xs:choice>
+				<xs:attribute name="image" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The image for the link to show at runtime
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="label" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The label of the link to show at runtime
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="transitionTo" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define the view / dialog to which the link will transition.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="layoutInsertAt" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="eventHandlers">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Event Handlers is a collection of event handlers defined for the parent object.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:sequence minOccurs="1" maxOccurs="unbounded">
+					<xs:element name="eventHandler" type="eventHandler" />
+				</xs:sequence>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="eventHandlerBase">
+		<xs:complexContent>
+			<xs:extension base="base">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">
+				EventHandlerBase is the base type for the EventHandler.  The EventHandler
+				type extends EventHandlerBase and adds the event attribute.  This is 
+				done so that other elements can add a type that extends EventHandlerBase 
+				with it's own set of event values
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="method" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">
+					The name of the function to call in the event class.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="class" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">
+					The class the method is registered to
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="transitionTo" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">
+					Allows a transition to be bound to an event without the need for a handler.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">
+					if set, the generator will look for the specified build.xml property
+					to determine if the artifact should be generated.  The build property
+					must exist and be set to true for the artifact to be generated. 
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="eventHandler">
+		<xs:complexContent>
+			<xs:extension base="eventHandlerBase">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						The Event Handler type extends EventHandlerBase and adds the event attribute.
+						An Event Handler binds a handler function from the event class to a
+						specific object event.
+						For example a button might define an event handler for to invoke a
+						function when the button is clicked.
+						Objects may have multiple events that can each be bound to individual
+						handlers (or possibly the same handler).
+						It is also possible to define multiple handlers for a given
+						event although the order of invoking the handler methods is not
+						deterministic.
+						An eventHandler is similar to an eventListener in that
+						they both bind events to functions but eventHandlers are listening
+						for events from their associated control and calling functions that
+						can do anything whereas eventListeners are generally listening for
+						external events (not from the associated control) and taking action
+						on the associated control.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:attribute name="event" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the event to bind to. Events may be system events for
+							objects or custom events defined by the application.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="eventListeners">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Event Listeners is a collection of event listeners defined for the parent object.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:sequence minOccurs="1" maxOccurs="unbounded">
+					<xs:element name="eventListener" type="eventListener" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="eventListener">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						An Event Listener subscribes to events on the event bus and calls a
+						function to take action on it's parent control when the event is
+						encountered.
+						For example, a save button may subscribe to a network disconnected
+						event and disable it's associated button when the network is not
+						available.
+						Another Event Listener could be defined to enable the save
+						button when the network becomes available.
+						An eventListener is similar to an eventHandler in that they both bind
+						events to functions but eventHandlers are listening for events from their 
+						associated control and calling functions that can do anything whereas 
+						eventListeners are generally listening for external events (not from 
+						the associated control) and taking action on the associated control.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:attribute name="event" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the custom event to bind to.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="class" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the class the event is bound to
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="method" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the method the event is bound to
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+    
+    <xs:complexType name="executionOf">
+		<xs:complexContent>
+			<xs:extension base="base">
+		        <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		
+		            </xs:documentation>
+		        </xs:annotation>
+		        <xs:attribute name="alias" type="xs:string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+							alias is a way to abstract actions in the application that not necessarily are exposed in the user interface or in a single method of a business rule. Take the status change example, where you need to define which role is needed to approve a work order. 
+							You can define an alias called 'approve' that can be used to filter out the APPR status from the list of available status a user can change the work order to.
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+		        <xs:attribute name="requiresRole" use="required">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    Used to define which role is needed by the alias. A list of roles can be entered and it will be interpreted as 'at least one of these roles'. The list should be comma separated.
+		                </xs:documentation>
+		            </xs:annotation>
+		            <xs:simpleType>
+		                <xs:restriction base="xs:string">
+		                    <xs:minLength value="1"/>
+		                </xs:restriction>
+		            </xs:simpleType>
+		        </xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+    </xs:complexType>
+    
+	<xs:complexType name="footer">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A footer allows placement of fixed buttons at the bottom of a view.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="1" maxOccurs="unbounded">
+		         <xs:element name="container" type="container" />
+					<xs:element name="button" type="button" />
+				</xs:choice>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="layout" type="xs:string" use="optional">
+		         <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		            </xs:documentation>
+		         </xs:annotation>
+		      </xs:attribute>
+		      <xs:attribute name="visibleButtonCount" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The number of visible buttons in the footer, useful if buttons are dynamically hidden and shown
+						</xs:documentation>
+					</xs:annotation>
+			  </xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+    
+	<xs:complexType name="group">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A group is a visual container for a set of items. Similar to a List
+						but for a set of predefined items.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="groupitem" type="groupitem" minOccurs="1" />
+					<xs:element name="eventHandlers" type="eventHandlers" />
+				</xs:choice>
+				<xs:attribute name="debugOnly" type="xs:boolean" use="optional" default="false">
+				   <xs:annotation>
+				      <xs:documentation xml:lang="en">
+				      		When set to true, the control will only build/render in debug mode.
+				      </xs:documentation>
+				   </xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="groupitem">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A groupItem is an element within a group. Similar to a ListItemTemplate but for predefined items.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="button" type="button" />
+					<xs:element name="text" type="text" />
+					<xs:element name="textarea" type="textarea" />
+					<xs:element name="directionslink" type="directionslink" />
+					<xs:element name="link" type="link" />
+					<xs:element name="checkbox" type="checkbox" />
+					<xs:element name="radiobutton" type="radiobutton" />
+					<xs:element name="image" type="image" />
+					<xs:element name="mapMarker" type="mapMarker" />
+					<xs:element name="eventHandlers" type="eventHandlers" />
+					<xs:element name="lastupdatetext" type="lastupdatetext" />
+					<xs:element name="combobox" type="combobox" />
+				</xs:choice>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the groupitem with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="queryBase" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define the querybase to use for the groupitem.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="transitionTo" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							An Image displays a image based on an attribute.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="transition" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							String - Optional. Used to define the type of transition. Default is 'slide'.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern
+								value="slide|fade|flip|cover|coverv|dissolve|reveal|revealv|scaleIn|scaleOut|slidev|swirl|zoomIn|zoomOut|cube|swap" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="layout" type="xs:string" use="optional">
+				   <xs:annotation>
+				      <xs:documentation xml:lang="en">
+				      </xs:documentation>
+				   </xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cssClass" type="xs:string" use="optional">
+		         <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		               A css class to apply to
+		               the container
+		            </xs:documentation>
+		         </xs:annotation>
+		      </xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="image">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Used to display an image in the UI
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="states" type="states" />
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="eventHandlerBase">
+														<xs:attribute name="event" use="optional">
+															<xs:annotation>
+																<xs:documentation xml:lang="en">
+																	The name of the event to bind to. Events may be system events
+																	for objects or custom events defined by the application.
+																</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="changestate|render" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:choice>
+				<xs:attribute name="resourceAttribute" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The attribute that can be used to adjust the image with states
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="image" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The attribute that describes the image source
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="platform" type="xs:boolean" use="optional" default="true">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Indicates that the image is stored in the platform directory
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The label of the image to show at runtime
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="layoutInsertAt" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cssAttributes" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A comma delimeted list of data attributes from which we get values to add to the css class.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cssClass" type="xs:string" use="optional">
+		         <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		               A css class to apply to the image
+		            </xs:documentation>
+		         </xs:annotation>
+		      	</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="lastupdatetext">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Extension of Text to display last update time.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="states" type="states" />
+				</xs:choice>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A label to show for the text. Translatable.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="link">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						The link control element
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="states" type="states" />
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="eventHandlerBase">
+														<xs:attribute name="event" use="required">
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="click|changestate|datachange|render" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="eventListeners" type="eventListeners" />
+				</xs:choice>
+				<xs:attribute name="image" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The image for the link to show at runtime
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="label" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The label of the link to show at runtime
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="transitionTo" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define the view / dialog to which the link will transition.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="layoutInsertAt" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resolverClass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to resolve a dynamic recordLabel
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resolverFunction" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to resolve a dynamic recordLabel
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="list">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A List displays a number of list items vertically.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="listItemTemplate" type="listItemTemplate" minOccurs="1" maxOccurs="unbounded" />
+					<xs:element name="findByScan" type="findByScan" minOccurs="0"
+						maxOccurs="unbounded" />
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="eventHandlerBase">
+														<xs:attribute name="event" use="optional">
+															<xs:annotation>
+																<xs:documentation xml:lang="en">
+																	The name of the
+																	event to bind to. Events may be system events
+																	for objects or
+																	custom events defined by the application.
+																</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="click|render" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="sortOptions" type="sortOptions" />
+					<xs:element name="searchAttributes" type="searchAttributes" />
+				</xs:choice>
+				<xs:attribute name="label" type="xs:string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    A text label to show on the list.
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+				<xs:attribute name="resource" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="queryBase" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to define the querybase to use when the action is invoked.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="displayPageSize" type="xs:integer" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                     Represents the display page size of the resource (number of list items per page) 
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+		        <xs:attribute name="recordLabel" type="xs:string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    A text representation of the field
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+				<!-- TODO - RULE to try and implement - if resolverFunction is not blank 
+					then resolverClass is necessary -->
+				<xs:attribute name="resolverClass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to resolve a dynamic recordLabel
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resolverFunction" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Used to resolve a dynamic recordLabel
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="transitionTo" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A view to transition to by default when a list item is clicked.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="transition" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							String - Optional. Used to define the type of transition. Default is 'slide'.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern
+								value="slide|fade|flip|cover|coverv|dissolve|reveal|revealv|scaleIn|scaleOut|slidev|swirl|zoomIn|zoomOut|cube|swap" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+		        <xs:attribute name="attribute" type="xs:string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    Represents an attribute that belongs to a given resource
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+		    	<xs:attribute name="showHeader" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether to show the list's header
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="hideSort" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether to hide the sort label, this will usually show the default section label instead.  Defaults to false.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>	
+				<xs:attribute name="collapsible" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether to allow collapse and expand list. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="defaultcollapsed" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether list is started in collapsed mode. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="hideEmpty" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether list should be hidden case there is no records. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="mixinclass" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Mixin class the list should use to build out its list items 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>	
+				<xs:attribute name="cssClass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A css class to apply to the list.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="useLongList" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Use a long scrolling list instead of paged.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+
+	<xs:complexType name="listItemTemplate">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A container for individual items in a list.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="actions" type="actions" />
+					<xs:element name="listtext" type="listtext" />
+					<xs:element name="text" type="text" />
+					<xs:element name="button" type="button" />
+					<xs:element name="image" type="image" />
+					<xs:element name="checkbox" type="checkbox" />
+					<xs:element name="radiobutton" type="radiobutton" />
+					<xs:element name="eventListeners" type="eventListeners" />
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="eventHandlerBase">
+														<xs:attribute name="event" use="optional">
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="click|longpress|render" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:choice>
+				<xs:attribute name="onClick" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Event fired on click.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="layout" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="layoutInsertAt" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cssAttributes" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A comma delimeted list of data attributes from which we get values to add to the css class.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cssClass" type="xs:string" use="optional">
+		         <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		               A css class to apply to
+		               the container
+		            </xs:documentation>
+		         </xs:annotation>
+		      	</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="localAttribute">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A Local Attribute is a resource attribute not backed by an OSLC
+						property. A Local Attribute exists within the local representation
+						of the resource only.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:attribute name="name" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A friendly name to reference the attribute within the artifact.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="dataType" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A data type to store the attribute, like "string" or "dateTime".
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="index" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Defines if the attribute should be indexed to become "searcheable"
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+		        <xs:attribute name="method" type="string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    The name of the function to call in the event class.
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+		        <xs:attribute name="formula" type="xs:string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    A formula to be evaluated before the data is persisted into local storage.
+		                    Example: ${currentbalance} &gt; 0 &amp;&amp; ${status} != 'CAN'
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+		        <xs:attribute name="persistent" type="boolean" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    Indicates if the local attribute should be persisted or not.
+		                    If the attribute is not persistent, any changes to its value will not
+		                    mark the model object as modified. By default, all local attributes are persistent.
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+		        <xs:attribute name="maxSize" type="xs:integer" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    Defeine the max size of this field.
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+		        <xs:attribute name="remoteName" type="xs:string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    Link a remoteName to this local attribute. Must be set
+		                    when this local attribute is used in sort feature. Because 
+		                    sort can happen in the server or locally we need to guarantee
+		                    that a local attribute has a server attribute to perform 
+		                    server sort. Use the value of property 'describedByProperty' from the
+		                    &lt;attribute&gt; as a remoteName.
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+		        <xs:attribute name="key" use="optional" type="xs:string">
+			        <xs:annotation>
+			            <xs:documentation xml:lang="en">
+			                Indicator of fields making up unique key identifier. 
+			            </xs:documentation>
+			        </xs:annotation>
+		        </xs:attribute>			        
+			</xs:extension>
+		</xs:complexContent>
+ 	</xs:complexType>
+
+	<xs:complexType name="map">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						The control to view a map within a view.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:attribute name="height" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The height of the map in either pixels or percentage
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="androidLocalMapUrl" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The android url (path) to the map file on the device.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>		
+				<xs:attribute name="windowsLocalMapUrl" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The windows url (path) to the map file on the device.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>					
+				<xs:attribute name="iosLocalMapUrl" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The iOS url (path) to the map file on the device.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>		
+				<xs:attribute name="iosMapAccessMethod" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Indicate where the iOS tpk map is located. Two options (1) useBundle (2) useDocumentsFolder.
+							if useBundle is applied, then it indicates that tpk map, at the build time, is supposed to be bundled into the build at this location,
+							/AnywhereWorkManagement/apps/WorkExecution/iphone/native/ISIImage.bundle;
+							if useDocumentsFolder is applied, then it indicates that tpk map should be copied over by each user into the device app sandbox
+							Documents folder by uisng apple tools: eg, iTunes.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>		
+				<xs:attribute name="mapHandlerClass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of handler class to used by the map
+							to handle map events.  The default handler is
+							platform.handlers.MapHandler 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="provider" use="required" >
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The provider for the map.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern value="esri|mxspatial" />
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>	
+				<xs:attribute name="providerUrl" use="optional" >
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The provider for the map.
+						</xs:documentation>
+					</xs:annotation>			
+				</xs:attribute>
+				<xs:attribute name="multipleRecords" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Inform if the map will use all records with locations or just the current record.
+						</xs:documentation>
+					</xs:annotation>			
+				</xs:attribute> 
+				<xs:attribute name="adjustToTop" use="required" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Setting this property to true will position the Map at the very top of the view just under header so 
+							there is no empty space.  If there is no header, it will be at the very top of the view.  You only
+							want to set this to true if the Map is the first visible control defined the view.  Setting it to false 
+							will keep the Map at it's default rendered DOM position. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="workOfflineResource" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, when the defined resource is download for off line work
+							the map will download map points and dirrections for the records
+							of the resource. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			   <xs:attribute name="layoutInsertAt" type="xs:string" use="optional">
+		         <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		
+		            </xs:documentation>
+		         </xs:annotation>
+		      </xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="mapDetails">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">
+				This control is basically a container that will hide its 
+				contents and display a message if the map doesn't
+				have any markers.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="container"/>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="mapMarker">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Shows the marker image of the selected marker in the Map.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:attribute name="layoutInsertAt" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="message">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">
+				A message is a translatable string that may be displayed to the user.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="id" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">
+					A unique identifier of this message that can be referenced in other
+					parts of the application.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="defaultMessage" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">
+					The message in its default language.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	
+	<xs:complexType name="event">
+	<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Eventsource is a push notification event source 
+						defined for the aplication aplication can subscribe for alert|confirmation nootification, 
+						using the default receive notofocation handles or define its own .
+					</xs:documentation>
+				</xs:annotation>
+				
+				<xs:attribute name="name" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A friendly name to
+							reference the attribute within the artifact.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="type" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Type of notification that will be displayed in application, 
+							it will be used by the default push notification handler in case of customer does
+							not define his own.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resource" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Resource that notification will send the jason info.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="autoregister" type="boolean" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A boolena flag to indicate if user will self sign to the event source the default value is true.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="notificationclass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Handler class that will be notified when incoming notification arrive.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="notificationmethod" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Handler method that will be notified when incoming notification arrive.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="transitionTo" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							View to display when receiving a new confirmation notification.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="notifications">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						notifications defines references
+						for all the Push notifications used by the application.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="event" type="event" minOccurs="0" />
+					<!--<xs:element name="eventHandlers" type="eventHandlers" /> -->
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="messages">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A collections of message
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="message" type="message" minOccurs="1" />
+					<xs:element name="eventHandlers" type="eventHandlers" />
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="property">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A property to set for a state.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="eventHandlers" type="eventHandlers" />
+				</xs:choice>
+				<xs:attribute name="name" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the property to set.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="value" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The value to set for the property. Translatable IF name property has
+							value of 'label'.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="creationFactory">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A creationFactory is a definition to instruct creating
+						data record(s) in target resource in the given the uri.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:attribute name="name" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the OSLC creationFactory.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>		
+				<xs:attribute name="creationUri" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The URI Content of the OSLC creationFactory.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>		
+				<xs:attribute name="describedByCFUsage" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The Usage definition of the OSLC creationFactory.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>					
+	</xs:complexType>
+	 
+	<xs:complexType name="queryBase">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A Query Base is a named query defined within OSLC used to acquire a
+						collection of OSLC resources for the application.
+						Multiple query bases can be used to fulfill a resource but only one can 
+						be used at a time. For example, a query named getMyAssignedWork and 
+						getAllUnassignedWork may both retrieve work orders but you would only
+						use one query base at a time.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="eventHandlers" type="eventHandlers" />
+				</xs:choice>
+				<xs:attribute name="name" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the OSLC query.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>		
+				<xs:attribute name="queryUri" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The URI Content of the OSLC query.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>		
+				<xs:attribute name="describedByQCUsage" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The Usage definition of the OSLC query.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute> 
+				<xs:attribute name="defaultForSearch" type="boolean" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Defines the queryBase is the one to be used for search
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="queryLabel" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Query label to be displayed whe resource is a list resource.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="creationFactories">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						creationFactories is a
+						container for multiple (or single) creationFactory elements.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="1" maxOccurs="unbounded">
+					<xs:element name="creationFactory" type="creationFactory" />
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="queryBases">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Query Bases is a
+						container for multiple (or single) Query Base elements.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="1" maxOccurs="unbounded">
+					<xs:element name="queryBase" type="queryBase" />
+					<xs:element name="eventHandlers" type="eventHandlers" />
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	 
+    <xs:complexType name="requiredAttribute">
+		<xs:complexContent>
+			<xs:extension base="base">
+		        <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		            Attribute for data related parent
+		            </xs:documentation>
+		        </xs:annotation>
+		        <xs:attribute name="name" type="xs:string" use="required">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                The defined requiredAttribute name for lookup
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+		        <xs:attribute name="reload" type="xs:boolean" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                	Indicates the resource should be reloaded when requested.
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+		        <xs:attribute name="enableFeatureByProperty" type="xs:string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                	Indicates if the resource should be load considering the enabled property.
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="requiredResources">
+ 		<xs:complexContent>
+			<xs:extension base="base">
+		        <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		            A collection of requiredResource tied to the parent
+		            </xs:documentation>
+		        </xs:annotation>
+		        <xs:choice minOccurs="1" maxOccurs="unbounded">
+		            <xs:element name="requiredResource" type="requiredResource" />
+		        </xs:choice>        
+			</xs:extension>
+		</xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="returnAttributes">
+		<xs:complexContent>
+			<xs:extension base="base">
+		        <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		            A collection of attributes to set when the lookup returns
+		            </xs:documentation>
+		        </xs:annotation>
+		        <xs:choice minOccurs="1" maxOccurs="unbounded">
+		            <xs:element name="returnAttribute" type="returnAttribute" />
+		        </xs:choice>        
+			</xs:extension>
+		</xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="returnAttribute">
+		<xs:complexContent>
+			<xs:extension base="base">
+		        <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		            An attribute to set when the lookup returns
+		            </xs:documentation>
+		        </xs:annotation>
+				<xs:attribute name="sourceAttribute" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+						
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="targetAttribute" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+						
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="targetResource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+						
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="requiredResource">
+		<xs:complexContent>
+			<xs:extension base="base">
+		        <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		            Defined resource.
+		            </xs:documentation>
+		        </xs:annotation>
+		        <xs:choice minOccurs="0" maxOccurs="unbounded">
+		            <xs:element name="requiredAttribute" type="requiredAttribute" />
+		        </xs:choice> 
+		        <xs:attribute name="name" type="xs:string" use="required">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                Indicates the resource tied to it by name
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="reload" type="xs:boolean" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                	Indicates the resource should be reloaded when requested.
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="resource">
+		<xs:complexContent>
+			<xs:extension base="base">
+		    	<xs:annotation>
+		    		<xs:documentation xml:lang="en">
+		    			Resource defines a given OSLC resource to be used by the
+		    			application and gives it a friendly name for use within
+		    			the artifact.
+		    		</xs:documentation>
+		    	</xs:annotation>
+		    	<xs:choice minOccurs="0" maxOccurs="unbounded">
+		    		<xs:element name="attributes" type="attributes" />
+		    		<xs:element name="creationFactories"
+		    			type="creationFactories" />
+		    		<xs:element name="queryBases" type="queryBases" />
+		    		<xs:element name="whereClause" type="whereClause" />
+		    		<xs:element name="conditions" type="conditions" />
+		    	</xs:choice>
+		    	<xs:attribute name="hasManagedQuery" type="boolean"
+		    		use="optional">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Used to define if this OSLC resource has a managed query base.
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="describedBy" type="xs:string"
+		    		use="optional">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Used to define the OSLC resource.
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="name" type="string" use="required">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				A friendly name for referencing the resource within
+		    				the artifact.
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="platform" use="optional" type="boolean">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Indicates that a resource will be used by the
+		    				platform and may not be loaded by some control.
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="singleton" use="optional" type="boolean">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Indicates that a resource will have just a single
+		    				record, auto-generated at it's creation.
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="class" type="xs:string" use="optional">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Represents the handler class for the given resource's data
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="providedBy" type="xs:string"
+		    		use="optional">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Service Provider Context URI, like "/oslc/sp/WorkManagement"
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="inMemory" type="boolean" use="optional">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				An indication that any data in this resource will
+		    				only be handled in memory, never persisted
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="pageSize" type="xs:integer"
+		    		use="optional">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Represents the page size of the resource
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="maxFetchDataLimit" type="xs:integer"
+		    		use="optional">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Represents the maximum number of items to retreive
+		    				from the resource
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="additionalData" type="boolean"
+		    		use="optional">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Indicates whether the resources contains additional data
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="isSystem" type="boolean" use="optional">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Indicates whether the resource is at system level
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="enableFeatureByProperty" use="optional"
+		    		type="xs:string">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				if set, the generator will look for the specified
+		    				build.xml property to determine if the artifact
+		    				should be generated. The build property must exist
+		    				and be set to true for the artifact to be generated.
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="hierarchyDescribedBy" type="xs:string"
+		    		use="optional">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Indicates the child attribute for a resource.
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="hierarchyRequestedBy" type="xs:string"
+		    		use="optional">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Indicates the descendent attribute for a resource.
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="isAttachment" type="xs:boolean" use="optional">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Indicates the resource should be handled as an attachment resource. Platform will add several
+		    				fields to is and handle its payloads download and upload accordingly. 
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="refreshOnLogin" type="xs:boolean" use="optional">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Indicates the resource should be downloaded every
+		    				time that user log in the application.
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+				<xs:attribute name="serverOnlyMode" type="xs:boolean" use="optional">
+		    		<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				Indicates the resource should be server Only Mode always getting data in the 
+		    				server instead fo use local data. Default values is false 
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+		    	<xs:attribute name="defaultOrderBy" type="xs:string" use="optional">
+			    	<xs:annotation>
+		    			<xs:documentation xml:lang="en">
+		    				When serverOnlyMode is true, this orderBy will be used when the data is retrieved from 
+		    				the server.  Can use either attribute from resource (default is assending, use desc for 
+		    				descending) or oslc attribute (+ or - for assending/descending).  If resource is used in 
+		    				a list with sortoptions, the orderby it needs to match a sortattribute or the list will not 
+		    				show the proper sort by.  
+		    			</xs:documentation>
+		    		</xs:annotation>
+		    	</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="searchAttributes">
+		<xs:complexContent>
+			<xs:extension base="base">
+		        <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		                searchAttributes is a collection of
+		                individual searchAttribute(s) that can be applied to the
+		                parent control.
+		            </xs:documentation>
+		        </xs:annotation>
+		        <xs:choice minOccurs="1" maxOccurs="unbounded">
+					<xs:element name="searchAttribute">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:attribute name="name" type="xs:string" use="required">
+										<xs:annotation>
+											<xs:documentation xml:lang="en">
+												The name of the attribute to search on.
+											</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+		        </xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="sortOptions">
+		<xs:complexContent>
+			<xs:extension base="base">
+		        <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		                sortOptions is a collection of
+		                individual sortOption(s) that can be applied to the
+		                parent control.
+		            </xs:documentation>
+		        </xs:annotation>
+		        <xs:choice minOccurs="0" maxOccurs="unbounded">
+		            <xs:element name="sortOption" type="sortOption" minOccurs="1" />
+		        </xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="sortOption">
+		<xs:complexContent>
+			<xs:extension base="base">
+		        <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		                A sortOption represents a
+		                named set of properties to apply to a field for sorting.
+		                The properties describe the data that is available for sorting within the container
+		            </xs:documentation>
+		        </xs:annotation>
+				<xs:choice minOccurs="1" maxOccurs="unbounded">
+					<xs:element name="sortAttribute">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:attribute name="name" type="xs:string" use="required">
+										<xs:annotation>
+											<xs:documentation xml:lang="en">
+												The name of the attribute to sort by.
+											</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+									<xs:attribute name="direction" use="optional">
+										<xs:annotation>
+											<xs:documentation xml:lang="en">
+												The sort direction. Default is ASC.
+											</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:string">
+												<xs:pattern value="asc|desc" />
+											</xs:restriction>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+		        </xs:choice>
+		        <xs:attribute name="label" type="xs:string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    A text representation of the field
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+    </xs:complexType>    	
+
+	<xs:complexType name="state">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A State represents a named set of properties to apply to a control.
+						For example, a button may have two states, one to show that a process 
+						is running and the button will stop it and another to show that the 
+						process is stopped and the button will start it.
+						You could also use states to specify that in some scenarios a button is
+						enabled and can be used and other scenarios it may be disabled.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="property" type="property" />
+					<xs:element name="eventHandlers" type="eventHandlers" />
+				</xs:choice>
+				<xs:attribute name="value" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A friendly, unique name for the state.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A text representation of the STATE
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="image" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							An image representation of the state.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="primary" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Indicator whether this is the primary state in a collection of STATES
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="default" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Use this as a default state. Only one state can be default.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="states">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						States is a collection of individual states that can be applied to the
+						parent control. 
+						States will watch for a change in the specified resourceAttribute and call
+						the handler to apply the appropriate state.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="state" type="state" minOccurs="1" />
+					<xs:element name="eventHandlers" type="eventHandlers" />
+				</xs:choice>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resourceAttribute" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Attribute to watch for change.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="class" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A function in the handler class that will determine which state to apply.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="text">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Text is a simple text element with an optional label.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="states" type="states" />
+					<xs:element name="eventListeners" type="eventListeners" />
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="eventHandlerBase">
+														<xs:attribute name="event" use="optional">
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="click|changestate|datachange|render|validate" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="button" type="button" />
+				</xs:choice>
+				<xs:attribute name="enableNumericKeyboard" use="optional" type="boolean" default="false">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							This attribute determines if the a numeric only keyboard should be displayed
+							when he user clicks on the textbox. This will also initialize the textbox with
+							numeric formatting.
+						</xs:documentation>
+					</xs:annotation>
+			    </xs:attribute>
+				<xs:attribute name="resourceAttribute" type="xs:string"	use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the attribute to display it's value as the text.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A label to show for the text. Translatable.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="labelCss" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A css class to apply to the label.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>		
+				<xs:attribute name="lookup" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="lookupAttribute" type="xs:string"	use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the attribute to use from the lookup result.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="editable" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether the text is in an editable field. Default is false.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="required" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether the text is required in the current view.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>		
+				<xs:attribute name="codeScannable" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether the text field is scannable or not. Default is false;
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>				
+				<xs:attribute name="placeHolder" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Placeholder text to show in the field if it is editable and empty. Entering
+							any data clears the placeholder.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="value" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A static value to use for the text if it is not bound to a resource
+							attribute and the text is not editable.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="type" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The type of text that is implemented
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="border" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether the text is displayed with a textbox border. Default is false.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cssAttributes" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A comma delimeted list of data attributes from which we get values to add to the css class.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cssClass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A css class to apply to the text
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="layoutInsertAt" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resolverClass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The class in which to find the resolverFunction
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resolverFunction" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The resolver function used to provide any 
+							dynamic parts of the text value. Specifying 
+							{0} in the value will be filled in by array element
+							0 in the array returned from the resolverFunction.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="textarea">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Textarea is a multiline text element with an optional label.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="eventListeners" type="eventListeners" />
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="eventHandlerBase">
+														<xs:attribute name="event" use="optional">
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="click|changestate|datachange|render|validate" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:choice>
+				<xs:attribute name="resourceAttribute" type="xs:string"	use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the attribute to display it's value as the text.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A label to show for the textarea. Translatable.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="labelCss" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A css class to apply to the label.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>		
+				<xs:attribute name="editable" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether the text is in an editable field. Default is false.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="required" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether the text is required in the current view.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>					
+				<xs:attribute name="placeHolder" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Placeholder text to show in the field if it is editable and 
+							empty. Entering any data clears the placeholder.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="value" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A static value to use for the text if it is not bound to a resource
+							attribute and the text is not editable.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				
+				<xs:attribute name="cssClass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A css class to apply to the text
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="listtext">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Text is a simple text element with an optional label.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:attribute name="resourceAttribute" type="xs:string"	use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the attribute to display it's value as the text.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="value" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A static value to use for the text if it is not bound to a resource
+							attribute and the text is not editable.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cssAttributes" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A comma delimeted list of data attributes from which we get values to add to the css class.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="cssClass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A css class to apply to the text
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="layoutInsertAt" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="hideEmpty" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether listtext should be hidden case there is no value. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="showreqattribute" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether listtext should show the required indicator if the attribute is set to true 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="ui">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						UI is a container for all the UI elements of the app. It contains the
+						views for the app.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="actions" type="actions" />
+					<xs:element name="erroractions" type="erroractions" />
+					<xs:element name="view" type="view" minOccurs="1" />
+					<xs:element name="combinedView" type="combinedView" />
+					<xs:element name="eventHandlers" type="eventHandlers" />
+					<xs:element name="dialog" type="dialog" />
+					<xs:element name="lookup" type="lookup" />
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+    
+	<xs:complexType name="view">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A view describes a "page" in the application. Each view has a
+						statically positioned header that shows the label for the view if
+						one is set, otherwise a blank header will be shown. The header will
+						also present the back navigation if that is available (future work).
+						A view may also have a footer containing navigation elements
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="map" type="map" />
+					<xs:element name="mapDetails" type="mapDetails" />
+					<xs:element name="actions" type="actions" />
+					<xs:element name="list" type="list" />
+					<xs:element name="container" type="container" />
+					<xs:element name="footer" type="footer" />
+					<xs:element name="states" type="states" />
+					<xs:element name="text" type="text" />
+					<xs:element name="button" type="button" />
+					<xs:element name="requiredResources" type="requiredResources" />
+					<xs:element name="eventListeners" type="eventListeners" />
+					<xs:element name="queries" type="queries" />
+					<xs:element name="combobox" type="combobox" />
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="eventHandlerBase">
+														<xs:attribute name="event" use="optional">
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="changestate|show|render|hide|initialize|cleanup|back" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="progressIndicator" type="progressIndicator" />
+					<xs:element name="errorIndicator" type="errorIndicator" />
+				</xs:choice>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="queryBase" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the query base to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The label shown in the view header. Translatable.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="back" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="fullScreen" type="xs:boolean" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether or not to show the view as full screen when in combined view mode.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="keepScrollPosition" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Set to false to stop view from maintaining scrollposition. (default is true)
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="primary" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<!-- TODO - RULE to try and implement - if resolverFunction is not blank 
+					then resolverClass is necessary -->
+				<xs:attribute name="resolverClass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resolverFunction" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="saveonhide" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Save all resources when this view is hidden.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="saveonshow" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Save all resources when this view is shown.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			  	<xs:attribute name="saveonenter" use="optional" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Save all resources when this view is intitialized. 
+						</xs:documentation>
+					</xs:annotation>
+			 	</xs:attribute>
+			 	<xs:attribute name="saveonexit" use="optional" type="xs:boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Save all resources when this view is closed. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+		
+				<xs:attribute name="showHeader" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether to show the view's header
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="showFooter" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether to show the view's footer
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="overflow" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Optional. Whether to show the overflow on this view. Default is true.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+		        <xs:attribute name="cssClass" type="xs:string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    A css class to apply to the view
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+		        <xs:attribute name="showOverflow" type="boolean" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                   Toggles whether to supress the overflow menu in the header
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="layout" type="xs:string" use="optional">
+		         <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		            </xs:documentation>
+		         </xs:annotation>
+		      </xs:attribute>
+		      <xs:attribute name="scrollDir" default="v">
+		         <xs:annotation>
+		            <xs:documentation>
+		               Specify a scrolling direction. “v” for vertical, “h” for horizontal, or “vh” for both.
+		               Default scrollDir value is ""
+		            </xs:documentation>
+		         </xs:annotation>
+		         <xs:simpleType>
+		            <xs:restriction base="xs:string">
+		               <xs:pattern value="v|h|vh"></xs:pattern>
+		            </xs:restriction>
+		         </xs:simpleType>
+		      </xs:attribute>
+			  <xs:attribute name="editableView" type="xs:string" use="optional">
+		         <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		            Specifies an alternate view to open when the record is editable becuase it has not been committed to the server.
+		            </xs:documentation>
+		         </xs:annotation>
+		      </xs:attribute>
+		      <xs:attribute name="showBackButton" type="boolean" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                   Toggles whether to show the Back button in the header
+		                </xs:documentation>
+		            </xs:annotation>
+		      </xs:attribute>
+		      <xs:attribute name="showCancelButton" type="boolean" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                   Toggles whether to show the Cancel button in the header
+		                </xs:documentation>
+		            </xs:annotation>
+		      </xs:attribute>
+		      <xs:attribute name="showKeyboard" use="optional" type="boolean" default="false">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							This attribute determines whether we should start with the first editable field selected 
+							and the keyboard shown when the view is loaded.
+						</xs:documentation>
+					</xs:annotation>
+			  </xs:attribute>
+			  <xs:attribute name="allowDrillDown" type="xs:boolean" use="optional" default="false">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Allows a transition to a new view without request validation.
+							Explanation: When we have an element on the current view that is required but we also have a 
+							transition to a new view, when click on this new view we get a validation problem. One way to 
+							solve it is pointing to current view that a drilldrow transition is allowed without request validation.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="combinedView">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A combinedView describes a "splitPane" view containing one view on the
+						left (leftPane) and one view on the right (rightPane) to better suit tablet form factor.
+						When an item on the leftPane view is selected the rightPane reacts loading the detailed
+						view for that record.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:sequence minOccurs="1" maxOccurs="1">
+					<xs:element name="leftPane" type="leftPane" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="rightPane" type="rightPane" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The label shown in the view header. Translatable.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="leftPane">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Left panel of a combined view
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="1" maxOccurs="1">
+					<xs:element name="view" type="view" minOccurs="1" />
+				</xs:choice>
+				<xs:attribute name="width" type="xs:string" use="optional" default="35%">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The width of the panel in either pixels or percentage
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="rightPane">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Right panel of a combined view
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="1" maxOccurs="unbounded">
+					<xs:element name="view" type="view" minOccurs="1" />
+				</xs:choice>
+				<xs:attribute name="width" type="xs:string" use="optional" default="65%">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The width of the panel in either pixels or percentage
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="lookup">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						A lookup describes a specialized view
+						in the application. A lookup should
+						contain a list of elements to select 
+						from. A list will automatically handle
+						the returning the selected item to the 
+						field that called the lookup and additional
+						buttons for Clear and Cancel.
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="list" type="list" />
+					<xs:element name="container" type="container" />
+					<xs:element name="text" type="text" />
+					<xs:element name="button" type="button" />
+					<xs:element name="requiredResources" type="requiredResources" />
+					<xs:element name="returnAttributes" type="returnAttributes" />
+					<xs:element name="eventListeners" type="eventListeners" />
+					<xs:element name="combobox" type="combobox" />
+					<!-- THIS IS HOW WE VALIDATE OUR SYSTEM EVENTS. No inheriting from type="eventhandlers" -->
+					<xs:element name="eventHandlers">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:extension base="base">
+									<xs:choice minOccurs="1" maxOccurs="unbounded">
+										<xs:element name="eventHandler">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:extension base="eventHandlerBase">
+														<xs:attribute name="event" use="optional">
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:pattern value="changestate|show|render" />
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:choice>
+								</xs:extension>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:choice>
+				<xs:attribute name="resource" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the resource to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="queryBase" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the query base to supply the control with data.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="requiredResources" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							A comma delimited list of resource names that will be needed when working within this view.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="label" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The label shown in the view header. Translatable.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="back" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<!-- TODO - RULE to try and implement - if resolverFunction is not blank 
+					then resolverClass is necessary -->
+				<xs:attribute name="resolverClass" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resolverFunction" type="xs:string"
+					use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+		
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="showHeader" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether to show the view's header
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="showFooter" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Whether to show the view's footer
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="overflow" use="optional" type="boolean">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							Optional. Whether to show the overflow on this view. Default is true.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+		        <xs:attribute name="cssClass" type="xs:string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                    A css class to apply to the view
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+		        <xs:attribute name="showOverflow" type="boolean" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                   Toggles whether to supress the overflow menu in the header
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+		        <xs:attribute name="filterClass" type="xs:string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                   The class that contains the filterMethod
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+		        <xs:attribute name="filterMethod" type="xs:string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                   A handler called before the lookup is displayed that can 
+		                   be used to filter the lookup resource.
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+    <xs:complexType name="whereClause">
+		<xs:complexContent>
+			<xs:extension base="base">
+		        <xs:annotation>
+		            <xs:documentation xml:lang="en">
+		                Represents the where clause that the resource needs, based on the 'clause' attribute 
+		            </xs:documentation>
+		        </xs:annotation>
+		        <xs:attribute name="clause" type="xs:string" use="optional">
+		            <xs:annotation>
+		                <xs:documentation xml:lang="en">
+		                     the clause used to apply to the data
+		                </xs:documentation>
+		            </xs:annotation>
+		        </xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+    </xs:complexType>   
+
+	<xs:complexType name="progressIndicator">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Display an indicator of the current progress
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="states" type="states" />
+				</xs:choice>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="errorIndicator">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						Display an indicator of the error for a record
+					</xs:documentation>
+				</xs:annotation>
+				<xs:choice minOccurs="0" maxOccurs="unbounded">
+					<xs:element name="states" type="states" />
+				</xs:choice>
+				<xs:attribute name="clearMethod" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the clear function to call in the event class.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="retryMethod" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the retry function to call in the event class.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="class" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The class the method is	registered to
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="findByScan">
+		<xs:complexContent>
+			<xs:extension base="base">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">
+						This control defines and enables scanning on list
+					</xs:documentation>
+				</xs:annotation>
+				<xs:attribute name="headerLabel" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							This is the label (or message) to display in the scanning header
+							when the list is filtered down by the scan.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="enableFeatureByProperty" use="optional" type="xs:string">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							if set, the generator will look for the specified build.xml property
+							to determine if the artifact should be generated.  The build property
+							must exist and be set to true for the artifact to be generated. 
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="resourceAttribute" type="xs:string"
+					use="required">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">
+							The name of the attribute to search against with the scanned in value.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

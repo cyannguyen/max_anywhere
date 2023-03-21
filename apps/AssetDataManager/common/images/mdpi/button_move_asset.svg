@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="26px" height="18px" viewBox="0 0 26 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>button_move_asset</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="nany-icon-/-button-move-asset" transform="translate(-3.000000, -7.000000)" fill="#5AAAFA" fill-rule="nonzero">
+            <path d="M23,18 L16,18 L16,15 L23,15 L23,11 L29,16 L23,21 L23,18 Z M17.8768218,12.1954547 C16.6292102,10.272242 14.4631791,9 12,9 C8.13400675,9 5,12.1340068 5,16 C5,19.8659932 8.13400675,23 12,23 C14.2939309,23 16.3301456,21.8965862 17.60684,20.191563 C18.1073193,20.5657115 18.6413041,20.964908 19.2087943,21.3891525 C17.5673301,23.5813252 14.9493397,25 12,25 C7.02943725,25 3,20.9705627 3,16 C3,11.0294373 7.02943725,7 12,7 C15.1669446,7 17.9518417,8.63573977 19.5559138,11.1084417 C18.9610977,11.4935147 18.4014003,11.8558523 17.8768218,12.1954547 Z" id="button_move_asset"></path>
+        </g>
+    </g>
+</svg>

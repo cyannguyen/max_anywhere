@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Anywhere-Sparse-xml-Processor" basedir="." default="generate-all-mxsfiles" >
+
+    <import file="util.xml" />
+    
+	<!-- definition of additional tasks needed to install platform -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${basedir}/libs/build/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+				    	
+	<path id="upgrade.classpath">
+	    <pathelement location="${basedir}/libs/codegen/artifact-processor_7.6.4.jar"/>
+	</path>
+
+	<basename property="ant.file.basename" file="${ant.file}" suffix=".xml"/>
+	<record name="${basedir}/${ant.file.basename}.log" logLevel="info"/>
+	
+	<basename property="project.name" file="${basedir}"/>
+	
+	<!-- working directory where to last release will be extracted to -->
+	<property name="tempdir.workdir" value="${basedir}/bin/tempdir"/>
+	<property name="app.ga.released.location" value="" />
+	<property name="app.latest.released.location" value="" />
+	<property name="version.latest.released.location" value="" />
+	
+	<target name="init" >
+		<if>
+			<available file="${tempdir.workdir}" type="dir" />
+			<then>
+				<delete dir="${tempdir.workdir}" />
+			</then>
+		</if>
+		<mkdir dir="${tempdir.workdir}" />
+	</target>
+	
+	<target name="validate-source-folders" >		
+		<if>
+			<not>
+				<available file="${basedir}/libs/codegen/artifact-processor_7.6.3.1.jar" type="file" />
+			</not>
+			<then>
+				<echotimestamp>Necessary library artifact-processor_7.6.3.1.jar cannot be found </echotimestamp>
+				<echotimestamp>Possible remedy is to run update-platform</echotimestamp>
+			</then>		
+		</if>
+					
+		<!-- verify the GA release folder -->
+		<if>
+			<or>
+				<equals arg1="${app.ga.released.location}" arg2="" />
+				<not>
+					<available file="${app.ga.released.location}" type="dir"/>
+				</not>
+			</or>
+			<then>
+				<fail message="app.ga.released.location is not set or available at location [${app.ga.released.location}]"/> 
+			</then>
+		</if>
+		
+		<!-- verify the latest release folder -->
+		<if>
+			<or>
+				<equals arg1="${app.latest.released.location}" arg2="" />
+				<not>
+					<available file="${app.latest.released.location}" type="dir"/>
+				</not>
+			</or>
+			<then>
+				<fail message="app.latest.released.location is not set or available at location [${app.latest.released.location}]"/> 
+			</then>
+		</if>
+		
+		<!-- verify the version file location folder -->
+		<if>
+			<or>
+				<equals arg1="${version.latest.released.location}" arg2="" />
+				<not>
+					<available file="${version.latest.released.location}" type="dir"/>
+				</not>
+			</or>
+			<then>
+				<fail message="version.latest.released.location is not set or available at location [${version.latest.released.location}]"/> 
+			</then>
+		</if>
+		
+		<echotimestamp> GA and latest folders exist for generating MXS diff files </echotimestamp>
+	</target>
+	
+	<!-- Generate mxs diff files for all application artifacts -->
+	<target name="generate-all-mxsfiles" depends="init,validate-source-folders" description="generate mxs diff files for app artifacts">
+			
+		<!-- now lets process the artifacts -->
+   	    <antcall target="process-app-artifacts"/>
+	</target>
+	
+    <target name="upgrade-previous-release-app-artifacts" >
+    	<property name="app.artifact.previous.zipname"  value="app_artifacts_previous.zip" />
+    	<if>
+    	    <available file="${basedir}/build/config/${app.artifact.previous.zipname}" />
+    		<then>
+    			<unzip src="${basedir}/build/config/${app.artifact.previous.zipname}" dest="${basedir}/apps" />
+    			
+                <!-- merge the mxs file for each app from any fixpack or release -->
+                <ant antfile="app-sparse-xml-processor.xml" target="apply-mxs-artifacts">
+                    <property name="working.app.basedir" value="${basedir}/apps"/>
+                </ant>
+    		</then>
+    		<else>
+    		   <fail message="There is no artifacts to process found in ${basedir}/build/config/${app.artifact.previous.zipname}" />
+    		</else>
+    	</if>        
+    </target>
+	
+    <target name="upgrade-previous-previous-release-app-artifacts" >
+        <property name="app.artifact.previous.previous.zipname" value="app_artifacts_previous_previous.zip" />
+        <if>
+            <available file="${basedir}/build/config/${app.artifact.previous.previous.zipname}" />
+            <then>
+                <unzip src="${basedir}/build/config/${app.artifact.previous.previous.zipname}" dest="${basedir}/apps" />
+        
+                <!-- merge the mxs file for each app from any fixpack or release -->
+                <ant antfile="app-sparse-xml-processor.xml" target="apply-mxs-artifacts">
+                    <property name="working.app.basedir" value="${basedir}/apps"/>
+                </ant>
+            </then>
+            <else>
+               <fail message="There is no artifacts to process found in ${basedir}/build/config/${app.artifact.previous.previous.zipname}" />
+            </else>
+        </if>       
+    </target>
+
+	
+	<target name="process-app-artifacts"
+		description="Parses all application artifacts and generates mxs diff files from them">
+		
+		<foreach target="-process-app-artifact" param="application.home" inheritall="true">
+			<path>
+				<dirset dir="${app.latest.released.location}/MaximoAnywhere/apps">
+					<include name="**" />
+				</dirset>
+			</path>
+		</foreach>
+		
+	</target>
+	
+	<target name="-process-app-artifact"
+		description="Parse the application artifact and generated mxs sparse file for each one">
+		
+	    <basename property="app.name" file="${application.home}" />
+	    
+	    <echotimestamp>Processing artifact for app: ${app.name}</echotimestamp>
+		<antcall target="-mxsgenerator">
+			<param name="artifact.new.path" value="${app.latest.released.location}/MaximoAnywhere/apps/${app.name}/artifact"/>
+			<param name="artifact.ga.path" value="${app.ga.released.location}/MaximoAnywhere/apps/${app.name}/artifact" />
+			<param name="version.ga.file.path" value="${version.latest.released.location}" />
+			<param name="artifact.name" value="app.xml"/>
+			<param name="artifact.mxs.name" value="${app.name}.mxs" />
+		</antcall>
+		
+	</target>
+	
+	<target name="-mxsgenerator">
+		<echotimestamp message="Generating mxs diff file for artifact [${artifact.new.path}/${artifact.name}]"/>	
+		<echotimestamp message="-b${artifact.ga.path}/${artifact.name} -m${artifact.new.path}/${artifact.name} -t${artifact.new.path}/${artifact.mxs.name} -v${version.ga.file.path}/version.txt"/>
+		<basename property="app.name" file="${application.home}" />
+		
+		<if>
+			<available file="${artifact.ga.path}/${artifact.name}" type="file"/>
+			<then>
+				<java classname="com.ibm.tivoli.si.build.upgrade.AWArtifactDiff" failonerror="true">
+					<classpath refid="upgrade.classpath" />
+					<arg value="-b${artifact.ga.path}/${artifact.name}" />
+					<arg value="-m${artifact.new.path}/${artifact.name}" />
+					<arg value="-t${artifact.new.path}/${artifact.mxs.name}" />
+					<arg value="-v${version.ga.file.path}/version.txt" />
+				</java>
+			</then>		
+		</if>
+	</target>
+
+	
+	<target name="apply-mxs-artifacts">
+		<property name="working.app.basedir" value="${basedir}/apps" />
+	
+		<foreach target="-apply-mxs-artifact" param="application.home" inheritall="true">
+			<path>
+				<dirset dir="${working.app.basedir}/">
+					<include name="*" />
+				</dirset>
+			</path>
+		</foreach>
+	</target>
+	
+	<target name="-apply-mxs-artifact">
+		<basename property="app.name" file="${application.home}" />
+		
+		<antcall target="-applymxs">
+			<param name="artifact.path" value="${application.home}/artifact" />
+			<param name="artifact.name" value="app.xml"/>
+			<param name="artifact.mxs.name" value="${app.name}.mxs" />
+		</antcall>
+	</target>	
+	
+	<target name="-applymxs">
+		<echotimestamp message="Applying mxs diff file to artifact [${artifact.path}/${artifact.name}]"/>
+		<basename property="app.name" file="${application.home}" />
+
+		<if>
+			<available file="${artifact.path}/${artifact.mxs.name}" type="file"/>
+			<then>
+				<java classname="com.ibm.tivoli.si.build.upgrade.AWArtifactApply" failonerror="true">
+					<classpath refid="upgrade.classpath" />
+					<arg value="-i${artifact.path}/${artifact.name}" />
+					<arg value="-o${artifact.path}/applied_${artifact.name}" />
+					<arg value="-t${artifact.path}/${artifact.mxs.name}" />
+					<arg value="-f"/>
+				</java>
+				
+				<echotimestamp> Success applying msx file for ${app.name}, backing up original </echotimestamp>
+				<copy file="${artifact.path}/${artifact.name}" tofile="${artifact.path}/backup_${artifact.name}" />
+				<echotimestamp> Renaming applied_${artifact.name} to ${artifact.name} for ${app.name}</echotimestamp>
+				<copy file="${artifact.path}/applied_${artifact.name}" tofile="${artifact.path}/${artifact.name}" overwrite="true"/>
+				<delete file="${artifact.path}/applied_${artifact.name}" />
+				<echotimestamp> Renaming ${artifact.mxs.name} to ${artifact.mxs.name}.bak</echotimestamp>
+				<copy file="${artifact.path}/${artifact.mxs.name}" tofile="${artifact.path}/${artifact.mxs.name}.bak" overwrite="true"/>
+				<delete file="${artifact.path}/${artifact.mxs.name}" />
+			</then>
+			<else>
+				<echotimestamp> ${artifact.path}/${artifact.mxs.name} doesn't exist, skipping mxs apply </echotimestamp>
+			</else>
+		</if>
+	
+	</target>
+</project>

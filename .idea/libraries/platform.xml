@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="platform">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/platform/maximo-anywhere-platform_7.6.4.202002190944.zip!/" />
+      <root url="jar://$PROJECT_DIR$/platform/artifact-processor_7.6.4.202002190944.zip!/" />
+      <root url="jar://$PROJECT_DIR$/platform/anywhere-unittest_7.6.4.202002190944.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

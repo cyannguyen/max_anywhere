@@ -1,0 +1,1195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM 5725-M39 (C) COPYRIGHT IBM CORP. 
+	2013 All Rights Reserved US Government Users Restricted Rights - Use, duplication 
+	or disclosure restricted by GSA ADP Schedule Contract with IBM Corp. -->
+<!-- =================================== -->
+<!-- SERVICE REQUEST APPLICATION ARTIFACT -->
+<!-- =================================== -->
+<app id="ServiceRequest" logLevel="0" requiredRole="ANYWHERE_SERVICE_REQUEST" version="20220526_155012-0400" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../build/app.xsd">
+	 
+	<!-- Back up this file before you edit it. -->
+	
+	<!--UI SECTION-->
+	<!--To change the display name of any element, change the label attribute.-->
+	<!--If you support additional languages, you must also update the label in the common/js/application/translation/nls/<language>/artifact.js file for that language.-->
+
+	<ui id="ui">
+	<!--Action panel-->
+   		<view id="ServiceRequest.ActionPanel" label="Service Request" resource="serviceRequest" showBackButton="false">
+   		    <requiredResources id="ServiceRequest.ActionPanel_errorResource">
+   		        <requiredResource id="ServiceRequest.ActionPanel_serviceRequest" name="serviceRequest" reload="true"/>
+				<requiredResource id="ServiceRequest.ActionPanel_requiredResource_errorResource" name="errorResource"/>
+			</requiredResources>			
+			<progressIndicator id="ServiceRequest.ActionPanel_0"/>
+			<actions id="ServiceRequest.ActionPanel_actions">
+				<action id="ServiceRequest.ActionPanel_SynchronizeData_action" label="Synchronize Data" overflow="true">
+					<eventHandlers id="ServiceRequest.ActionPanel_SynchronizeData_action_eventHandlers">
+						<eventHandler class="platform.handlers.WorkOfflineHandler" event="click" id="ServiceRequest.ActionPanel_SynchronizeData_action_eventHandlers_click_sync" method="sync"/>
+						<eventHandler class="platform.handlers.WorkOfflineHandler" event="render" id="ServiceRequest.ActionPanelR_SynchronizeData_action_eventHandlers_render_enableDisableMenu" method="enableDisableSyncMenu"/>
+					</eventHandlers>
+				</action>
+			</actions>
+			<container cssClass="errorheader" id="ServiceRequest.ActionPanel_container_0">
+				<link id="link" label="">
+					<eventHandlers id="link_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="render" id="link_eventHandlers_render_hideShowSelectLink" method="hideShowErrorLink"/>
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="link_eventHandlers_click" method="showErrorPage"/>
+					</eventHandlers>
+				</link>
+			</container>
+			<container id="ServiceRequest.ActionPanel_container_1">
+			    <group id="action1">
+				    <groupitem id="action1groupitem" layout="Button1Item1" transitionTo="ServiceRequest.CreateSR"> 
+				    	<image cssClass="actionButton" id="sricon" image="acBtn_createNew.svg" label="Create New Request" layoutInsertAt="button1" platform="false"/>
+				    	<text id="createsrtext" layoutInsertAt="item1" value="Create New Request"/>
+				    </groupitem>
+				    <groupitem id="action2groupitem" layout="Button1Item1" transitionTo="ServiceRequest.MyReportedSR">
+				    	<image cssClass="actionButton" id="sricon2" image="acBtn_viewList.svg" label="My Request List" layoutInsertAt="button1" platform="false"/>
+				    	<text id="createsrtext2" layoutInsertAt="item1" value="My Request List"/>
+				    </groupitem>
+			    </group>
+			</container>
+			<eventHandlers id="ServiceRequest.ActionPanel_eventHandlers">
+  				<eventHandler class="application.handlers.SRDetailHandler" event="initialize" id="ServiceRequest.ActionPanel_eventHandlers_initialize_initActionPanel" method="initActionPanel"/>
+			</eventHandlers>
+		</view>
+
+	<!--My Reported SR view-->
+		<view id="ServiceRequest.MyReportedSR" label="My Reported SRs" resource="serviceRequest" showBackButton="true">
+			<queries id="ServiceRequest.MyReportedSR_serviceRequest_queries" resource="serviceRequest">
+				<query id="ServiceRequest.MyReportedSR_MY_REPORTED_SR" label="My Service Requests" queryBase="MY_REPORTED_SR"/>
+				<query id="ServiceRequest.MyReportedSR__created__" label="Service Requests Created Locally" queryBase="__created__" system="true"/>
+				<query id="ServiceRequest.MyReportedSR___errored__" label="Records with Errors" queryBase="__errored__" system="true">
+					<eventHandlers id="ServiceRequest.MyReportedSR___errored___eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="render" id="ServiceRequest.MyReportedSR___errored___eventHandlers_render_hideShowErrorMenu" method="hideShowErrorMenu"/>
+					</eventHandlers>
+				</query>
+			</queries>
+			<requiredResources id="ServiceRequest.MyReportedSR_requiredResources">
+				<requiredResource id="ServiceRequest.MyReportedSR_serviceRequest" name="serviceRequest" reload="true"/>
+				<requiredResource id="ServiceRequest.MyReportedSR_PlatformProgressResource" name="PlatformProgressResource"/>
+				<requiredResource id="ServiceRequest.MyReportedSR_domainsrstatus" name="domainsrstatus"/>
+			</requiredResources>
+		
+  			<eventHandlers id="ServiceRequest.MyReportedSR_eventHandlers">
+  				<eventHandler class="application.handlers.SRDetailHandler" event="initialize" id="ServiceRequest.MyReportedSR_eventHandlers_initialize_initMyReportedSR" method="initMyReportedSR"/>
+			</eventHandlers>
+
+			<progressIndicator id="ServiceRequest.MyReportedSR_0"/>
+			
+			<list displayPageSize="20" id="ServiceRequest.MyReportedSR_serviceRequest_list" resource="serviceRequest" transitionTo="ServiceRequest.SRDetail"> 
+<!--  
+				<eventHandlers id="ServiceRequest.WorkItemsView_workOrder_list_eventHandlers">
+					<eventHandler class="platform.handlers.WorkOfflineHandler" event="render" id="ServiceRequest.WorkItemsView_ServiceRequest_list_eventHandlers_render_keepWorkListResource" method="keepWorkListResource"/>
+				</eventHandlers>  -->
+  
+				<sortOptions id="ServiceRequest.WorkItemsView_serviceRequest_list_sortOptions">
+<!--  
+		  			<sortOption id="ServiceRequest.WorkItemsView_sortOption_ReportDate" label="Report Date">
+						<sortAttribute direction="desc" id="ServiceRequest.WorkItemsView_Status_sortAttribute_reportdatedesc" name="reportdate"/>
+					</sortOption> -->
+					<sortOption id="ServiceRequest.WorkItemsView_sortOption_srnum" label="Request Number">
+						<sortAttribute direction="desc" id="ServiceRequest.WorkItemsView_srnum_sortAttribute_srnum" name="srnum"/>
+					</sortOption>
+				</sortOptions>
+				
+				<listItemTemplate id="ServiceRequest.MyReportedSR_serviceRequest_listItemTemplate_WorkListItem" layout="WorkListItem">
+					<listtext cssClass="bold textappearance-medium" id="ServiceRequest.MyReportedSR_serviceRequest_WorkListItem_srnum" layoutInsertAt="item1" resourceAttribute="srnum"/>
+					<listtext id="ServiceRequest.MyReportedSR_serviceRequest_WorkListItem_description" layoutInsertAt="item3" resourceAttribute="summary"/>
+					<listtext cssAttributes="status" id="ServiceRequestMyReportedSR_serviceRequest_WorkListItem_statusdesc" layoutInsertAt="item2" resourceAttribute="statusdesc"/>
+ 					<listtext id="ServiceRequest.MyReportedSR_serviceRequest_WorkListItem_asset" layoutInsertAt="item4" resourceAttribute="asset"/>
+ 					<listtext id="ServiceRequest.MyReportedSR_serviceRequest_WorkListItem_assetdesc" layoutInsertAt="item5" resourceAttribute="maxassetdesc"/>
+ 
+ 				</listItemTemplate>
+			</list>
+			<actions id="ServiceRequest.MyReportedSR_actions">
+				<action id="ServiceRequest.MyReportedSR_CreateSR_action" label="Create New Request" overflow="true" transitionTo="ServiceRequest.CreateSR"/>
+				<action id="ServiceRequest.MyReportedSR_SynchronizeData_action" label="Synchronize Data" overflow="true">
+					<eventHandlers id="ServiceRequest.MyReportedSR_SynchronizeData_action_eventHandlers">
+						<eventHandler class="platform.handlers.WorkOfflineHandler" event="click" id="ServiceRequest.MyReportedSR_SynchronizeData_action_eventHandlers_click_sync" method="sync"/>
+						<eventHandler class="platform.handlers.WorkOfflineHandler" event="render" id="ServiceRequest.MyReportedSR_SynchronizeData_action_eventHandlers_render_enableDisableMenu" method="enableDisableSyncMenu"/>
+					</eventHandlers>
+				</action>
+			</actions>
+		</view>
+
+		<!--Edit Asset view-->
+		<view id="ServiceRequest.EditAssetView" label="Asset">
+			<requiredResources id="ServiceRequest.EditAssetView_requiredResources">
+				<requiredResource id="ServiceRequest.EditAssetView_serviceRequest" name="serviceRequest"/>
+				<requiredResource id="ServiceRequest.EditAssetView_additionalasset" name="additionalasset"/>
+				<requiredResource id="ServiceRequest.EditAssetView_domainAssetstatus" name="domainAssetstatus"/>
+			</requiredResources>
+			<container id="ServiceRequest.EditAssetView_serviceRequest_container_0" resource="serviceRequest">
+				<group id="ServiceRequest.EditAssetView_group_0">
+					<groupitem id="ServiceRequest.EditAssetView_serviceRequest_groupitem_0">
+						<text codeScannable="true" editable="true" id="ServiceRequest.EditAssetView_serviceRequest_groupitem_0_asset" lookup="ServiceRequest.AssetLookup" lookupAttribute="assetnum" placeHolder="Tap to enter" resourceAttribute="asset">
+							<eventHandlers id="ServiceRequest.EditAssetView_serviceRequest_groupitem_0_asset_eventHandlers">
+								<eventHandler class="application.handlers.SRDetailHandler" event="validate" id="ServiceRequest.EditAssetView_serviceRequest_groupitem_0_asset_eventHandlers_validate_validateAsset" method="validateAsset"/>
+<!--  								<eventHandler event="render" method="initAssetField"
+									class="application.handlers.SRDetailHandler" />  --> 
+							</eventHandlers> 
+						</text>
+						<text editable="false" id="ServiceRequest.EditAssetView_serviceRequest_groupitem_0_assetdesc" resourceAttribute="assetdesc"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.EditAssetView_serviceRequest_groupitem_1">
+						<text cssClass="richText" editable="false" id="ServiceRequest.EditAssetView_serviceRequest_groupitem_1_assetld" resourceAttribute="assetld"/>
+					</groupitem>
+				</group>
+			</container>
+			<footer id="ServiceRequest.EditAssetView_footer">
+				<button id="ServiceRequest.EditAssetView_Cancel_button" label="Cancel">
+					<eventHandlers id="ServiceRequest.EditAssetView_Cancel_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.EditAssetView_Cancel_button_eventHandlers_click_handleBackButtonClickEditAssetView" method="handleBackButtonClickEditAssetView"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="ServiceRequest.EditAssetView_Save_button" label="Save" primary="true">
+					<eventHandlers id="ServiceRequest.EditAssetView_Save_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.EditAssetView_Save_button_eventHandlers_click_commitAssetEntryView" method="commitAssetEntryView"/>
+					</eventHandlers>
+				</button>
+			</footer>
+			<eventHandlers id="ServiceRequest.EditAssetView_eventHandlers">
+  				<eventHandler class="application.handlers.SRDetailHandler" event="initialize" id="ServiceRequest.EditAssetView_eventHandlers_initialize_initEditAssetView" method="initEditAssetView"/>
+				<eventHandler class="application.handlers.SRDetailHandler" event="cleanup" id="ServiceRequest.EditAssetView_eventHandlers_cleanup_cleanupEditAssetView" method="cleanupEditAssetView"/>
+			</eventHandlers>
+		</view>
+
+		<!--Edit Location view-->
+		<view id="ServiceRequest.EditLocationView" label="Location">
+			<requiredResources id="ServiceRequest.EditLocationView_requiredResources">
+				<requiredResource id="ServiceRequest.EditLocationView_additionallocations" name="additionallocations"/>
+				<requiredResource id="ServiceRequest.EditLocationView_serviceRequest" name="serviceRequest"/>
+				<requiredResource id="ServiceRequest.EditLocationView_domainAssetstatus" name="domainAssetstatus"/>
+				<requiredResource id="ServiceRequest.EditLocationView_additionalasset" name="additionalasset"/>
+			</requiredResources>
+			<container id="ServiceRequest.EditLocationView_serviceRequest_container_0" resource="serviceRequest">
+				<group id="ServiceRequest.EditLocationView_group_0">
+					<groupitem id="ServiceRequest.EditLocationView_serviceRequest_groupitem_0">
+						<text codeScannable="true" editable="true" id="ServiceRequest.EditLocationView_serviceRequest_groupitem_0_location_Location" label="Location" lookup="ServiceRequest.LocationLookup" lookupAttribute="location" placeHolder="Tap to enter" resourceAttribute="location">
+							<eventHandlers id="ServiceRequest.EditLocationView_serviceRequest_groupitem_0_location_Location_eventHandlers">
+  								<eventHandler class="application.handlers.SRDetailHandler" event="validate" id="ServiceRequest.EditLocationView_serviceRequest_groupitem_0_location_Location_eventHandlers_validate_validateLocation" method="validateLocation"/>
+							</eventHandlers>
+						</text>
+						<text editable="false" id="ServiceRequest.EditLocationView_serviceRequest_groupitem_0_locationdesc" resourceAttribute="locationdesc"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.EditLocationView_serviceRequest_groupitem_1">
+						<text cssClass="richText" editable="false" id="ServiceRequest.EditLocationView_serviceRequest_groupitem_1_locationld" resourceAttribute="locationld"/>
+					</groupitem>
+
+				</group>
+			</container>
+			<footer id="ServiceRequest.EditLocationView_footer">
+				<button id="ServiceRequest.EditLocationView_Cancel_button" label="Cancel" layoutInsertAt="button1">
+					<eventHandlers id="ServiceRequest.EditLocationView_Cancel_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.EditLocationView_Cancel_button_eventHandlers_click_discardView" method="discardView"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="ServiceRequest.EditLocationView_Save_button" label="Save" layoutInsertAt="button2" primary="true">
+					<eventHandlers id="ServiceRequest.EditLocationView_Save_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.EditLocationView_Save_button_eventHandlers_click_commitActualLocationEntryView" method="commitActualLocationEntryView"/>
+					</eventHandlers>
+				</button>
+			</footer>
+			<eventHandlers id="ServiceRequest.EditLocationView_eventHandlers">
+				<eventHandler class="application.handlers.SRDetailHandler" event="cleanup" id="ServiceRequest.EditLocationView_eventHandlers_cleanup_cleanupEditLocationView" method="cleanupEditLocationView"/>
+				<eventHandler class="application.handlers.SRDetailHandler" event="initialize" id="ServiceRequest.EditLocationView_eventHandlers_initialize_initEditLocationView" method="initEditLocationView"/>
+			</eventHandlers>
+		</view>
+
+	<!--Create SR view-->
+		<view id="ServiceRequest.CreateSR" label="Create New Request" resource="serviceRequest" showKeyboard="true">
+			<requiredResources id="ServiceRequest.CreateSR_requiredResources">
+				<requiredResource id="ServiceRequest.CreateSR_serviceRequest" name="serviceRequest"/>
+				<requiredResource id="ServiceRequest.CreateSR_additionalasset" name="additionalasset"/>
+				<requiredResource id="ServiceRequest.CreateSR_domainAssetstatus" name="domainAssetstatus"/>
+				<requiredResource id="ServiceRequest.CreateSR_mylabor" name="mylabor"/>
+				<requiredResource id="ServiceRequest.CreateSR_myPerson" name="myPerson"/>
+				<requiredResource id="ServiceRequest.CreateSR_priorityDomain" name="priorityDomain"/>
+			</requiredResources>
+			<eventHandlers id="ServiceRequest.CreateSR_eventHandlers">
+				<eventHandler class="application.handlers.SRDetailHandler" event="initialize" id="ServiceRequest.CreateSR_eventHandlers_initialize_initNewServiceRequestView" method="initNewServiceRequestView"/>
+				<eventHandler class="application.handlers.SRDetailHandler" event="cleanup" id="ServiceRequest.CreateSR_eventHandlers_cleanup_handleBackButton" method="handleBackButton"/>
+			</eventHandlers>
+			<actions id="ServiceRequest.CreateSR_actions">
+			    <action enableFeatureByProperty="attachments.enabled" id="ServiceRequest.CreateSR_TakePhoto_action" image="/images/header_camera_off.svg" label="Take Photo">
+					<eventHandlers id="ServiceRequest.CreateSR_TakePhoto_action_eventHandlers">
+						<eventHandler class="platform.handlers.AttachmentHandler" event="click" id="ServiceRequest.CreateSR_TakePhoto_action_eventHandlers_click_launchCameraForPhoto" method="launchCameraForPhoto"/>
+						<eventHandler class="application.handlers.SRAttachmentHandler" event="render" id="ServiceRequest.CreateSR_TakePhoto_action_eventHandlers_render_initCategory" method="initCategory"/>
+					</eventHandlers>
+				</action>
+			</actions>
+			<container id="ServiceRequest.CreateSR_serviceRequest_container_0" resource="serviceRequest">
+				<group id="ServiceRequest.CreateSR_group_0">
+					<groupitem id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest_summary_0">
+						<text editable="true" id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.summary_0" label="Summary" resourceAttribute="summary"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.CreateSR_serviceRequest_groupitem_0">
+						<textarea editable="true" id="ServiceRequest.CreateSR_serviceRequest_groupitem_0_description_Description" label="Description" placeHolder="Tap to enter" required="true" resourceAttribute="description"/>
+					</groupitem>
+					<groupitem enableFeatureByProperty="gps.enabled" id="ServiceRequest.CreateSR_groupitem_ServiceRequest.GPS">
+						<checkbox editable="true" id="ServiceRequest.CreateSR_checkbox_CreateSR.GPS" label="Capture GPS coordinates?" resourceAttribute="gpsLocation">
+							<eventHandlers id="ServiceRequest.CreateSR_checkbox_eventHandlers">
+								<eventHandler class="application.handlers.SRDetailHandler" event="render" id="ServiceRequest.CreateSR_checkbox_eventHandlers_render_initGPSField" method="initGPSField"/>
+							</eventHandlers>
+						</checkbox>
+					</groupitem> 
+					<groupitem id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.EditLocationView_0" transitionTo="ServiceRequest.EditLocationView">
+						<text codeScannable="true" editable="true" id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.EditLocationView_0_location_Location" label="Location" lookup="ServiceRequest.LocationLookup" lookupAttribute="location" placeHolder="Tap to enter" resourceAttribute="location">
+							<eventHandlers id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.EditLocationView_0_location_Location_eventHandlers">
+								<eventHandler class="application.handlers.SRDetailHandler" event="validate" id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.EditLocationView_0_location_Location_eventHandlers_validate_asyncvalidateLocation" method="asyncvalidateLocation"/>
+							</eventHandlers>
+						</text>
+						<text editable="false" id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.EditLocationView_0_locationdesc" resourceAttribute="locationdesc"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.EditAssetView_0" transitionTo="ServiceRequest.EditAssetView">
+						<text codeScannable="true" editable="true" id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.EditAssetView_0_asset_Asset" label="Asset" lookup="ServiceRequest.AssetLookup" lookupAttribute="assetnum" placeHolder="Tap to enter" resourceAttribute="asset">
+							<eventHandlers id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.EditAssetView_0_asset_Asset_eventHandlers">
+								<eventHandler class="application.handlers.SRDetailHandler" event="validate" id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.EditAssetView_0_asset_Asset_eventHandlers_validate_asyncvalidateAsset" method="asyncvalidateAsset"/>
+							</eventHandlers>
+						</text>
+						<text editable="false" id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.EditAssetView_0_assetdesc" resourceAttribute="assetdesc"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.ReportedPriority_0">
+						<text editable="true" id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.ReportedPriority_0_ReportedPririty" label="Priority" lookup="ServiceRequest.PriorityLookup" lookupAttribute="reportedpriority" placeHolder="Tap to enter" resourceAttribute="reportedpriority">
+							<eventHandlers id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.CreateSR_0_Priority_Priority_eventHandlers">
+								<eventHandler class="application.handlers.SRDetailHandler" event="validate" id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.EditPriorityView_0_Priority_Priority_eventHandlers_validate_validatePriority" method="validatePriority"/>
+							</eventHandlers>
+						</text>
+						<text editable="false" id="ServiceRequest.CreateSR_serviceRequest_groupitem_ServiceRequest.EditLocationView_0_prioritydesc" resourceAttribute="prioritydesc"/>
+					</groupitem>
+					<groupitem enableFeatureByProperty="attachments.enabled" id="ServiceRequest.CreateSR_groupitem_ServiceRequest.AttachmentsView_0" layout="Item1Count1Button2" transitionTo="ServiceRequest.AttachmentsView">
+						<text cssClass="relatedRecords" editable="false" id="ServiceRequest.CreateSR_groupitem_ServiceRequest.AttachmentsView_0_Attachments" layoutInsertAt="item1" value="Attachments"/>
+						<text editable="false" id="ServiceRequest.CreateSR_groupitem_ServiceRequest.AttachmentsView_0_attachmentssize" layoutInsertAt="count1" resourceAttribute="attachmentssize">
+						</text>						
+					</groupitem>
+				</group>
+				<group id="ServiceRequest.CreateSR_group_1">
+					<groupitem id="ServiceRequest.CreateSR_group_1_grouptitem1" layout="Item1Count1Button1" transitionTo="ServiceRequest.WorkLogView">
+						<text cssClass="relatedRecords" editable="false" id="ServiceRequest.CreateSR_group_1_groupitem1_text1" layoutInsertAt="item1" value="Work Log"/>
+						<text editable="false" id="ServiceRequest.CreateSR_group_1_groupitem1_text2" layoutInsertAt="count1" resourceAttribute="workloglistsize">
+						</text>
+						<button id="ServiceRequest.CreateSR_group_1_button1" image="action_addNew_OFF.svg" label="Create Work Log Entry" layoutInsertAt="button1" transitionTo="ServiceRequest.NewWorkLogView">
+							<eventHandlers id="ServiceRequest.CreateSR_group_1_eventhandlers">
+								<eventHandler class="application.handlers.WorkLogHandler" event="datachange" id="ServiceRequest.CreateSR_group_1_enableAddWorkLogButton" method="enableAddWorkLogButton"/>
+							</eventHandlers>
+						</button> 
+					</groupitem>
+				</group>				
+			</container>
+			<footer id="ServiceRequest.CreateSR_footer">
+				<button id="ServiceRequest.CreateSR_Cancel_button" label="Cancel">
+					<eventHandlers id="ServiceRequest.CreateSR_Cancel_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.CreateSR_Cancel_button_eventHandlers_click_discardNewServiceRequestView" method="discardNewServiceRequestView"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="ServiceRequest.CreateSR_wonum_Create_button" label="Create" primary="true" resourceAttribute="srnum">
+					<eventHandlers id="ServiceRequest.CreateSR_wonum_Create_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.CreateSR_wonum_Create_button_eventHandlers_click_commitNewServiceRequestView" method="commitNewServiceRequestView"/>
+					</eventHandlers>
+				</button>
+			</footer>
+		</view>
+
+	<!--SR Details view-->
+		<view editableView="ServiceRequest.SRDetailEdit" id="ServiceRequest.SRDetail" label="Service Request Details" resource="serviceRequest" showBackButton="true">
+			<requiredResources id="ServiceRequest.SRDetail_requiredResources">
+				<requiredResource id="ServiceRequest.SRDetail_serviceRequest" name="serviceRequest"/>
+				<requiredResource id="ServiceRequest.SRDetail_additionalasset" name="additionalasset"/>
+				<requiredResource id="ServiceRequest.SRDetail_domainAssetstatus" name="domainAssetstatus"/>
+				<requiredResource id="ServiceRequest.SRDetail_domainsrstatus" name="domainsrstatus"/>
+			</requiredResources>
+			<eventHandlers id="ServiceRequest.SRDetail_eventHandlers">
+				<eventHandler class="application.handlers.SRDetailHandler" event="initialize" id="ServiceRequest.SRDetail_eventHandlers_initialize_fetchAllListSizes" method="fetchAllListSizes"/>
+				<eventHandler class="application.handlers.SRDetailHandler" event="render" id="ServiceRequest.SRDetailw_eventHandlers_render_refreshAllListSizes" method="refreshAllListSizes"/>
+			</eventHandlers>
+			<container id="ServiceRequest.SRDetail_serviceRequest_container_0" resource="serviceRequest">
+			<errorIndicator id="ServiceRequest.SRDetail_errorIndicator"/>
+				<group id="ServiceRequest.SRDetail_group_0">
+					<groupitem id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest_status_0">
+						<text editable="false" id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.status_0" label="Status" resourceAttribute="statusdesc"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest_srnum_0">
+						<text editable="false" id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.srnum_0" label="Request Number" resourceAttribute="srnum"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest_owner_0">
+						<text editable="false" id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.owner_0" label="Service Request Owner" resourceAttribute="owner"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest_summary_0">
+						<text editable="false" id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.summary_0" label="Summary" resourceAttribute="summary"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetail_serviceRequest_groupitem_0">
+						<text cssClass="richText" editable="false" id="ServiceRequest.SRDetail_serviceRequest_groupitem_0_description_Description" label="Description" resourceAttribute="description"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.EditLocationView_0">
+						<text editable="false" id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.LocationView_0_location_Location" label="Location" resourceAttribute="location"/>
+						<text editable="false" id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.EditLocationView_0_maxlocationdesc" resourceAttribute="maxlocationdesc"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.AssetView_0">
+						<text editable="false" id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.AssetView_0_asset_Asset" label="Asset" resourceAttribute="asset"/>
+						<text editable="false" id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.EditAssetView_0_maxassetdesc" resourceAttribute="maxassetdesc"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest_reportedpriority_0">
+						<text editable="false" id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.reportedpriority_0" label="Reported Priority" resourceAttribute="reportedpriority"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest_reportdate_0">
+						<text editable="false" id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.reportdate_0" label="Reported Date" resourceAttribute="reportdate"/>
+					</groupitem>
+					<groupitem enableFeatureByProperty="attachments.enabled" id="ServiceRequest.SRDetailView_groupitem_ServiceRequest.AttachmentsView_0" layout="Item1Count1Button2" transitionTo="ServiceRequest.AttachmentsView">
+						<text cssClass="relatedRecords" editable="false" id="ServiceRequest.SRDetailView_groupitem_ServiceRequest.AttachmentsView_0_Attachments" layoutInsertAt="item1" value="Attachments"/>
+						<text editable="false" id="ServiceRequest.SRDetailView_groupitem_ServiceRequest.AttachmentsView_0_attachmentssize" layoutInsertAt="count1" resourceAttribute="attachmentssize">
+						</text>
+					</groupitem>
+				</group>
+<!-- Story 176503 WorkLog.  -->
+				<group id="ServiceRequest.SRDetail_serviceRequest_group_1">
+					<groupitem id="ServiceRequest.SRDetail_serviceRequest_group_1_grouptitem1" layout="Item1Count1Button1" transitionTo="ServiceRequest.WorkLogView">
+						<text cssClass="relatedRecords" editable="false" id="ServiceRequest.SRDetail_serviceRequest_group_1_groupitem1_text1" layoutInsertAt="item1" value="Work Log"/>
+						<text editable="false" id="ServiceRequest.SRDetail_serviceRequest_group_1_groupitem1_text2" layoutInsertAt="count1" resourceAttribute="workloglistsize">
+						</text>
+						<button id="ServiceRequest.SRDetail_serviceRequest_group_1_button1" image="action_addNew_OFF.svg" label="Create Work Log Entry" layoutInsertAt="button1" transitionTo="ServiceRequest.NewWorkLogView">
+							<eventHandlers id="ServiceRequest.SRDetail_serviceRequest_group_1_eventhandlers">
+								<eventHandler class="application.handlers.WorkLogHandler" event="datachange" id="ServiceRequest.SRDetail_serviceRequest_group_1_enableAddWorkLogButton" method="enableAddWorkLogButton"/>
+							</eventHandlers>
+						</button> 
+					</groupitem>
+				</group>				
+			</container>
+<!-- Story 176505 Follow work order.  Attribute needed Container deprecated until rest of work can begin -->
+  			<container id="ServiceRequest.SRDetail_serviceRequest_container_1" resource="serviceRequest">
+				<eventHandlers id="ServiceRequest.SRDetail_container_1_eventHandlers">
+					<eventHandler class="application.handlers.SRDetailHandler" event="render" id="ServiceRequest.SRDetail_serviceRequest_container_1_eventHandlers_render_validateFollowupWonum" method="validateFollowupWonum"/>
+				</eventHandlers> 
+				<group id="ServiceRequest.SRDetail_group_1">
+					<groupitem id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest_wonum_1">
+						<text editable="false" id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.wonum_0" label="Work Order No." resourceAttribute="wonum"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest_status_1">
+						<text editable="false" id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.wostatus_1" label="Work Order Status" resourceAttribute="wostatus"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest_woowner_1">
+						<text editable="false" id="ServiceRequest.SRDetail_serviceRequest_groupitem_ServiceRequest.woowner_1" label="Work Order Owner" resourceAttribute="woowner"/>
+					</groupitem>
+ 				</group>
+ 			</container> 
+		</view>
+
+	<!--SR Details Edit view-->
+		<view editableView="ServiceRequest.SRDetailEdit" id="ServiceRequest.SRDetailEdit" label="Service Request Details" resource="serviceRequest" showBackButton="true">
+			<requiredResources id="ServiceRequest.SRDetailEdit_requiredResources">
+				<requiredResource id="ServiceRequest.SRDetailEdit_serviceRequest" name="serviceRequest"/>
+				<requiredResource id="ServiceRequest.SRDetailEdit_additionalasset" name="additionalasset"/>
+				<requiredResource id="ServiceRequest.SRDetailEdit_domainAssetstatus" name="domainAssetstatus"/>
+			</requiredResources>
+			<eventHandlers id="ServiceRequest.SRDetailEdit_eventHandlers">
+				<eventHandler class="application.handlers.SRDetailHandler" event="initialize" id="ServiceRequest.SRDetailEdit_eventHandlers_initialize_fetchAllListSizes" method="fetchAllListSizes"/>
+				<eventHandler class="application.handlers.SRDetailHandler" event="render" id="ServiceRequest.SRDetailEdit_eventHandlers_render_refreshAllListSizes" method="refreshAllListSizes"/>
+			</eventHandlers>
+			<container id="ServiceRequest.SRDetailEdit_serviceRequest_container_0" resource="serviceRequest">
+			<errorIndicator id="ServiceRequest.SRDetailEdit_errorIndicator"/>
+				<group id="ServiceRequest.SRDetailEdit_group_0">
+					<groupitem id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest_status_0">
+						<text editable="false" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.status_0" label="Status" resourceAttribute="status"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest_srnum_0">
+						<text editable="false" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.srnum_0" label="Request Number" resourceAttribute="srnum"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest_owner_0">
+						<text editable="true" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.owner_0" label="Service Request Owner" resourceAttribute="owner"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest_summary_0">
+						<text editable="true" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.summary_0" label="Summary" resourceAttribute="summary"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_0">
+						<textarea editable="false" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_0_description_Description" label="Description" resourceAttribute="description"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.EditLocationView_0" transitionTo="ServiceRequest.EditLocationView">
+						<text codeScannable="true" editable="true" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.LocationView_0_location_Location" label="Location" lookup="ServiceRequest.LocationLookup" lookupAttribute="location" resourceAttribute="location">
+							<eventHandlers id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.EditLocationView_0_location_Location_eventHandlers">
+								<eventHandler class="application.handlers.SRDetailHandler" event="validate" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.EditLocationView_0_location_Location_eventHandlers_validate_asyncvalidateLocation" method="asyncvalidateLocation"/>
+							</eventHandlers>
+						</text>
+						<text editable="false" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.EditLocationView_0_maxlocationdesc" resourceAttribute="maxlocationdesc"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.AssetView_0" transitionTo="ServiceRequest.EditAssetView">
+						<text codeScannable="true" editable="true" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.AssetView_0_asset_Asset" label="Asset" lookup="ServiceRequest.AssetLookup" lookupAttribute="assetnum" placeHolder="Tap to enter" resourceAttribute="asset">
+							<eventHandlers id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.EditAssetView_0_asset_Asset_eventHandlers">
+								<eventHandler class="application.handlers.SRDetailHandler" event="validate" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.EditAssetView_0_asset_Asset_eventHandlers_validate_asyncvalidateAsset" method="asyncvalidateAsset"/>
+							</eventHandlers>
+						</text>
+						<text editable="false" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.EditAssetView_0_maxassetdesc" resourceAttribute="maxassetdesc"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest_reportedpriority_0">
+						<text editable="true" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.reportedpriority_0" label="Reported Priority" lookup="ServiceRequest.PriorityLookup" lookupAttribute="reportedpriority" placeHolder="Tap to enter" resourceAttribute="reportedpriority">
+							<eventHandlers id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.CreateSR_0_Priority_Priority_eventHandlers">
+								<eventHandler class="application.handlers.SRDetailHandler" event="validate" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.EditPriorityView_0_Priority_Priority_eventHandlers_validate_validatePriority" method="validatePriority"/>
+							</eventHandlers>
+						</text>
+						<text editable="false" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.EditLocationView_0_prioritydesc" resourceAttribute="prioritydesc"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest_reportdate_0">
+						<text editable="true" id="ServiceRequest.SRDetailEdit_serviceRequest_groupitem_ServiceRequest.reportdate_0" label="Reported Date" resourceAttribute="reportdate"/>
+					</groupitem>
+					<groupitem enableFeatureByProperty="attachments.enabled" id="ServiceRequest.SRDetailViewEdit_groupitem_ServiceRequest.AttachmentsView_0" layout="Item1Count1Button2" transitionTo="ServiceRequest.AttachmentsView">
+						<text cssClass="relatedRecords" editable="false" id="ServiceRequest.SRDetailViewEdit_groupitem_ServiceRequest.AttachmentsView_0_Attachments" layoutInsertAt="item1" value="Attachments"/>
+						<text editable="false" id="ServiceRequest.SRDetailViewEdit_groupitem_ServiceRequest.AttachmentsView_0_attachmentssize" layoutInsertAt="count1" resourceAttribute="attachmentssize">
+						</text>
+					</groupitem>
+				</group>
+<!-- Story 176503 WorkLog.  -->
+				<group id="ServiceRequest.SRDetailEdit_serviceRequest_group_1">
+					<groupitem id="ServiceRequest.SRDetailEdit_serviceRequest_group_1_grouptitem1" layout="Item1Count1Button1" transitionTo="ServiceRequest.WorkLogView">
+						<text cssClass="relatedRecords" editable="false" id="ServiceRequest.SRDetailEdit_serviceRequest_group_1_groupitem1_text1" layoutInsertAt="item1" value="Work Log"/>
+						<text editable="true" id="ServiceRequest.SRDetailEdit_serviceRequest_group_1_groupitem1_text2" layoutInsertAt="count1" resourceAttribute="workloglistsize">
+						</text>
+						<button id="ServiceRequest.SRDetailEdit_serviceRequest_group_1_button1" image="action_addNew_OFF.svg" label="Create Work Log Entry" layoutInsertAt="button1" transitionTo="ServiceRequest.NewWorkLogView">
+							<eventHandlers id="ServiceRequest.SRDetailEdit_serviceRequest_group_1_eventhandlers">
+								<eventHandler class="application.handlers.WorkLogHandler" event="datachange" id="ServiceRequest.SRDetailEdit_serviceRequest_group_1_enableAddWorkLogButton" method="enableAddWorkLogButton"/>
+							</eventHandlers>
+						</button> 
+					</groupitem>
+				</group>				
+			</container>
+		</view>
+
+		<!-- Define Work Log list view -->
+		<view id="ServiceRequest.WorkLogView" label="Work Log">
+			<requiredResources id="ServiceRequest.WorkLogView_requiredResources">
+				<requiredResource id="ServiceRequest.WorkLogView_serviceRequest" name="serviceRequest">
+					<requiredAttribute id="ServiceRequest.WorkLogView_serviceRequest_workloglist" name="workloglist" reload="false"/>
+				</requiredResource>
+			</requiredResources>
+			<actions id="ServiceRequest.WorkLogView_actions">
+				<action id="ServiceRequest.WorkLogView_CreateWorkLogEntry_action" image="header_add_OFF.svg" label="Create Work Log Entry" transitionTo="ServiceRequest.NewWorkLogView">
+					<eventHandlers id="ServiceRequest.WorkLogView_CreateWorkLogEntry_action_eventHandlers">
+						<eventHandler class="application.handlers.WorkLogHandler" event="render" id="ServiceRequest.WorkLogView_CreateWorkLogEntry_action_eventHandlers_render_enableAddWorkLogButton" method="enableAddWorkLogButton"/>
+					</eventHandlers>
+				</action>
+			</actions>
+			<list attribute="workloglist" id="ServiceRequest.WorkLogView_serviceRequest_workloglist_list" resource="serviceRequest" transitionTo="ServiceRequest.WorkLogDetailView">
+
+				<sortOptions id="ServiceRequest.WorkLogView_serviceRequest_workloglist_list_sortOptions">
+					<sortOption id="ServiceRequest.WorkLogView_sortOption_CreatedDate" label="Created Date">
+						<sortAttribute direction="asc" id="ServiceRequest.WorkLogView_CreatedDate_sortAttribute_createdate" name="createdateISO"/>
+					</sortOption>
+					<sortOption id="ServiceRequest.WorkLogView_sortOption_CreatedBy" label="Created By">
+						<sortAttribute direction="asc" id="ServiceRequest.WorkLogView_CreatedBy_sortAttribute_createby" name="createby"/>
+					</sortOption>
+				</sortOptions>
+
+				<listItemTemplate id="ServiceRequest.WorkLogView_serviceRequest_workloglist_listItemTemplate_WorkLogListItem" layout="WorkLogListItem">
+					<listtext id="ServiceRequest.WorkLogView_serviceRequest_WorkLogListItem_createdate" layoutInsertAt="item1" resourceAttribute="createdate"/>
+					<listtext id="ServiceRequest.WorkLogView_serviceRequest_WorkLogListItem_createby" layoutInsertAt="item2" resourceAttribute="createby"/>
+					<listtext cssClass="bold textappearance-medium" id="ServiceRequest.WorkLogView_serviceRequest_WorkLogListItem_summary" layoutInsertAt="item3" resourceAttribute="summary"/>
+				</listItemTemplate>
+			</list>
+		</view>
+
+		<!-- Define Work Log Detail view -->
+		<view editableView="ServiceRequest.NewWorkLogView" id="ServiceRequest.WorkLogDetailView" label="Work Log Entry">
+			<requiredResources id="ServiceRequest.WorkLogDetailView_requiredResources">
+				<requiredResource id="ServiceRequest.WorkLogDetailView_serviceRequest" name="serviceRequest">
+					<requiredAttribute id="ServiceRequest.WorkLogDetailView_serviceRequest_workloglist" name="workloglist" reload="false"/>
+				</requiredResource>
+			</requiredResources>
+			<container attribute="workloglist" id="ServiceRequest.WorkLogDetailView_serviceRequest_container_0" resource="serviceRequest">
+				<group id="ServiceRequest.WorkLogDetailView_group_0">
+					<groupitem id="ServiceRequest.WorkLogDetailView_serviceRequest_groupitem_0">
+						<text editable="false" id="ServiceRequest.WorkLogDetailView_serviceRequest_groupitem_0_createdate" resourceAttribute="createdate"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.WorkLogDetailView_serviceRequest_groupitem_1">
+						<text editable="false" id="ServiceRequest.WorkLogDetailView_serviceRequest_groupitem_1_createby_CreatedBy" label="Created By" resourceAttribute="createby"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.WorkLogDetailView_serviceRequest_groupitem_2">
+						<checkbox editable="false" id="ServiceRequest.WorkLogDetailView_clientviewable_checkbox" label="Display to Client" resourceAttribute="clientviewable"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.WorkLogDetailView_serviceRequest_groupitem_3">
+						<text editable="false" id="ServiceRequest.WorkLogDetailView_serviceRequest_groupitem_3_logtype_Type" label="Type" resourceAttribute="logtype"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.WorkLogDetailView_serviceRequest_groupitem_4">
+						<text editable="false" id="ServiceRequest.WorkLogDetailView_serviceRequest_groupitem_4_summary_Summary" label="Summary" resourceAttribute="summary"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.WorkLogDetailView_serviceRequest_groupitem_5">
+						<text cssClass="richText" editable="false" id="ServiceRequest.WorkLogDetailView_serviceRequest_groupitem_5_details_Details" label="Details" resourceAttribute="details"/>
+					</groupitem>
+				</group>
+				<group id="ServiceRequest.WorkLogDetailView_group_1">
+					<groupitem id="ServiceRequest.WorkLogDetailView_serviceRequest_groupitem_6">
+						<lastupdatetext id="ServiceRequest.WorkLogDetailView_lastupdatetext"/>
+					</groupitem>
+				</group>
+
+			</container>
+			<eventHandlers id="ServiceRequest.WorkLogDetailView_eventHandlers">
+				<eventHandler class="application.handlers.WorkLogHandler" event="show" id="ServiceRequest.WorkLogDetailView_eventHandlers_show_initWorkLogDetailView" method="initWorkLogDetailView"/>
+			</eventHandlers>
+		</view>
+
+		<!-- Define Work Log Entry view -->
+		<view id="ServiceRequest.NewWorkLogView" label="Work Log Entry" showOverflow="false">
+			<requiredResources id="ServiceRequest.NewWorkLogView_requiredResources">
+				<requiredResource id="ServiceRequest.NewWorkLogView_serviceRequest" name="serviceRequest">
+					<requiredAttribute id="ServiceRequest.NewWorkLogView_serviceRequest_workloglist" name="workloglist" reload="false"/>
+				</requiredResource>
+				<requiredResource id="ServiceRequest.NewWorkLogView_domainlogtype" name="domainlogtype"/>
+			</requiredResources>
+			<container attribute="workloglist" id="ServiceRequest.NewWorkLogView_serviceRequest_container_0" resource="serviceRequest">
+				<group id="ServiceRequest.NewWorkLogView_group_0">
+					<groupitem id="ServiceRequest.NewWorkLogView_serviceRequest_groupitem_0">
+						<text editable="false" id="ServiceRequest.NewWorkLogView_serviceRequest_groupitem_0_createdate" resourceAttribute="createdate"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.NewWorkLogView_serviceRequest_groupitem_1">
+						<text editable="false" id="ServiceRequest.NewWorkLogView_serviceRequest_groupitem_1_createby_CreatedBy" label="Created By" resourceAttribute="createby"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.NewWorkLogView_serviceRequest_groupitem_2">
+						<checkbox editable="true" id="ServiceRequest.NewWorkLogView_clientviewable_checkbox" label="Display to Client" resourceAttribute="clientviewable"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.NewWorkLogView_serviceRequest_groupitem_3">
+						<text editable="true" id="ServiceRequest.NewWorkLogView_serviceRequest_groupitem_3_logtype_Type" label="Type" lookup="ServiceRequest.LogTypeLookup" lookupAttribute="value" placeHolder="Tap to enter" required="true" resourceAttribute="logtype">
+							<eventHandlers id="ServiceRequest.NewWorkLogView_serviceRequest_groupitem_3_logtype_Type_eventHandlers">
+								<eventHandler class="application.handlers.WorkLogHandler" event="validate" id="ServiceRequest.NewWorkLogView_serviceRequest_groupitem_3_logtype_Type_eventHandlers_validate_validateLogType" method="validateLogType"/>
+							</eventHandlers>
+						</text>
+					</groupitem>
+					<groupitem id="ServiceRequest.NewWorkLogView_serviceRequest_groupitem_4">
+						<text editable="true" id="ServiceRequest.NewWorkLogView_serviceRequest_groupitem_4_summary_Summary" label="Summary" placeHolder="Tap to enter" resourceAttribute="summary"/>
+					</groupitem>
+					<groupitem id="ServiceRequest.NewWorkLogView_serviceRequest_groupitem_5">
+						<textarea editable="true" id="ServiceRequest.NewWorkLogView_details_0" label="Work Log Details" placeHolder="Tap to enter" resourceAttribute="details"/>
+					</groupitem>
+				</group>
+			</container>
+			<footer id="ServiceRequest.NewWorkLogView_footer">
+				<button id="ServiceRequest.NewWorkLogView_Cancel_button" label="Cancel">
+					<eventHandlers id="ServiceRequest.NewWorkLogView_Cancel_button_eventHandlers">
+						<eventHandler class="application.handlers.WorkLogHandler" event="click" id="ServiceRequest.NewWorkLogView_Cancel_button_eventHandlers_click_discardNewWorkLogEntry" method="discardNewWorkLogEntry"/>
+					</eventHandlers>
+				</button>
+				<button cssClass="mblPrimaryButton" id="ServiceRequest.NewWorkLogView_Create_button" label="Create" primary="true">
+					<eventHandlers id="ServiceRequest.NewWorkLogView_Create_button_eventHandlers">
+						<eventHandler class="application.handlers.WorkLogHandler" event="click" id="ServiceRequest.NewWorkLogView_Create_button_eventHandlers_click_commitWorkLogEntryView" method="commitWorkLogEntryView"/>
+					</eventHandlers>
+				</button>
+			</footer>
+			<eventHandlers id="ServiceRequest.NewWorkLogView_eventHandlers">
+				<eventHandler class="application.handlers.WorkLogHandler" event="initialize" id="ServiceRequest.NewWorkLogView_eventHandlers_initialize_initNewWorkLogEntry" method="initNewWorkLogEntry"/>
+				<eventHandler class="application.handlers.WorkLogHandler" event="cleanup" id="ServiceRequest.NewWorkLogView_eventHandlers_cleanup_handleBackButtonClick" method="handleBackButtonClick"/>
+				<eventHandler class="application.handlers.WorkLogHandler" event="show" id="ServiceRequest.NewWorkLogView_eventHandlers_show_showFooter" method="showFooter"/>
+			</eventHandlers>
+		</view>
+
+
+		<!-- Define Attachments List view -->
+		<view id="ServiceRequest.AttachmentsView" label="Attachments" showOverflow="true">
+			<requiredResources id="ServiceRequest.AttachmentsView_requiredResources">
+				<requiredResource id="ServiceRequest.AttachmentsView_serviceRequest" name="serviceRequest">
+					<requiredAttribute id="ServiceRequest.AttachmentsView_serviceRequest_attachments" name="attachments" reload="true"/>
+				</requiredResource>
+			</requiredResources>
+			<actions id="ServiceRequest.AttachmentsView_actions">
+				<action id="ServiceRequest.AttachmentsView_TakePhoto_action" image="/images/header_camera_off.svg" label="Take Photo">
+					<eventHandlers id="ServiceRequest.AttachmentsView_TakePhoto_action_eventHandlers">
+								<eventHandler class="platform.handlers.AttachmentHandler" event="click" id="ServiceRequest.AttachmentsView_TakePhoto_action_eventHandlers_click_launchCameraForPhoto" method="launchCameraForPhoto"/>
+								<eventHandler class="application.handlers.SRAttachmentHandler" event="render" id="ServiceRequest.AttachmentsView_TakePhoto_action_eventHandlers_render_initCategory" method="initCategory"/>
+							</eventHandlers>
+				</action>
+				<action id="ServiceRequest.AttachmentsView_PickfromGallery_action" image="header_add_OFF.svg" label="Pick from Gallery">
+					<eventHandlers id="ServiceRequest.AttachmentsView_PickfromGallery_action_eventHandlers">
+						<eventHandler class="platform.handlers.AttachmentHandler" event="click" id="ServiceRequest.AttachmentsView_PickfromGallery_action_eventHandlers_click_launchGallery" method="launchGallery"/>
+					</eventHandlers>
+				</action>
+			</actions>
+			<list attribute="attachments" id="ServiceRequest.AttachmentsView_serviceRequest_attachments_list" resource="serviceRequest">
+				<sortOptions id="ServiceRequest.AttachmentsView_serviceRequest_attachments_list_sortOptions">
+					<sortOption id="ServiceRequest.AttachmentsView_sortOption_CreatedDate" label="Created Date">
+						<sortAttribute direction="asc" id="ServiceRequest.AttachmentsView_CreatedDate_sortAttribute_displayCreationDate" name="displayCreationDate"/>
+					</sortOption>
+					<sortOption id="ServiceRequest.AttachmentsView_sortOption_FileName" label="File Name">
+						<sortAttribute direction="asc" id="ServiceRequest.AttachmentsView_FileName_sortAttribute_displayFileName" name="displayFileName"/>
+					</sortOption>
+					<sortOption id="ServiceRequest.AttachmentsView_sortOption_Description" label="Description">
+						<sortAttribute direction="asc" id="ServiceRequest.AttachmentsView_Description_sortAttribute_displayDescription" name="displayDescription"/>
+					</sortOption>
+				</sortOptions>
+
+				<listItemTemplate id="ServiceRequest.AttachmentsView_serviceRequest_attachments_listItemTemplate_AttachmentsListItem" layout="AttachmentsListItem">
+					<listtext cssClass="bold textappearance-medium" id="ServiceRequest.AttachmentsView_serviceRequest_AttachmentsListItem_displayFileName" layoutInsertAt="item1" resourceAttribute="displayFileName"/>
+					<listtext id="ServiceRequest.AttachmentsView_serviceRequest_AttachmentsListItem_displayDescription" layoutInsertAt="item2" resourceAttribute="displayDescription"/>
+					<listtext id="ServiceRequest.AttachmentsView_serviceRequest_AttachmentsListItem_displayFileType" layoutInsertAt="item3" resourceAttribute="displayFileType"/>
+					<button border="false" cssClass="attachmentIcon" id="ServiceRequest.AttachmentsView_serviceRequest_anywhereAttachDownloaded_imagesmsg_downloadComplete_small.svg_button" image="/images/msg_downloadComplete_small.svg" layoutInsertAt="icon" resourceAttribute="anywhereAttachDownloaded">					    					    
+						<eventHandlers id="ServiceRequest.AttachmentsView_serviceRequest_anywhereAttachDownloaded_imagesmsg_downloadComplete_small.svg_button_eventHandlers">
+							<eventHandler class="application.handlers.SRAttachmentHandler" event="datachange" id="ServiceRequest.AttachmentsView_serviceRequest_anywhereAttachDownloaded_imagesmsg_downloadComplete_small.svg_button_eventHandlers_datachange_displayLocal" method="displayLocal"/>
+							<eventHandler class="application.handlers.SRAttachmentHandler" event="click" id="ServiceRequest.AttachmentsView_serviceRequest_anywhereAttachDownloaded_imagesmsg_downloadComplete_small.svg_button_eventHandlers_click_handleThumbnailClick" method="handleThumbnailClick"/>
+						</eventHandlers>
+					</button>					
+					<listtext id="ServiceRequest.AttachmentsView_serviceRequest_AttachmentsListItem_displaySize" layoutInsertAt="item4" resourceAttribute="displaySize"/>
+					<listtext id="ServiceRequest.AttachmentsView_serviceRequest_AttachmentsListItem_createby" layoutInsertAt="item5" resourceAttribute="createby"/>			
+					<listtext id="ServiceRequest.AttachmentsView_serviceRequest_AttachmentsListItem_displayCreationDate" layoutInsertAt="item6" resourceAttribute="displayCreationDate"/>										 
+					<eventHandlers id="ServiceRequest.AttachmentsView_serviceRequest_attachments_listItemTemplate_AttachmentsListItem_eventHandlers">
+						<eventHandler class="application.handlers.SRAttachmentHandler" event="click" id="ServiceRequest.AttachmentsView_serviceRequest_attachments_listItemTemplate_AttachmentsListItem_eventHandlers_click_handleThumbnailClick" method="handleThumbnailClick"/>						
+					</eventHandlers>
+				</listItemTemplate>
+			</list>
+		</view>
+
+		<dialog id="ServiceRequest.SRAssetToLocationDialog">
+			<container cssClass="mblSimpleDialogText" id="ServiceRequest.SRAssetToLocationDialog_container_0">
+				<text id="ServiceRequest.SRAssetToLocationDialog_container_0_Theassetisinloca" resolverClass="application.handlers.SRDetailHandler" resolverFunction="resolveAssetLocation" value="The asset is in location {0}. Replace the current location with location {1}? If you do not want to update the current asset, click Close."/>
+			</container>
+			<container cssClass="mblSimpleDialogFooter" id="ServiceRequest.SRAssetToLocationDialog_container_1">
+
+				<button cssClass="mblPrimaryButton" id="ServiceRequest.SRAssetToLocationDialog_Yes_button" label="Yes">
+					<eventHandlers id="ServiceRequest.SRAssetToLocationDialog_Yes_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.SRAssetToLocationDialog_Yes_button_eventHandlers_click_asyncyesOnSRAssetToLocation" method="asyncyesOnSRAssetToLocation"/>						
+					</eventHandlers>
+				</button>
+				<button id="ServiceRequest.SRAssetToLocationDialog_Close_button" label="Close">
+					<eventHandlers id="ServiceRequest.SRAssetToLocationDialog_Close_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.SRAssetToLocationDialog_Close_button_eventHandlers_click_closeOnSRAssetToLocation" method="closeOnSRAssetToLocation"/>
+					</eventHandlers>
+				</button>
+				<button id="ServiceRequest.SRAssetToLocationDialog_No_button" label="No">
+					<eventHandlers id="ServiceRequest.SRAssetToLocationDialog_No_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.SRAssetToLocationDialog_No_button_eventHandlers_click_noOnSRAssetToLocation" method="noOnSRAssetToLocation"/>
+					</eventHandlers>
+				</button>
+
+			</container>
+		</dialog>
+
+
+		<dialog id="ServiceRequest.SRLocationToAssetDialog">
+			<container cssClass="mblSimpleDialogText" id="ServiceRequest.WOLocationToAssetDialog_container_0">
+				<text id="ServiceRequest.WOLocationToAssetDialog_container_0_Thespecifiedlocati" resolverClass="application.handlers.SRDetailHandler" resolverFunction="resolveExistingAsset" value="The specified location does not match the location of asset {0}. Clear the current asset? If you do not want to update the current location, click Close."/>
+			</container>
+			<container cssClass="mblSimpleDialogFooter" id="ServiceRequest.SRLocationToAssetDialog_container_1">
+
+				<button cssClass="mblPrimaryButton" id="ServiceRequest.SRLocationToAssetDialog_Yes_button" label="Yes">
+					<eventHandlers id="ServiceRequest.SRLocationToAssetDialog_Yes_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.SRLocationToAssetDialog_Yes_button_eventHandlers_click_asyncYesOnSRLocationToAsset" method="asyncYesOnSRLocationToAsset"/>
+					</eventHandlers>
+				</button>
+				<button id="ServiceRequest.SRLocationToAssetDialog_Close_button" label="Close">
+					<eventHandlers id="ServiceRequest.SRLocationToAssetDialog_Close_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.SRLocationToAssetDialog_Close_button_eventHandlers_click_closeOnSRLocationToAsset" method="closeOnSRLocationToAsset"/>
+					</eventHandlers>
+				</button>
+				<button id="ServiceRequest.SRLocationToAssetDialog_No_button" label="No">
+					<eventHandlers id="ServiceRequest.SRLocationToAssetDialog_No_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.SRLocationToAssetDialog_No_button_eventHandlers_click_noOnSRLocationToAsset" method="noOnSRLocationToAsset"/>
+					</eventHandlers>
+				</button>
+
+			</container>
+		</dialog>
+		
+		<dialog id="ServiceRequest.SRCommitConfirm">
+			<container cssClass="mblSimpleDialogText" id="ServiceRequest_SRCommitConfirm">
+				<text id="ServiceRequest.SRCommitConfirm_container_0" value="The Service Request was created successfully."/>
+			</container>
+			<container cssClass="mblSimpleDialogFooter" id="ServiceRequest.SRCommitConfirm_container_1">
+				<button cssClass="mblPrimaryButton" id="ServiceRequest.SRCommitConfirm_button" label="Ok">
+					<eventHandlers id="ServiceRequest.SRCommitConfirm_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.SRCommitConfirm_button_eventHandlers_click_okOnSRCommitConfirm" method="okOnSRCommitConfirm"/>
+					</eventHandlers>
+				</button>
+			</container>
+		</dialog>
+		
+		<dialog id="ServiceRequest.ConfirmCancel">
+			<container cssClass="mblSimpleDialogText" id="ServiceRequest.ConfirmCancel_container_0">
+				<text id="ServiceRequest.ConfirmCancel_container_0_Areyousure" value="Are you sure you wish to Cancel?  All changes to this request will be lost."/>
+			</container>
+			<container cssClass="mblSimpleDialogFooter" id="ServiceRequest.ConfirmCancel_container_1">
+				<button cssClass="mblPrimaryButton" id="ServiceRequest.ConfirmCancel_Yes_button" label="Yes">
+					<eventHandlers id="ServiceRequest.ConfirmCancel_Yes_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.ConfirmCancel_Yes_button_eventHandlers_click_yesOnCancel" method="yesOnCancel"/>
+					</eventHandlers>
+				</button>
+				<button id="ServiceRequest.ConfirmCancel_No_button" label="No">
+					<eventHandlers id="ServiceRequest.ConfirmCancel_No_button_eventHandlers">
+						<eventHandler class="application.handlers.SRDetailHandler" event="click" id="ServiceRequest.ConfirmCancel_No_button_eventHandlers_click_noOnCancel" method="noOnCancel"/>
+					</eventHandlers>
+				</button>
+			</container>
+		</dialog>
+		<dialog id="ServiceRequest.DownloadAttachmentLocal" resource="PlatformProgressResource">
+			<container cssClass="mblSimpleDialogText" id="ServiceRequest.DownloadAttachmentLocal_container_0">
+				<text editable="false" id="ServiceRequest.DownloadAttachmentLocal_container_0_progressMsg" resourceAttribute="progressMsg"/>
+			</container>
+			<container cssClass="mblSimpleDialogFooter" id="ServiceRequest.DownloadAttachmentLocal_container_1">
+				<button id="ServiceRequest.DownloadAttachmentLocal_Cancel_button" label="Cancel">
+					<eventHandlers id="ServiceRequest.DownloadAttachmentLocal_Cancel_button_eventHandlers">
+						<eventHandler class="application.handlers.SRAttachmentHandler" event="click" id="ServiceRequest.DownloadAttachmentLocal_Cancel_button_eventHandlers_click_cancelDownload" method="cancelDownload"/>
+					</eventHandlers>
+				</button>
+			</container>
+		</dialog>	
+		
+				
+		<!-- *********************** -->
+		<!-- LOOKUP SECTION -->
+		<!-- *********************** -->
+
+		<!-- Location lookup -->
+		<lookup filterClass="application.handlers.SRDetailHandler" filterMethod="filterLocationForLookup" id="ServiceRequest.LocationLookup" label="Select Location" resource="additionallocations">
+			<requiredResources id="ServiceRequest.LocationLookup_requiredResources">
+				<requiredResource id="ServiceRequest.LocationLookup_additionallocations" name="additionallocations"/>
+			</requiredResources>
+
+			<list id="ServiceRequest.LocationLookup_additionallocations_list" resource="additionallocations">
+				<searchAttributes id="ServiceRequest.LocationLookup_additionallocations_searchAttributes">
+					<searchAttribute id="ServiceRequest.LocationLookup_additionallocations_searchAttribute_location" name="location"/>
+  					<searchAttribute id="ServiceRequest.LocationLookup_additionallocations_searchAttribute_description" name="description"/>
+				</searchAttributes>
+				<listItemTemplate id="ServiceRequest.LocationLookup_additionallocations_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="ServiceRequest.LocationLookup_additionallocations_Item1Desc1_location" layoutInsertAt="item1" resourceAttribute="location"/>
+  					<listtext cssClass="bold textappearance-medium" id="ServiceRequest.LocationLookup_additionallocations_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/> 
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="ServiceRequest.LocationLookup_returnAttributes">
+				<returnAttribute id="ServiceRequest.LocationLookup_location_location" sourceAttribute="location" targetAttribute="location"/>
+  				<returnAttribute id="ServiceRequest.LocationLookup_description_locationdesc" sourceAttribute="description" targetAttribute="locationdesc"/>
+			</returnAttributes>
+		</lookup>
+
+		<!-- Asset lookup -->
+		<lookup filterClass="application.handlers.SRDetailHandler" filterMethod="filterAssetForLookup" id="ServiceRequest.AssetLookup" label="Select Asset" resource="additionalasset">
+			<requiredResources id="ServiceRequest.AssetLookup_requiredResources">
+				<requiredResource id="ServiceRequest.AssetLookup_additionalasset" name="additionalasset"/>
+				<requiredResource id="ServiceRequest.AssetLookup_serviceRequest" name="serviceRequest"/>
+			</requiredResources>
+
+			<list id="ServiceRequest.AssetLookup_additionalasset_list" resource="additionalasset">
+				<searchAttributes id="ServiceRequest.AssetLookup_additionalasset_searchAttributes">
+					<searchAttribute id="ServiceRequest.AssetLookup_additionalasset_searchAttribute_assetnum" name="assetnum"/>
+					<searchAttribute id="ServiceRequest.AssetLookup_additionalasset_searchAttribute_description" name="description"/>
+					<searchAttribute id="ServiceRequest.AssetLookup_additionalasset_searchAttribute_location" name="location"/>
+					<searchAttribute id="ServiceRequest.AssetLookup_additionalasset_searchAttribute_locationdesc" name="locationdesc"/>
+				</searchAttributes>
+				<listItemTemplate id="ServiceRequest.AssetLookup_additionalasset_listItemTemplate_Item2Desc2" layout="Item2Desc2">
+					<listtext cssClass="bold textappearance-medium" id="ServiceRequest.AssetLookup_additionalasset_Item2Desc2_assetnum" layoutInsertAt="item1" resourceAttribute="assetnum"/>
+					<listtext cssClass="bold textappearance-medium" id="ServiceRequest.AssetLookup_additionalasset_Item2Desc2_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+					<listtext id="ServiceRequest.AssetLookup_additionalasset_Item2Desc2_location" layoutInsertAt="item2" resourceAttribute="location"/>
+					<listtext id="ServiceRequest.AssetLookup_additionalasset_Item2Desc2_locationdesc" layoutInsertAt="desc2" resourceAttribute="locationdesc"/>
+				</listItemTemplate>
+			</list>
+
+			<returnAttributes id="ServiceRequest.AssetLookup_returnAttributes">
+				<returnAttribute id="ServiceRequest.AssetLookup_assetnum_asset" sourceAttribute="assetnum" targetAttribute="asset"/>
+				
+				
+				<returnAttribute id="ServiceRequest.AssetLookup_assetsite_id" sourceAttribute="siteid" targetAttribute="assetsiteid"/>
+				<returnAttribute id="ServiceRequest.AssetLookup_description_assetdesc" sourceAttribute="description" targetAttribute="assetdesc"/>
+			</returnAttributes>
+		</lookup>
+			
+		<!-- Priority Domain Lookup -->
+		<lookup id="ServiceRequest.PriorityLookup" label="Select Priority" resource="priorityDomain">			
+			<requiredResources id="ServiceRequest.PriorityLookup_requiredResources">
+				<requiredResource id="ServiceRequest.PriorityLookup_priorityDomain" name="priorityDomain"/>
+			</requiredResources>
+			<list id="ServiceRequest.PriorityLookup_priorityDomain_list" resource="priorityDomain">
+				<listItemTemplate id="ServiceRequest.PriorityLookup_priorityDomain_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="ServiceRequest.PriorityLookup_priorityDomain_Item1Desc1_value" layoutInsertAt="item1" resourceAttribute="value"/>
+					<listtext cssClass="bold textappearance-medium" id="ServiceRequest.PriorityLookup_priorityDomain_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="ServiceRequest.PriorityLookup_returnAttributes">
+				<returnAttribute id="ServiceRequest.PriorityLookup_value_reportedpriority" sourceAttribute="value" targetAttribute="reportedpriority"/>
+				<returnAttribute id="ServiceRequest.priorityLookup_description_prioritydesc" sourceAttribute="description" targetAttribute="prioritydesc"/>
+			</returnAttributes>
+		</lookup>
+		
+		<!-- AppDocType lookup for Attachments -->
+		<lookup id="ServiceRequest.appDocTypeLookup" label="Select Value" resource="appDocType">
+			<requiredResources id="ServiceRequest.appDocTypeLookup_requiredResources">
+				<requiredResource id="ServiceRequest.appDocTypeLookup_appDocType" name="appDocType"/>
+			</requiredResources>
+			<list id="ServiceRequest.appDocTypeLookup_appDocType_list" resource="appDocType">
+				<listItemTemplate id="ServiceRequest.appDocTypeLookup_appDocType_listItemTemplate">
+					<listtext cssClass="bold textappearance-medium" id="ServiceRequest.appDocTypeLookup_appDocType_doctype" resourceAttribute="doctype"/>
+				</listItemTemplate>
+			</list>
+			<returnAttributes id="ServiceRequest.appDocTypeLookup_returnAttributes">
+				<returnAttribute id="ServiceRequest.appDocTypeLookup_doctype_category" sourceAttribute="doctype" targetAttribute="category"/>
+			</returnAttributes>
+		</lookup>
+
+		<!-- Worklog Type lookup -->
+		<lookup id="ServiceRequest.LogTypeLookup" label="Select Log Type" resource="domainlogtype">
+			<requiredResources id="ServiceRequest.LogTypeLookup_requiredResources">
+				<requiredResource id="ServiceRequest.LogTypeLookup_domainlogtype" name="domainlogtype" reload="true"/>
+			</requiredResources>
+			<list id="ServiceRequest.LogTypeLookup_domainlogtype_list" resource="domainlogtype">
+				<searchAttributes id="ServiceRequest.LogTypeLookup_domainlogtype_searchAttributes">
+					<searchAttribute id="ServiceRequest.LogTypeLookup_domainlogtype_searchAttribute_value" name="value"/>
+					<searchAttribute id="ServiceRequest.LogTypeLookup_domainlogtype_searchAttribute_description" name="description"/>
+				</searchAttributes>
+				<listItemTemplate id="ServiceRequest.LogTypeLookup_domainlogtype_listItemTemplate_Item1Desc1" layout="Item1Desc1">
+					<listtext cssClass="bold textappearance-medium" id="ServiceRequest.LogTypeLookup_domainlogtype_Item1Desc1_value" layoutInsertAt="item1" resourceAttribute="value"/>
+					<listtext cssClass="bold textappearance-medium" id="ServiceRequest.LogTypeLookup_domainlogtype_Item1Desc1_description" layoutInsertAt="desc1" resourceAttribute="description"/>
+				</listItemTemplate>
+			</list>
+		</lookup>
+
+	</ui>
+
+	<!--DATA DEFINITION SECTION-->
+	<data id="data">	
+    
+    <!--Service Request resource-->
+		<resource class="application.business.ServiceRequestObject" defaultOrderBy="srnum desc" describedBy="http://jazz.net/ns/ism/work/smarter_physical_infrastructure#ServiceRequest" hasManagedQuery="true" id="serviceRequest" name="serviceRequest" pageSize="200" providedBy="/oslc/sp/WorkManagement"> 
+			<attributes id="serviceRequest_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="serviceRequest_identifier_dctermsidentifier" index="true" name="identifier"/>
+				<attribute describedByProperty="dcterms:title" id="serviceRequest_summary_dctermstitle" index="true" name="summary"/>
+				<attribute describedByProperty="dcterms:description" id="serviceRequest_description_dcterms_description" name="description"/>
+    			<attribute describedByProperty="oslc:shortTitle" id="serviceRequest_srnum_oslcshortTitle" index="true" name="srnum"/>
+    			<attribute describedByProperty="spi:location{oslc:shortTitle}" id="serviceRequest_locations_oslc_shortTitle" index="true" name="location" referenceResource="additionallocations"/>
+				<attribute describedByProperty="spi:location{dcterms:title}" id="servicerequest_maxlocationdesc_spilocationdctermstitle" name="maxlocationdesc" referenceResource="additionallocations"/>
+				<attribute describedByProperty="spi_wm:reportedby" id="serviceRequest__spi_wm_reportby" index="true" name="reportedby"/>
+				<attribute describedByProperty="spi_wm:reportdate" id="serviceRequest__spi_wm_reportdate" name="reportdate"/>
+    			<attribute describedByProperty="spi_wm:owner" id="serviceRequest_asset_spi_wm_owner" name="owner"/>
+    			<attribute describedByProperty="spi_wm:orgid" id="serviceRequest_asset_spi_wm_orgid" index="true" name="orgid"/>
+    			<attribute describedByProperty="spi_wm:siteid" id="serviceRequest_asset_spi_wm_siteid" index="true" name="siteid"/>
+    			<attribute describedByProperty="spi:asset{oslc:shortTitle}" id="serviceRequest_asset_oslc_shortTitle" index="true" name="asset"/>
+				<attribute describedByProperty="spi:asset{dcterms:title}" id="servicerequest_maxassetdesc_spiassetdctermstitle" name="maxassetdesc" referenceResource="additionalasset"/>
+				
+				
+				<attribute describedByProperty="spi_wm:assetsiteid" id="serviceRequest_spi_wm_assetsiteid" index="true" name="assetsiteid"/>
+				<attribute describedByProperty="spi_wm:status" id="serviceRequest_spi_wm_status" index="true" method="statusChanged" name="status"/>
+				<attribute describedByProperty="spi_wm:reportedpriority" id="serviceRequest_spi_wm_reportedpriority" index="true" name="reportedpriority"/>
+				<attribute describedByProperty="spi:attachments" describedByResource="attachments" id="serviceRequest_attachments_spiattachments" name="attachments"/>
+
+				<!-- Attributes needed for Maps -->
+				<attribute describedByProperty="spi_wm:tkserviceaddress{spi_wm:latitudey}" id="serviceRequest_latitudey_spi_wmcalculatedy" name="latitudey"/>
+				<attribute describedByProperty="spi_wm:tkserviceaddress{spi_wm:longitudex}" id="serviceRequest_longitudex_spi_wmcalculatedx" name="longitudex"/>
+
+				<!-- Attribute need for gps location on SR -->
+				<localAttribute dataType="boolean" id="serviceRequest_gpsLocation_boolean" name="gpsLocation"/>
+
+				<localAttribute dataType="string" id="serviceRequest_attachmentssize_string" name="attachmentssize" persistent="false"/>
+				<localAttribute dataType="string" id="serviceRequest_locationld_string" name="locationld"/>
+				<localAttribute dataType="string" id="serviceRequest_locationdesc_string" name="locationdesc"/>
+				<localAttribute dataType="string" id="serviceRequest_assetdesc_string" name="assetdesc"/>
+				<localAttribute dataType="string" id="serviceRequest_assetld_string" name="assetld"/>
+				<localAttribute dataType="string" id="serviceRequest_prioritydesc_string" name="prioritydesc"/>
+
+				<localAttribute dataType="string" id="serviceRequest_wonumanddescription_string" name="srnumanddescription"/>
+				<localAttribute dataType="string" id="serviceRequest_assetnumanddescription_string" name="assetnumanddescription"/>
+				<localAttribute dataType="string" id="serviceRequest_locationanddescription_string" name="locationanddescription"/>
+
+				<localAttribute dataType="string" id="serviceRequest_statusdesc_string" name="statusdesc"/>
+
+				<!-- Complex attributes for followup work order -->
+				<attribute describedByProperty="spi_wm:workorder{spi_wm:wonum}" id="serviceRequest_workorder_spi_wmwonum" name="wonum"/>
+				<attribute describedByProperty="spi_wm:workorder{spi_wm:owner}" id="serviceRequest_workorder_spi_wmowner" name="woowner"/>
+				<attribute describedByProperty="spi_wm:workorder{spi_wm:status}" id="serviceRequest_workorder_spi_wmstatus" name="wostatus"/>
+
+				<!-- Complex attribute for worklog -->
+				<localAttribute dataType="string" id="serviceRequest_workloglistsize_string" name="workloglistsize" persistent="false"/>
+				<attribute describedByProperty="spi_wm:worklogsr" describedByResource="workLogResource" id="serviceRequest_workloglist_spi_wmworklog" name="workloglist"/>
+    		</attributes>
+
+	        <creationFactories id="serviceRequest_creationFactories">
+		        <creationFactory creationUri="/oslc/os/oslcsrdetail" id="serviceRequest_creationFactory_createSR" name="createSR"/>
+	        </creationFactories>
+
+			<queryBases id="serviceRequest_queryBases">
+				<!-- list of query bases the app will rely upon for this resource -->
+				<queryBase id="serviceRequest_queryBase_MY_REPORTED_SR" name="MY_REPORTED_SR" queryUri="/oslc/os/oslcsrdetail?savedQuery=MY_REPORTED_SR"/>
+			</queryBases>
+		</resource>
+					
+		<!-- Service Request Status domain -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domainsrstatus" isSystem="true" name="domainsrstatus" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="domainsrstatus_attributes">
+				<attribute describedByProperty="spi:orgid" id="domainsrstatus_orgid_spiorgid" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="domainsrstatus_siteid_spisiteid" name="siteid"/>
+				<attribute describedByProperty="spi:maxvalue" id="domainsrstatus_maxvalue_spimaxvalue" name="maxvalue"/>
+				<attribute describedByProperty="spi:value" id="domainsrstatus_value_spivalue" name="value"/>
+				<attribute describedByProperty="dcterms:title" id="domainsrstatus_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:defaults" id="domainsrstatus_defaults_spidefaults" name="defaults"/>
+				<attribute describedByProperty="oslc:shortTitle" id="domainsrstatus_domainid_oslcshortTitle" name="domainid"/>
+				<attribute describedByProperty="dcterms:identifier" id="domainsrstatus_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
+			</attributes>
+			<queryBases id="domainsrstatus_queryBases">
+ 	 			<queryBase id="domainsrstatus_queryBase_getsrstatus" name="getsrstatus" queryUri="/oslc/os/oslcsynonymdomain"/>
+	 		</queryBases>			
+			<whereClause clause="oslc:shortTitle='SRSTATUS'" id="domainsrstatus_whereClause"/>
+		</resource>
+					
+						
+		<!-- UserInfo attribute list -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#MaxUser" id="userInfo" name="userInfo" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">	
+	        <attributes id="userInfo_attributes">
+		        <attribute describedByProperty="dcterms:identifier" id="userInfo_maxuserid_dctermsidentifier" name="maxuserid"/>
+		        <attribute describedByProperty="spi:userid" id="userInfo_userid_spiuserid" name="userid"/>
+		        <attribute describedByProperty="spi:loginid" id="userInfo_loginid_spiloginid" name="loginid"/>
+		        <attribute describedByProperty="spi:storeroomsite" id="userInfo_storeroomsite_spistoreroomsite" name="storeroomsite"/>
+		        <attribute describedByProperty="spi:type" id="userInfo_type_spitype" name="type"/>
+		        <attribute describedByProperty="spi:personid" id="userInfo_personid_spipersonid" name="personid"/>
+		        <attribute describedByProperty="spi:sysuser" id="userInfo_sysuser_spisysuser" name="sysuser"/>
+		        <attribute describedByProperty="spi:querywithsite" id="userInfo_querywithsite_spiquerywithsite" name="querywithsite"/>
+		        <attribute describedByProperty="spi:defsite{oslc:shortTitle}" id="userInfo_defsite_spidefsiteoslcshortTitle" name="defsite"/>
+		        <attribute describedByProperty="spi:defsite{spi:orgid}" id="userInfo_deforg_spidefsitespiorgid" name="deforg"/>
+		        <attribute describedByProperty="spi:status" id="userInfo_status_spistatus" name="status"/>
+		        <attribute describedByProperty="spi:emailpswd" id="userInfo_emailpswd_spiemailpswd" name="emailpswd"/>
+		        <attribute describedByProperty="spi:screenreader" id="userInfo_screenreader_spiscreenreader" name="screenreader"/>
+		        <attribute describedByProperty="spi:failedlogins" id="userInfo_failedlogins_spifailedlogins" name="failedlogins"/>
+		        <attribute describedByProperty="spi:inactivesites" id="userInfo_inactivesites_spiinactivesites" name="inactivesites"/>
+		        <attribute describedByProperty="spi:groupuser" describedByResource="userRoles" id="userInfo_groupList_spigroupuser" name="groupList"/>
+		     </attributes>
+		     <queryBases id="userInfo_queryBases">
+				<queryBase id="userInfo_queryBase_currentUser" name="currentUser" queryUri="/oslc/os/oslcmaxuser?savedQuery=currentUser"/>
+			</queryBases>
+	    </resource>
+	   
+		<!-- Attachments resource-->
+		<resource class="application.business.AttachmentsObject" id="attachments" isAttachment="true" name="attachments">
+			<attributes id="attachments_attributes">
+				<!-- 
+					NOTICE: There must be at least two attributes with these aliases: fileSize and fileName
+				-->
+				<attribute describedByProperty="oslc_cm:attachmentSize" id="attachments_fileSize_oslc_cmattachmentSize" name="fileSize"/> 
+				<attribute describedByProperty="dcterms:title" id="attachments_fileName_dctermstitle" key="1" name="fileName"/>
+				<attribute describedByProperty="spi:fileName" id="attachments_fullFileName_spifileName" key="2" name="fullFileName"/> 
+				<attribute describedByProperty="dcterms:description" id="attachments_description_dctermsdescription" name="description"/>
+				<attribute describedByProperty="dcterms:created" id="attachments_creationDate_dctermscreated" key="3" name="creationDate"/>
+				<attribute describedByProperty="spi:urlType" id="attachments_urlType_spiurlType" name="urlType"/>
+				<attribute describedByProperty="spi:docType" id="attachments_docType_spidocType" name="docType"/>
+				<attribute describedByProperty="spi:printthrulink" id="attachments_bulkDownload_spiprintthrulink" name="bulkDownload"/>
+				<attribute describedByProperty="spi:contentLocation" id="attachments_contentLocation_spicontentLocation" name="contentLocation"/>
+				<attribute describedByProperty="spi:anywhererefid" id="attachments_anywhereRefId_spianywhererefid" name="anywhereRefId"/>
+				<attribute describedByProperty="spi:createby" id="attachments_createby_spicreateby" name="createby"/> 
+				<localAttribute dataType="string" id="attachments_displaySize_string" name="displaySize"/>
+				<localAttribute dataType="string" formula="(${fileName} || ${anywhereAttachName})" id="attachments_displayFileName_string" name="displayFileName"/>
+				<localAttribute dataType="string" formula="(${description} || ${anywhereAttachDescription})" id="attachments_displayDescription_string" name="displayDescription"/>
+				<localAttribute dataType="string" formula="(${docType} || ${anywhereAttachCategory})" id="attachments_displayCategory_string" name="displayCategory"/>
+				<localAttribute dataType="dateTime" formula="(${creationDate} || ${anywhereCreationDate})" id="attachments_displayCreationDate_dateTime" name="displayCreationDate"/>
+				<localAttribute dataType="string" id="attachments_displayFileType_string" name="displayFileType"/>
+			</attributes>
+		</resource>
+		
+	    											    
+		<!-- Roles attribute list -->				
+	    <resource id="userRoles" name="userRoles">
+			<attributes id="userRoles_attributes">
+				<attribute describedByProperty="spi:groupname" id="userRoles_roleName_spigroupname" name="roleName"/>			
+			</attributes>
+		</resource>
+	
+		<!-- Location resource -->
+		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Location" id="additionallocations" name="additionallocations" pageSize="1000" providedBy="/oslc/sp/SmarterPhysicalInfrastructure"> 
+			<attributes id="additionallocations_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="additionallocations_locationsid_dctermsidentifier" name="locationsid"/>
+				<attribute describedByProperty="spi:siteid" id="additionallocations_siteid_spisiteid" index="true" isExactMatchIndex="true" name="siteid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="additionallocations_location_oslcshortTitle" index="true" name="location"/>
+				<attribute describedByProperty="dcterms:title" id="additionallocations_description_dctermstitle" index="true" name="description"/>
+
+				<attribute describedByProperty="spi:locoper{spi:failureCode{oslc:shortTitle}}" id="additionallocations_failurecode_spilocoperspifailureCodeoslcshortTitle" name="failurecode"/>	
+				<attribute describedByProperty="spi:locoper{spi:failureCode{dcterms:title}}" id="additionallocations_failurecodedesc_spilocoperspifailureCodedctermstitle" name="failurecodedesc"/>					
+				<!-- <attribute name="autowogen" describedByProperty="spi:autowogen" 
+					/> -->
+				<!-- <attribute name="changeby" describedByProperty="spi:changeby" /> -->
+				<!-- <attribute name="changedate" describedByProperty="spi:changedate" 
+					/> -->
+				<!-- <attribute name="disabled" describedByProperty="spi:disabled" /> -->
+				<!-- <attribute name="glaccount" describedByProperty="spi:glaccount" 
+					/> -->
+				<!-- <attribute name="isdefault" describedByProperty="spi:isdefault" 
+					/> -->
+				<!-- <attribute name="isrepairfacility" describedByProperty="spi:isrepairfacility" 
+					/> -->
+				<attribute describedByProperty="spi:status" id="additionallocations_status_spistatus" index="true" isExactMatchIndex="true" name="status"/>
+				<!-- <attribute name="statusdate" describedByProperty="spi:statusdate" 
+					/> -->
+				<!-- <attribute name="type" describedByProperty="spi:type" /> -->
+				<!-- <attribute name="useinpopr" describedByProperty="spi:useinpopr" 
+					/> -->
+				<!-- <attribute name="locationld" describedByProperty="spi:description_longdescription" 
+					/> -->
+			</attributes>
+			<queryBases id="additionallocations_queryBases">
+ 	 			<queryBase id="additionallocations_queryBase_getlocation" name="getlocation" queryUri="/oslc/os/oslcoperloc"/>
+	 		</queryBases>									
+			<whereClause clause="spi:status in [${domainAssetstatus[maxvalue=OPERATING].value}]" id="additionallocations_whereClause"/>
+		</resource>
+		
+		<!-- Error resource checker -->
+   		<resource id="errorResource" name="errorResource" singleton="true">
+   			<attributes id="errorResource_attributes">
+   				<localAttribute dataType="boolean" id="errorResource_hasErrors_boolean" name="hasError"/>
+   			</attributes>
+   		</resource>
+		
+		<!-- Asset Status domain -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domainAssetstatus" isSystem="true" name="domainAssetstatus" pageSize="100" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="domainAssetstatus_attributes">
+				<attribute describedByProperty="spi:orgid" id="domainAssetstatus_orgid_spiorgid" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="domainAssetstatus_siteid_spisiteid" name="siteid"/>
+				<attribute describedByProperty="spi:maxvalue" id="domainAssetstatus_maxvalue_spimaxvalue" name="maxvalue"/>
+				<attribute describedByProperty="spi:value" id="domainAssetstatus_value_spivalue" name="value"/>
+				<attribute describedByProperty="dcterms:title" id="domainAssetstatus_description_dctermstitle" name="description"/>
+				<attribute describedByProperty="spi:defaults" id="domainAssetstatus_defaults_spidefaults" name="defaults"/>
+				<attribute describedByProperty="oslc:shortTitle" id="domainAssetstatus_domainid_oslcshortTitle" name="domainid"/>
+				<attribute describedByProperty="dcterms:identifier" id="domainAssetstatus_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
+			</attributes>
+			<queryBases id="domainAssetstatus_queryBases">
+ 	 			<queryBase id="domainAssetstatus_queryBase_getlocassetstatus" name="getlocassetstatus" queryUri="/oslc/os/oslcsynonymdomain"/>
+	 		</queryBases>			
+			<whereClause clause="oslc:shortTitle='LOCASSETSTATUS' and spi:siteid!='*' and spi:orgid!='*'" id="domainAssetstatus_whereClause"/>
+		</resource>
+
+		<!-- Priority Domain -->
+		<resource additionalData="true" describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#NumericDomain" id="priorityDomain" name="priorityDomain" pageSize="200" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="priorityDomain_attributes">
+				<attribute describedByProperty="spi:value" id="priorityDomain_value_spivalue" name="value"/>
+				<attribute describedByProperty="spi:description" id="priorityDomain_description_spidescription" name="description"/>
+				<attribute describedByProperty="spi:domainid" id="priorityDomain_domainid_spidomainid" name="domainid"/>
+				<attribute describedByProperty="spi:numericdomainid" id="priorityDomain_numericdomainid_spinumericdomainid" name="identifier"/>
+			</attributes>
+			<queryBases id="priorityDomain_queryBases">
+ 	 			<queryBase id="priorityDomain_queryBase_getassetstatus" name="getPriorityCode" queryUri="/oslc/os/oslcnumericdomain"/>
+	 		</queryBases>			
+			<whereClause clause="spi:domainid='TICKETPRIORITY'" id="priorityDomain_whereClause"/>
+		</resource>
+
+		
+		<!-- Asset resource -->
+		<resource additionalData="true" describedBy="http://open-services.net/ns/asset#Asset" id="additionalasset" name="additionalasset" pageSize="1000" providedBy="/oslc/sp/AssetManagement">
+			<attributes id="additionalasset_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="additionalasset_assetuid_dctermsidentifier" name="assetuid"/>
+				<attribute describedByProperty="spi:assetid" id="additionalasset_assetid_spiassetid" name="assetid"/>
+				<attribute describedByProperty="spi:orgid" id="additionalasset_orgid_spiorgid" index="true" name="orgid"/>
+				<attribute describedByProperty="spi:siteid" id="additionalasset_siteid_spisiteid" index="true" isExactMatchIndex="true" name="siteid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="additionalasset_assetnum_oslcshortTitle" index="true" name="assetnum"/>
+				<attribute describedByProperty="dcterms:title" id="additionalasset_description_dctermstitle" index="true" name="description"/>
+				<!-- <attribute name="saddresscode" describedByProperty="spi:saddresscode" 
+					/> -->
+				<attribute describedByProperty="spi:location{oslc:shortTitle}" id="additionalasset_location_spilocationoslcshortTitle" index="true" name="location" referenceResource="additionallocations"/>
+				<attribute describedByProperty="spi:location{dcterms:title}" id="additionalasset_locationdesc_spilocationdctermstitle" index="true" name="locationdesc" referenceResource="additionallocations"/>
+				<!-- <attribute name="serialnum" describedByProperty="spi:serialnum" 
+					/> -->
+				<attribute describedByProperty="spi:status" id="additionalasset_status_spistatus" index="true" isExactMatchIndex="true" name="status"/>
+				<attribute describedByProperty="spi:itemnum" id="additionalasset_itemnum_spiitemnum" index="true" name="itemnum"/>
+				<attribute describedByProperty="spi:itemtype" id="additionalasset_itemtype_spiitemtype" index="true" name="itemtype"/>
+				<attribute describedByProperty="spi:itemsetid" id="additionalasset_itemsetid_spiitemsetid" index="true" name="itemsetid"/>
+				<!--<attribute name="assettag" describedByProperty="spi:assettag" /> -->
+				<!--<attribute name="assetuid" describedByProperty="spi:assetuid" /> -->
+				<!--<attribute name="changeby" describedByProperty="spi:changeby" /> -->
+				<!--<attribute name="changedate" describedByProperty="spi:changedate" 
+					/> -->
+				<!--<attribute name="children" describedByProperty="spi:children" /> -->
+				<!-- <attribute name="disabled" describedByProperty="spi:disabled" /> -->
+				 <attribute describedByProperty="spi:failureCode{oslc:shortTitle}" id="additionalasset_failurecode_spifailureCodeoslcshortTitle" name="failurecode"/>
+				 <attribute describedByProperty="spi:failureCode{dcterms:title}" id="additionalasset_failurecodedesc_spifailureCodedctermstitle" name="failurecodedesc"/>				 
+				<!-- <attribute name="isrunning" describedByProperty="spi:isrunning" 
+					/> -->
+				<!-- <attribute name="manufacturer" describedByProperty="spi:manufacturer" 
+					/> -->
+				<attribute describedByProperty="spi:parent" id="additionalasset_parent_spiparent" index="true" name="parent"/>
+				<!-- <attribute name="priority" describedByProperty="spi:priority" /> -->
+				<!-- <attribute name="vendor" describedByProperty="spi:vendor" /> -->
+				<attribute describedByProperty="spi:description_longdescription" id="additionalasset_assetlongdesc_spidescription_longdescription" name="assetlongdesc"/>
+				<localAttribute dataType="boolean" formula="${itemnum} ? true : false" id="additionalasset_itemnumnotnull_boolean" index="true" name="itemnumnotnull"/>
+			</attributes>
+			<queryBases id="additionalasset_queryBases">
+ 	 			<queryBase id="additionalasset_queryBase_getadditionalasset" name="getadditionalasset" queryUri="/oslc/os/oslcasset"/>
+	 		</queryBases>			
+			<whereClause clause="spi:status in [${domainAssetstatus[maxvalue=OPERATING].value}]" id="additionalasset_whereClause"/>
+		</resource>
+
+		<!-- My Labor resource -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#Labor" id="mylabor" isSystem="true" name="mylabor" pageSize="10" providedBy="/oslc/sp/SmarterPhysicalInfrastructure" refreshOnLogin="true">
+			<attributes id="mylabor_attributes">
+				<attribute describedByProperty="spi:personid" id="mylabor_personid_spipersonid" name="personid"/>
+				<attribute describedByProperty="oslc:shortTitle" id="mylabor_laborcode_oslcshortTitle" name="laborcode"/>
+				<attribute describedByProperty="dcterms:identifier" id="mylabor_laborid_dctermsidentifier" name="laborid"/>				
+				
+				<!-- 
+ 				<attribute name="displayname" describedByProperty="spi_wm:person{spi_wm:displayname}" />
+ 				-->
+ 												
+				<attribute describedByProperty="spi:orgid" id="mylabor_orgid_spiorgid" name="orgid"/>
+				
+			</attributes>		
+			<queryBases id="mylabor_queryBases">
+ 	 			<queryBase id="mylabor_queryBase_getlabor" name="getlabor" queryUri="/oslc/os/oslclabor"/>
+	 		</queryBases>
+ 			<whereClause clause="spi:personid=${personid} and spi:orgid=${deforg}" id="mylabor_whereClause"/>
+		</resource>
+		
+		<!-- APPDOCTYPE --> 
+		<resource describedBy="http://xmlns.com/foaf/0.1/Person" id="myPerson" isSystem="true" name="myPerson" pageSize="10" providedBy="/oslc/sp/FriendOfAFriend" refreshOnLogin="true">
+			<attributes id="myPerson_attributes">
+				<attribute describedByProperty="dcterms:identifier" id="myPerson_personuid" name="personuid"/>
+				<attribute describedByProperty="foaf:name" id="myPerson_displayname" name="displayname"/>
+				<attribute describedByProperty="foaf:givenName" id="myPerson_firstname" name="firstname"/>
+				<attribute describedByProperty="foaf:familyName" id="myPerson_lastname" name="lastname"/>
+				<attribute describedByProperty="oslc:shortTitle" id="myPerson_personid" name="personid"/>
+			</attributes>
+			<queryBases id="person_queryBases">
+				<queryBase id="person_queryBase_getperson" name="getperson" queryUri="/oslc/os/oslcperson"/>
+			</queryBases>
+			<whereClause clause="oslc:shortTitle=${personid}" id="myPerson_whereclause"/>
+		</resource>
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#AppDocType" id="appDocType" isSystem="true" name="appDocType" pageSize="50" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="appDocType_attributes">
+				<attribute describedByProperty="spi:appdoctypeid" id="appDocType_identifier_spiappdoctypeid" index="true" name="identifier"/> 
+				<attribute describedByProperty="spi:doctype" id="appDocType_doctype_spidoctype" index="true" name="doctype"/>
+				<attribute describedByProperty="spi:app" id="appDocType_app_spiapp" index="true" name="app"/>
+			</attributes>
+			<queryBases id="appDocType_queryBases">
+ 	 			<queryBase id="appDocType_queryBase_getSRDocTypes" name="getSRDocTypes" queryUri="/oslc/os/oslcappdoctype?oslc.where=spi:app=%22SR%22"/>
+	 		</queryBases>
+	 		<whereClause id="appDocType_whereClause"/>
+		</resource>	 
+
+		<!-- Work Log resource -->
+		<resource id="workLogResource" name="workLogResource">
+			<attributes id="workLogResource_attributes">
+			    <attribute describedByProperty="spi_wm:worklogid" id="workLogResource_worklogid_spi_wmworklogid" name="identifier"/>
+				<attribute describedByProperty="spi_wm:createdate" id="workLogResource_createdate_spi_wmcreatedate" name="createdate"/>
+				<attribute describedByProperty="spi_wm:createby" id="workLogResource_createby_spi_wmcreateby" index="true" name="createby"/>
+				<attribute describedByProperty="spi_wm:clientviewable" id="workLogResource_clientviewable_spi_wmclientviewable" name="clientviewable"/>
+				<attribute describedByProperty="spi_wm:logtype" id="workLogResource_logtype_spi_wmlogtype" name="logtype"/>
+				<attribute describedByProperty="spi_wm:description" id="workLogResource_summary_spi_wmdescription" name="summary"/>
+				<attribute describedByProperty="spi_wm:description_longdescription" id="workLogResource_details_spi_wmdescription_longdescription" name="details"/>
+				<localAttribute dataType="boolean" id="workLogResource_dontDiscard_boolean" name="dontDiscard"/>
+				<localAttribute dataType="string" formula="${createdate}" id="workLogResource_createdateISO_string" index="true" name="createdateISO" remoteName="spi_wm:createdate"/>
+				<attribute describedByProperty="spi_wm:anywhererefid" id="workLogResource_anywhereRefId_spi_wmanywhererefid" name="anywhereRefId"/>
+			</attributes>
+		</resource>
+
+		<!-- Work Log Type domain -->
+		<resource describedBy="http://jazz.net/ns/ism/asset/smarter_physical_infrastructure#SynonymDomain" id="domainlogtype" isSystem="true" name="domainlogtype" pageSize="10" providedBy="/oslc/sp/SmarterPhysicalInfrastructure">
+			<attributes id="domainlogtype_attributes">
+				<!-- <attribute name="orgid" describedByProperty="spi:orgid" /> -->
+				<!-- <attribute name="siteid" describedByProperty="spi:siteid" /> -->
+				<attribute describedByProperty="spi:maxvalue" id="domainlogtype_maxvalue_spimaxvalue" name="maxvalue"/>
+				<attribute describedByProperty="spi:value" id="domainlogtype_value_spivalue" index="true" name="value"/>
+				<attribute describedByProperty="dcterms:title" id="domainlogtype_description_dctermstitle" index="true" name="description"/>
+				<attribute describedByProperty="spi:defaults" id="domainlogtype_defaults_spidefaults" name="defaults"/>
+				<attribute describedByProperty="oslc:shortTitle" id="domainlogtype_domainid_oslcshortTitle" name="domainid"/>
+				<attribute describedByProperty="dcterms:identifier" id="domainlogtype_synonymdomainid_dctermsidentifier" name="synonymdomainid"/>
+			</attributes>
+			<queryBases id="domainlogtype_queryBases">
+ 	 			<queryBase id="domainlogtype_queryBase_getlogtype" name="getlogtype" queryUri="/oslc/os/oslcsynonymdomain"/>
+	 		</queryBases>			
+			<whereClause clause="oslc:shortTitle='LOGTYPE'" id="domainlogtype_whereClause"/>
+		</resource>
+
+	</data>
+	
+	<messages id="messages">
+		<message defaultMessage="Service Request" id="primaryResourceSingleLabel"/>
+		<message defaultMessage="Service Requests" id="primaryResourcePluralLabel"/>
+		<message defaultMessage="IBM Maximo Service Requestor" id="applicationName"/>
+		<message defaultMessage="The specified location was not found on this device. Verify that the identifier is correct, or refresh your data when you are online." id="invalidLocation"/>
+		<message defaultMessage="The specified asset was not found on this device. Verify that the identifier is correct, or refresh your data when you are online." id="invalidAsset"/>
+		<message defaultMessage="The specified priority was not found on this device. Verify that the identifier is correct, or refresh your data when you are online." id="invalidPriority"/>
+		<message defaultMessage="An error exists. Click here to view the error." id="errorExists"/>
+		<message defaultMessage="Errors Exist. Review the errors." id="reviewErrors"/>
+	</messages>
+</app>

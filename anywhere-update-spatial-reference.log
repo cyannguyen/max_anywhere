@@ -1,0 +1,233 @@
+Override ignored for property "adapter.connection.port"
+Override ignored for property "platformzip.location"
+Override ignored for property "build.target"
+Override ignored for property "enableDataEncryption"
+Override ignored for property "JAVA_HOME"
+Override ignored for property "adapter.connection.domain"
+Override ignored for property "adapter.connection.user"
+Override ignored for property "run.bvt.scripts"
+Override ignored for property "appsToBuild"
+Override ignored for property "version.name"
+Override ignored for property "build.process"
+Override ignored for property "adapter.connection.context"
+Override ignored for property "app.xsd.output.location"
+Override ignored for property "build.update.check.enabled"
+Override ignored for property "android.senderId"
+Override ignored for property "adapter.connection.password"
+Override ignored for property "android.pushSender.Key"
+Override ignored for property "ios.pushSender.password"
+Override ignored for property "globalization.use.mock"
+Override ignored for property "update.artifact.timestamps"
+Override ignored for property "adapter.connection.protocol"
+Override ignored for property "config.dir"
+Importing file C:\IBM\Anywhere\MaximoAnywhere\build-taskdef.xml from C:\IBM\Anywhere\MaximoAnywhere\anywhere-update-spatial-reference.xml
+Overriding previous definition of reference to ant.projectHelper
+parsing buildfile C:\IBM\Anywhere\MaximoAnywhere\build-taskdef.xml with URI = file:/C:/IBM/Anywhere/MaximoAnywhere/build-taskdef.xml
+parsing buildfile jar:file:/C:/IBM/Anywhere/MaximoAnywhere/libs/build/ivy-2.3.0.jar!/org/apache/ivy/ant/antlib.xml with URI = jar:file:/C:/IBM/Anywhere/MaximoAnywhere/libs/build/ivy-2.3.0.jar!/org/apache/ivy/ant/antlib.xml from a zip file
+Trying to override old definition of task propertycopy
+Trying to override old definition of task shellscript
+Trying to override old definition of task pathtofileset
+Trying to override old definition of task runtarget
+Trying to override old definition of task remoteant
+Trying to override old definition of task propertyregex
+Trying to override old definition of task assert
+Trying to override old definition of task math
+Trying to override old definition of task trycatch
+Trying to override old definition of task antserver
+Trying to override old definition of task antcallback
+Trying to override old definition of task compilewithwalls
+Trying to override old definition of task outofdate
+Trying to override old definition of task osfamily
+Trying to override old definition of task stopwatch
+Trying to override old definition of task throw
+Trying to override old definition of task antclipse
+Trying to override old definition of task urlencode
+Trying to override old definition of task timestampselector
+Trying to override old definition of task foreach
+Trying to override old definition of task if
+Trying to override old definition of task propertyselector
+Trying to override old definition of task sortlist
+Trying to override old definition of task antfetch
+Trying to override old definition of task post
+Trying to override old definition of task forget
+Trying to override old definition of task limit
+Trying to override old definition of task switch
+Trying to override old definition of task relentless
+Trying to override old definition of task var
+Trying to override old definition of task inifile
+Trying to override old definition of task verifydesign
+Overriding previous definition of reference to ant.projectHelper
+Override ignored for property "appsToBuild"
+Build sequence for target(s) `remove-spatial-reference' is [remove-spatial-reference]
+Complete build sequence is [remove-spatial-reference, Application Utils Script.test, restore-spatial-reference, test, ]
+
+remove-spatial-reference:
+Override ignored for property "DSTAMP"
+Override ignored for property "TSTAMP"
+Override ignored for property "TODAY"
+     [echo] 2023-03-13 10:44:46> Removing spatial reference for PhysicalCount,IssuesReturns,Transfers
+[available] Unable to find apps\PhysicalCount\platform-artifacts\map\app.xml.backup
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\platform-artifacts\map
+     [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\platform-artifacts\map\app.xml to C:\IBM\Anywhere\MaximoAnywhere\apps\PhysicalCount\platform-artifacts\map\app.xml.backup
+  [xmltask] Reading C:\IBM\Anywhere\MaximoAnywhere/apps/PhysicalCount/platform-artifacts/map/app.xml
+  [xmltask] Executing xmltask 1.16.1
+  [xmltask] Processing C:\IBM\Anywhere\MaximoAnywhere/apps/PhysicalCount/platform-artifacts/map/app.xml into C:\IBM\Anywhere\MaximoAnywhere/apps/PhysicalCount/platform-artifacts/map/app.xml
+  [xmltask] Using predefined xml catalog
+  [xmltask] Applying CopyAction(removetag) to /app/data/resource[@providedBy='/oslc/sp/Spatial']/text()
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			
+		' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			
+		' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			
+		' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			
+		' to property removetag
+  [xmltask] Applied CopyAction(removetag) - 16 match(es)
+  [xmltask] Performing action since 'removetag' is set
+  [xmltask] Applying RemovalAction() to /app/data/resource[@providedBy='/oslc/sp/Spatial']
+  [xmltask] Applied RemovalAction() - 4 match(es)
+  [xmltask] Normalizing resultant document
+  [xmltask] Indenting resultant document
+Override ignored for property "DSTAMP"
+Override ignored for property "TSTAMP"
+Override ignored for property "TODAY"
+     [echo] 2023-03-13 10:44:46> Removed Spatial Reference for PhysicalCount
+[available] Unable to find apps\IssuesReturns\platform-artifacts\map\app.xml.backup
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\platform-artifacts\map
+     [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\platform-artifacts\map\app.xml to C:\IBM\Anywhere\MaximoAnywhere\apps\IssuesReturns\platform-artifacts\map\app.xml.backup
+  [xmltask] Reading C:\IBM\Anywhere\MaximoAnywhere/apps/IssuesReturns/platform-artifacts/map/app.xml
+  [xmltask] Executing xmltask 1.16.1
+  [xmltask] Processing C:\IBM\Anywhere\MaximoAnywhere/apps/IssuesReturns/platform-artifacts/map/app.xml into C:\IBM\Anywhere\MaximoAnywhere/apps/IssuesReturns/platform-artifacts/map/app.xml
+  [xmltask] Using predefined xml catalog
+  [xmltask] Applying CopyAction(removetag) to /app/data/resource[@providedBy='/oslc/sp/Spatial']/text()
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			
+		' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			
+		' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			
+		' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			
+		' to property removetag
+  [xmltask] Applied CopyAction(removetag) - 16 match(es)
+Override ignored for property "removetag"
+  [xmltask] Performing action since 'removetag' is set
+  [xmltask] Applying RemovalAction() to /app/data/resource[@providedBy='/oslc/sp/Spatial']
+  [xmltask] Applied RemovalAction() - 4 match(es)
+  [xmltask] Normalizing resultant document
+  [xmltask] Indenting resultant document
+Override ignored for property "DSTAMP"
+Override ignored for property "TSTAMP"
+Override ignored for property "TODAY"
+     [echo] 2023-03-13 10:44:46> Removed Spatial Reference for IssuesReturns
+[available] Unable to find apps\Transfers\platform-artifacts\map\app.xml.backup
+     [copy] Copying 1 file to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\platform-artifacts\map
+     [copy] Copying C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\platform-artifacts\map\app.xml to C:\IBM\Anywhere\MaximoAnywhere\apps\Transfers\platform-artifacts\map\app.xml.backup
+  [xmltask] Reading C:\IBM\Anywhere\MaximoAnywhere/apps/Transfers/platform-artifacts/map/app.xml
+  [xmltask] Executing xmltask 1.16.1
+  [xmltask] Processing C:\IBM\Anywhere\MaximoAnywhere/apps/Transfers/platform-artifacts/map/app.xml into C:\IBM\Anywhere\MaximoAnywhere/apps/Transfers/platform-artifacts/map/app.xml
+  [xmltask] Using predefined xml catalog
+  [xmltask] Applying CopyAction(removetag) to /app/data/resource[@providedBy='/oslc/sp/Spatial']/text()
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			
+		' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			
+		' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			
+		' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			' to property removetag
+  [xmltask] Copying '
+			
+		' to property removetag
+  [xmltask] Applied CopyAction(removetag) - 16 match(es)
+Override ignored for property "removetag"
+  [xmltask] Performing action since 'removetag' is set
+  [xmltask] Applying RemovalAction() to /app/data/resource[@providedBy='/oslc/sp/Spatial']
+  [xmltask] Applied RemovalAction() - 4 match(es)
+  [xmltask] Normalizing resultant document
+  [xmltask] Indenting resultant document
+Override ignored for property "DSTAMP"
+Override ignored for property "TSTAMP"
+Override ignored for property "TODAY"
+     [echo] 2023-03-13 10:44:47> Removed Spatial Reference for Transfers
+remove-spatial-reference:  duration 0 seconds

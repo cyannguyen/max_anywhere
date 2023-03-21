@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout id="AssetMove" version="201510151515" width="100">
+    <row id="row_0">
+		<column colspan="4" columnid="item1" id="item1_column"/>
+		<column colspan="8" columnid="item2" id="item2_column"/>
+	</row>
+    <row id="row_1">
+		<column colspan="4" columnid="item3" id="item3_column"/>
+		<column colspan="8" columnid="item4" id="item4_column"/>
+	</row>
+	 <row id="row_2">
+		<column colspan="4" columnid="item5" id="item5_column"/>
+		<column colspan="8" columnid="item6" id="item6_column"/>
+	</row>
+	 <row id="row_3">
+		<column colspan="12" columnid="item7" id="item7_column"/>
+	</row>
+	 <row id="row_4">
+		<column colspan="12" columnid="item8" id="item8_column"/>
+	</row>
+</layout>

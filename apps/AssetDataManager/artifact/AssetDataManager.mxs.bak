@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updatescript version="20220526_155012-0400">
+	<app apptype="anywhere" id="AssetDataManager">
+		<add before="AssetDataManager.AssetDetailView_actions" container="AssetDataManager.AssetDetailView" control="eventHandlers">
+			<set property="id" value="AssetDataManager.AssetDetailView_asset_eventHandler"/>
+		</add>
+		<add container="AssetDataManager.AssetDetailView_asset_eventHandler" control="eventHandler">
+			<set property="class" value="application.handlers.AssetDetailHandler"/>
+			<set property="event" value="back"/>
+			<set property="id" value="AssetDataManager.AssetDetailView_asset_eventHandler_back_handleAssetBack"/>
+			<set property="method" value="handleDetailsBackButton"/>
+		</add>
+		<add container="AssetDataManager.AssetDetailView_asset" control="requiredAttribute">
+			<set property="id" value="AssetDataManager.AssetDetailView_asset_assetClassSpec"/>
+			<set property="name" value="assetClassSpec"/>
+			<set property="reload" value="true"/>
+		</add>
+		<add before="assetAttribute" container="data" control="resource">
+			<set property="id" value="assetClassSpec"/>
+			<set property="name" value="assetClassSpec"/>
+		</add>
+		<add container="assetClassSpec" control="attributes">
+			<set property="id" value="assetClassSpec_attributes"/>
+		</add>
+		<add container="assetClassSpec_attributes" control="attribute">
+			<set property="describedByProperty" value="spi:domainid"/>
+			<set property="id" value="domainid"/>
+			<set property="name" value="domainid"/>
+		</add>
+		<add container="assetClassSpec_attributes" control="attribute">
+			<set property="describedByProperty" value="spi_wm:assetattr{spi_wm:assetattrid}"/>
+			<set property="id" value="assetattrid"/>
+			<set property="name" value="assetattrid"/>
+		</add>
+		<add before="asset_spiassetmovedflt_assetmovedflt" container="asset_attributes" control="attribute">
+			<set property="describedByProperty" value="spi:assetclassspec"/>
+			<set property="describedByResource" value="assetClassSpec"/>
+			<set property="id" value="asset_assetClassSpec_spi_assetClassSpec"/>
+			<set property="name" value="assetClassSpec"/>
+		</add>
+		<remove container="AssetDataManager.shiftLookup_returnAttributes" control="AssetDataManager.shiftLookup_description_statusdesc"/>
+		<remove container="AssetDataManager.calendarLookup_returnAttributes" control="AssetDataManager.calendarLookup_description_statusdesc"/>
+	</app>
+</updatescript>

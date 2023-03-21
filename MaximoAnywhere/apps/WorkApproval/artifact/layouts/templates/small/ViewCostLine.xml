@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout id="ViewCostLine" width="100">
+	<row id="row_0">
+		<column columnid="item1" halign="left" id="item1_column"/>
+		<column columnid="item2" halign="right" id="item2_column"/>
+	</row>
+</layout>

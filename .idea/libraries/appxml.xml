@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="appxml">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/apps/PhysicalCount/artifact/appxml.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="43px" height="32px" viewBox="0 0 43 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>header_app_AssetDataManager_back_OFF</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="header_app_AssetDataManager_back_OFF" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="header_app_AssetDataManager_noBack" transform="translate(15.000000, 4.000000)">
+            <circle id="Oval" fill="#F9F9F9" cx="12.5" cy="12.5" r="4.5"></circle>
+            <circle id="Oval-Copy" stroke="#F9F9F9" cx="21" cy="3" r="3"></circle>
+            <circle id="Oval-Copy-2" stroke="#F9F9F9" cx="19" cy="20" r="3"></circle>
+            <circle id="Oval-Copy-3" stroke="#F9F9F9" cx="3" cy="22" r="3"></circle>
+            <circle id="Oval-Copy-4" stroke="#F9F9F9" cx="5" cy="4" r="3"></circle>
+            <rect id="Rectangle-19" fill="#F9F9F9" transform="translate(8.317858, 7.560323) rotate(-41.000000) translate(-8.317858, -7.560323) " x="7.81785753" y="5.51813985" width="1" height="4.08436543"></rect>
+            <rect id="Rectangle-19-Copy" fill="#F9F9F9" transform="translate(15.850824, 16.023062) rotate(-41.000000) translate(-15.850824, -16.023062) " x="15.3508245" y="13.7771218" width="1" height="4.49188137"></rect>
+            <rect id="Rectangle-19-Copy-2" fill="#F9F9F9" transform="translate(16.881554, 7.597180) rotate(-138.000000) translate(-16.881554, -7.597180) " x="16.3815539" y="4.55253159" width="1" height="6.08929696"></rect>
+            <rect id="Rectangle-19-Copy-3" fill="#F9F9F9" transform="translate(7.459298, 17.138038) rotate(-138.000000) translate(-7.459298, -17.138038) " x="6.95929829" y="13.3655935" width="1" height="7.54488844"></rect>
+        </g>
+        <g id="nany-icon-/-back-arrow" fill="#FFFFFF">
+            <polygon id="header_back_OFF" points="4.09980033 16 7.53567422 22.5 4.18511389 22.5 1 16 4.64943967 9.5 8 9.5"></polygon>
+        </g>
+    </g>
+</svg>

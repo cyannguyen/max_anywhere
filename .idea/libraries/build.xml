@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="build">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/build/ant-contrib-1.0b3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/build/ivy-2.3.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/build/commons-codec-1.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/build/apache-ivy.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/build/dd-plist.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/build/testng-6.8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/build/commons-io-2.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/build/xmltask-1.16.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/build/isiprojectpbx.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
